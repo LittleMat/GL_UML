@@ -11,7 +11,9 @@
 //---------------------------------------------------------------- INCLUDE
 
 //--------------------------------------------------------- System include
+#include <iostream>
 
+using namespace std;
 //------------------------------------------------------ Personnal include
 #include "Service.h"
 //------------------------------------------------------------- Constantes
@@ -25,7 +27,8 @@
 */
 int main ( int argc, char ** argv )
 {
-
+	cout << "Hello world" << endl;
+	return 0;
 } // End of main
 
 int menu ( ) 
