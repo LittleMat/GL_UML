@@ -38,7 +38,7 @@ public :
 	/*
 	 *	
 	 */
-	Capteur ( const std :: string sensorID, const Point * position, const std :: string description);
+	Capteur ( const std :: string sensorID, Point * const position, const std :: string description);
 
 	/*
 	 *	

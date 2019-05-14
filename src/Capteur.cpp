@@ -39,7 +39,7 @@ using namespace std;
 
 //-------------------------------------------- Constructors - destructor
 
-Capteur :: Capteur ( const std :: string sensorID, const Point * position, const std :: string description)
+Capteur :: Capteur ( const std :: string sensorID, Point * const position, const std :: string description)
 {
 	#ifdef MAP
 	    cerr << "Constructor of <Capteur>" << endl;
@@ -53,5 +53,5 @@ Capteur :: Capteur ( const std :: string sensorID, const Point * position, const
 
 Capteur :: ~Capteur ( )
 {
-
+	delete position;
 }// End of destructor 
