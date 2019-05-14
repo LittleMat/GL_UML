@@ -18,6 +18,9 @@ using namespace std;
 #include <list>
 #include "Capteur.h"
 #include <tuple>
+#include <utility> 
+#include <string>
+#include <ctime>
 
 //------------------------------------------------------------------------
 // Goals of the <Service> class
@@ -33,10 +36,13 @@ public:
 	//----------------------------------------------------- Public methods
 	bool surveillerComportementCapteur(string capteurID);
 	list<Capteur> surveillerComportementCapteurs(list<string> capteursID );
-	list<tuple(Capteur, Capteur)> obtenirCapteursSimilaires(debut : Date, nbMesures : int);
-	tuple(int, list<float>, int) calculerQualite(tempsInf : Date, tempsSup : Date)
+	list<pair<Capteur, Capteur>> obtenirCapteursSimilaires(struct tm Date, int nbMesures);
+	tuple<int, list<float>, int> calculerQualite(struct tm tempsInf, struct tm tempsSup);
 
 	//-------------------------------------------- Constructor - destructor
+	Service(FileReader f);
+
+	~Service();
 
 protected:
 	//----------------------------------------------------- Protected attributes
