@@ -61,13 +61,19 @@ Mesure::Mesure ( )
 // Algorithm :
 //
 {
-	
+
+#ifdef MAP
+		cout << "Appel au constructeur de <Mesure>" << endl;
+#endif
 }//-----End of Mesure
 
 Mesure::~Mesure ( )
 // Algorithm :
 //
 {
+#ifdef MAP
+cout << "Appel au destructeur de <Mesure>" << endl;
+#endif
 
 }//-----End of Mesure
 
