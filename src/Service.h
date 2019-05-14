@@ -35,9 +35,9 @@ public:
 
 	//----------------------------------------------------- Public methods
 	bool surveillerComportementCapteur(string capteurID);
-	list<Capteur> surveillerComportementCapteurs(list<string> capteursID );
-	list<pair<Capteur, Capteur>> obtenirCapteursSimilaires(struct tm Date, int nbMesures);
-	tuple<int, list<float>, int> calculerQualite(struct tm tempsInf, struct tm tempsSup);
+	list<Capteur> * surveillerComportementCapteurs(list<string> capteursID );
+	list<pair<Capteur, Capteur>> * obtenirCapteursSimilaires(struct tm Date, int nbMesures);
+	tuple<int, list<float>, int> * calculerQualite(struct tm tempsInf, struct tm tempsSup);
 
 	//-------------------------------------------- Constructor - destructor
 	Service(FileReader & f);

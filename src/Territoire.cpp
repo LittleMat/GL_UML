@@ -55,7 +55,7 @@ Territoire::Territoire(Point c, int r)
 	rayon = r;
 }//----- End of Territoire 
 
-Point::~Point()
+Territoire::~Territoire()
 // Algorithm : 
 {
 #ifdef MAP
