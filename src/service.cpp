@@ -31,6 +31,7 @@ Service::Service()
 	cout << "Appel au constructeur de <Service>" << endl;
 #endif
 
+<<<<<<< HEAD
 }//----- End of Service 
 
 Service::~Service()
@@ -45,3 +46,5 @@ Service::~Service()
  //------------------------------------------------------------------ PRIVE
 
  //----------------------------------------------------- Protected methods
+=======
+>>>>>>> 279866042f809473c21667f1de644f70c7ecb7df

@@ -1,37 +1,80 @@
 /*************************************************************************
-                           Cli  -  description
+                           Mesure  -  description
                              -------------------
     beginning            : 14/05
     copyright            : (C) 2019 by CERBA Guilhem, YE Zihang, YE Linda, MONTGOMERY Mathieu, ZHANG Tianyu
     e-mail               : guilhem.cerba@insa-lyon.fr, zihang.ye@insa-lyon.fr, linda.ye@insa-lyon.fr , mathieu.montgomery@insa-lyon.fr, tianyu.zhang@insa-lyon.fr
 *************************************************************************/
 
-//------------- Realisation of <Cli> (file Cli.cpp) ----------------
+//------------- Realisation of <Mesure> (file Mesure.cpp) ----------------
 
 //---------------------------------------------------------------- INCLUDE
 
 //--------------------------------------------------------- System include
-#include <iostream>
 
+#include <iostream>
 using namespace std;
+
 //------------------------------------------------------ Personnal include
-#include "Service.h"
+
+#include "Mesure.h"
+
 //------------------------------------------------------------- Constantes
 
 //----------------------------------------------------------------- PUBLIC
 
 //----------------------------------------------------- Public methodes
 
-/*
- *
-*/
-int main ( int argc, char ** argv )
-{
-	cout << "Hello world" << endl;
-	return 0;
-} // End of main
-
-int menu ( ) 
+Date Mesure::timestamp()
+// Algorithm :
+//
 {
 
-} // End of menu
+    
+
+}//-----End of timestamp
+
+Attribut Mesure::attribute()
+// Algorithm :
+//
+{
+
+}//-----End of attribute
+
+int Mesure::value()
+// Algorithm :
+//
+{
+
+}//-----End of value
+
+string Mesure::sensorID()
+// Algorithm :
+//
+{
+
+}//-----End of sensorID
+
+//-------------------------------------------- Constructors - destructor
+
+Mesure::Mesure ( )
+// Algorithm :
+//
+{
+
+#ifdef MAP
+		cout << "Appel au constructeur de <Mesure>" << endl;
+#endif
+}//-----End of Mesure
+
+Mesure::~Mesure ( )
+// Algorithm :
+//
+{
+#ifdef MAP
+cout << "Appel au destructeur de <Mesure>" << endl;
+#endif
+
+}//-----End of Mesure
+
+//----- End of ~Mesure 

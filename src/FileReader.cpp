@@ -10,7 +10,7 @@
 //------------- Realisation of <FileReader> (file FileReader.cpp) ----------------
 
 //---------------------------------------------------------------- INCLUDE
-
+using namespace std;
 //--------------------------------------------------------- System include
 
 //------------------------------------------------------ Personnal include
@@ -21,13 +21,37 @@
 
 //----------------------------------------------------- Public methodes
 
+	//TODO mettre paramêtre
+	const list < Capteur > lireCapteurs ( )
+	{
+		return null;
+	}
+
+	//TODO mettre paramêtre
+	const list < Attribut > lireAttributs ( )
+	{
+
+	}
+
+	//TODO mettre paramêtre
+	const Mesure prochaineMesure ( )
+	{
+
+	}
+
 //-------------------------------------------- Constructors - destructor
 
 FileReader :: FileReader ( const std :: string & nomFichierCapteurs, const string & nomFichierAttributs, const std :: list < std :: string > & nomFichiersMesures, const std :: string & fichierMesureEnCours)
 {
 	#ifdef MAP
-	    cerr << "Constructor of <Capteur>" << endl;
+	    cerr << "Constructor of <FileReader>" << endl;
 	#endif
+
+	this.nomFichierCapteurs = nomFichierCapteurs;
+	this.nomFichierAttributs = nomFichierAttributs;
+	this.nomFichiersMesures = nomFichiersMesures;
+	this.fichierMesureEnCours = fichierMesureEnCours;
+	int numLigne = 0;
 
 } // End of constructor
 
