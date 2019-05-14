@@ -44,7 +44,7 @@ public :
 
 protected :  
 		
-		Mesure (struct tm timestamp, Attribut & attribute, int value, const std ::string sensorID);
+		Mesure (struct tm timestamp, Attribut * const attribut, int value, const std ::string sensorID);
 		// Mode d'emploi :
 		//
     	// Contrat :
@@ -62,7 +62,7 @@ protected :
 
 protected :
 	struct tm timestamp;
-	Attribut attribute;
+	Attribut * attribut;
 	int value;
 	std ::string sensorID;
 

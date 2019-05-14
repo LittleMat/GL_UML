@@ -40,13 +40,13 @@ public:
 	tuple<int, list<float>, int> * calculerQualite(struct tm tempsInf, struct tm tempsSup);
 
 	//-------------------------------------------- Constructor - destructor
-	Service(FileReader & f);
+	Service(FileReader * f);
 
 	~Service();
 
 protected:
 	//----------------------------------------------------- Protected attributes
-	FileReader fileReader;
+	FileReader * fileReader;
 };
 
 #endif // SERVICE_H
