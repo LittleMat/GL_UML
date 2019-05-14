@@ -28,10 +28,17 @@ public :
 //----------------------------------------------------- Public methods
 
 //-------------------------------------------- Constructor - destructor
+
+	const std :: string getSensorID() const;
+
+	const Point * getPosition() const;
+
+	const std :: string getDescription() const;
+	
 	/*
 	 *	
 	 */
-	Capteur ( const std :: string & sensorID, const Point & position, const std :: string & description);
+	Capteur ( const std :: string sensorID, const Point * position, const std :: string description);
 
 	/*
 	 *	
@@ -42,7 +49,7 @@ protected :
 
 //----------------------------------------------------- Protected attributes
 	std :: string sensorID;
-	Point position;
+	Point * position;
 	std :: string description;
 };
 

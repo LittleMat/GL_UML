@@ -22,10 +22,24 @@ using namespace std;
 //----------------------------------------------------------------- PUBLIC
 
 //----------------------------------------------------- Public methodes
+	const std :: string Capteur :: getSensorID()
+	{
+		return sensorID;
+	}
+
+	const Point * Capteur :: getPosition() const
+	{
+		return position;
+	}
+
+	const std :: string Capteur :: getDescription() const
+	{
+		return description;
+	}
 
 //-------------------------------------------- Constructors - destructor
 
-Capteur :: Capteur ( const std :: string & sensorID, const Point & position, const std :: string & description)
+Capteur :: Capteur ( const std :: string sensorID, const Point * position, const std :: string description)
 {
 	#ifdef MAP
 	    cerr << "Constructor of <Capteur>" << endl;
