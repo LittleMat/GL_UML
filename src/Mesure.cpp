@@ -39,7 +39,7 @@ using namespace std;
 
 //-------------------------------------------- Constructors - destructor
 
-Mesure::Mesure (Date timestamp, Attribut attribute, int value, const std ::string sensorID )
+Mesure::Mesure (Date & timestamp, Attribut & attribute, int & value, const std ::string & sensorID )
 // Algorithm :
 //
 {
@@ -47,6 +47,12 @@ Mesure::Mesure (Date timestamp, Attribut attribute, int value, const std ::strin
 #ifdef MAP
 		cout << "Appel au constructeur de <Mesure>" << endl;
 #endif
+
+	this->timestamp = timestamp;
+	this->attribute = attribute;
+	this->value = value;
+	this->sensorID = sensorID;
+	
 }//-----End of Mesure
 
 Mesure::~Mesure ()
