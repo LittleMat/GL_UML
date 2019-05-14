@@ -34,8 +34,8 @@ float Point::getLatitude()
 
 float Point::distance(Point p)
 {
-	float longt2 = longitude * longitude;
-	float lat2 = getLatitude() ^ 2;
+	float long2 = longitude * longitude;
+	float lat2 = latitude * latitude;
 	return sqrt(long2 + lat2);
 
 }//----- End of distance 
