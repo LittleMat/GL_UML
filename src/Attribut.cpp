@@ -37,15 +37,15 @@ using namespace std;
 
 
 //-------------------------------------------- Constructors - destructor
-Attribut:: Attribut (std ::string attributID, std ::string unit, std ::string description)
+Attribut:: Attribut (std ::string & attributID, std ::string & unit, std ::string & description)
 {
 	#ifdef MAP
 	    cerr << "Constructor of <Attribut>" << endl;
 	#endif
 	    
-	this.attributID = attributID;
-	this.unit = unit;
-	this.description = description;
+	this->attributID = attributID;
+	this->unit = unit;
+	this->description = description;
 	    
 	
 }//End of constructor
