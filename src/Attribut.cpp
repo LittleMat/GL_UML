@@ -24,20 +24,21 @@ using namespace std;
 //----------------------------------------------------- Public methodes
 
 
-// Algorithm :
-//
-{
-
-    
-
-}//-----End of attributID
-
-
-
-
-
 //-------------------------------------------- Constructors - destructor
-Attribut:: Attribut (std ::string & attributID, std ::string & unit, std ::string & description)
+Attribut::Attribut()
+{
+#ifdef MAP
+	cerr << "Constructor of <Attribut>" << endl;
+#endif
+
+	this->attributID = "";
+	this->unit = "";
+	this->description = "";
+
+
+}//End of constructor
+
+Attribut:: Attribut (const std ::string & attributID, const std ::string & unit, const std ::string & description)
 {
 	#ifdef MAP
 	    cerr << "Constructor of <Attribut>" << endl;

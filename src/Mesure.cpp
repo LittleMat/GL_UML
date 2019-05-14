@@ -27,15 +27,6 @@ using namespace std;
 //----------------------------------------------------- Public methodes
 
 
-// Algorithm :
-//
-{
-
-    
-
-}//-----End of 
-
-
 
 //-------------------------------------------- Constructors - destructor
 

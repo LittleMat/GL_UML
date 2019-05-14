@@ -22,20 +22,22 @@ using namespace std;
 //----------------------------------------------------- Public methodes
 
 	//TODO mettre paramêtre
-	const list < Capteur > lireCapteurs ( )
+	const list < Capteur >* lireCapteurs ( )
 	{
-		return list < Capteur >();
+		return nullptr;
 	}
 
 	//TODO mettre paramêtre
-	const list < Attribut > lireAttributs ( )
+	const list < Attribut >* lireAttributs ( )
 	{
+		return nullptr;
 
 	}
 
 	//TODO mettre paramêtre
-	const Mesure prochaineMesure ( )
+	const Mesure* prochaineMesure ( )
 	{
+		return nullptr;
 
 	}
 

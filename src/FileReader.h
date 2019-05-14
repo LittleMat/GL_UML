@@ -31,17 +31,17 @@ public :
 	/*
 	 * Lit les capteurs du fichiers contenant les capteurs et retourne une liste de capteurs
 	 */
-	const list < Capteur > lireCapteurs ( ); //TODO mettre parametre
+	const list < Capteur >* lireCapteurs ( ); //TODO mettre parametre
 
 	/*
 	 * Lit les différents attributs du fichier contenant les attributs et retourne une liste d'attributs
 	 */
-	const list < Attribut > lireAttributs ( ); //TODO mettre parametre
+	const list < Attribut >* lireAttributs ( ); //TODO mettre parametre
 
 	/*
 	 * Lit la prochaine mesure des fichiers contenant les mesures
 	 */
-	const Mesure prochaineMesure ( ); //TODO mettre paramêtre
+	const Mesure* prochaineMesure ( ); //TODO mettre paramêtre
 //-------------------------------------------- Constructor - destructor
 	/*
 	 *	

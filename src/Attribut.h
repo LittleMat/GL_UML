@@ -41,6 +41,12 @@ public :
 //-------------------------------------------- Constructor - destructor
 
 protected :  
+
+		Attribut();
+		// Mode d'emploi :
+		//
+		// Contrat :
+		//
 		
 		Attribut (const std ::string & attributID, const std ::string & unit, const std ::string & description);
 		// Mode d'emploi :
