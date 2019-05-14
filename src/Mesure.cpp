@@ -25,39 +25,20 @@ using namespace std;
 
 //----------------------------------------------------- Public methodes
 
-Date Mesure::timestamp()
+
 // Algorithm :
 //
 {
 
     
 
-}//-----End of timestamp
+}//-----End of 
 
-Attribut Mesure::attribute()
-// Algorithm :
-//
-{
 
-}//-----End of attribute
-
-int Mesure::value()
-// Algorithm :
-//
-{
-
-}//-----End of value
-
-string Mesure::sensorID()
-// Algorithm :
-//
-{
-
-}//-----End of sensorID
 
 //-------------------------------------------- Constructors - destructor
 
-Mesure::Mesure ( )
+Mesure::Mesure (Date t, Attribut a, int v, string sid )
 // Algorithm :
 //
 {
@@ -67,7 +48,7 @@ Mesure::Mesure ( )
 #endif
 }//-----End of Mesure
 
-Mesure::~Mesure ( )
+Mesure::~Mesure ( Date t, Attribut a, int v, string sid)
 // Algorithm :
 //
 {

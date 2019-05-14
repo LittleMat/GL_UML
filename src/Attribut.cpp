@@ -23,7 +23,7 @@ using namespace std;
 
 //----------------------------------------------------- Public methodes
 
-string Attribut::attributID()
+
 // Algorithm :
 //
 {
@@ -32,29 +32,12 @@ string Attribut::attributID()
 
 }//-----End of attributID
 
-string Attribut::unit()
 
-// Algorithm :
-//
-{
-
-    
-
-}//-----End of unit
-
-string Attribut::description()
-// Algorithm :
-//
-{
-
-    
-
-}//-----End of description
 
 
 
 //-------------------------------------------- Constructors - destructor
-Attribut:: Attribut ()
+Attribut:: Attribut (string aid, string u, string des)
 {
 	#ifdef MAP
 	    cerr << "Constructor of <Attribut>" << endl;
@@ -63,7 +46,7 @@ Attribut:: Attribut ()
 	
 }//End of constructor
 
-Attribut :: ~Attribut ( )
+Attribut :: ~Attribut (string aid, string u, string des )
 {
 
 }// End of destructor 

@@ -30,19 +30,7 @@ public :
 
 //----------------------------------------------------- Public methods
 
-	string attributID();
-	// Mode d'emploi :
-	//
-    // Contrat :
-    //
 
-	string unit();
-	// Mode d'emploi :
-	//
-    // Contrat :
-    //
-
-	string description();
 	// Mode d'emploi :
 	//
     // Contrat :
@@ -53,13 +41,13 @@ public :
 
 protected :  
 		
-		Attribut ();
+		Attribut (string aid, string u, string des);
 		// Mode d'emploi :
 		//
     	// Contrat :
     	//
 
- 		~Attribut ();
+ 		~Attribut (string aid, string u, string des);
  		// Mode d'emploi :
 		//
     	// Contrat :
@@ -68,7 +56,11 @@ protected :
 
 
 //----------------------------------------------------- Protected attributes
+protected :
 
+    string attributID;
+    string unit;
+    string description;
 
 };
 

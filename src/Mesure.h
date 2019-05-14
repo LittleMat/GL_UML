@@ -31,42 +31,25 @@ public :
 
 //----------------------------------------------------- Public methods
 
-	Date timestamp();
 	// Mode d'emploi :
 	//
     // Contrat :
     //
 
-	Attribut attribute();
-	// Mode d'emploi :
-	//
-    // Contrat :
-    //
-
-	int value();
-	// Mode d'emploi :
-	//
-    // Contrat :
-    //
-
-	string sensorID();
-	// Mode d'emploi :
-	//
-    // Contrat :
-    //
+	
 
 
 //-------------------------------------------- Constructor - destructor
 
 protected :  
 		
-		Mesure ();
+		Mesure (Date t, Attribut a, int v, string sid);
 		// Mode d'emploi :
 		//
     	// Contrat :
     	//
 
- 		~Mesure ();
+ 		~Mesure (Date t, Attribut a, int v, string sid);
  		// Mode d'emploi :
 		//
     	// Contrat :
@@ -76,6 +59,11 @@ protected :
 
 //----------------------------------------------------- Protected attributes
 
+protected :
+	Date timestamp;
+	Attribut attribute;
+	int value;
+	string sensorID;
 
 };
 
