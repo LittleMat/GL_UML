@@ -10,14 +10,14 @@ SRCDIR=src
 BINDIR=bin
 
 # man config
-MANPAGE=${EXENAME}.1
-MANDIR=/usr/share/man/man1
+#MANPAGE=${EXENAME}.1
+#MANDIR=/usr/share/man/man1
 
 DEFAULT=main
 
 default: ${DEFAULT}
 
-main: %.o
+main: cli.o %.o
 	@echo -e "\033[33mCompilation de main\033[0m"
 	cd ${BINDIR} && \
 	g++ ${CPPFLAGS} ${FLAGS} \
@@ -63,3 +63,5 @@ help:
 
 	@echo -e "\033[33mhelp :\033[0m"
 	@echo -e "\taffiche ce message d'aide\n"
+
+cli.o: ${SRCDIR}/cli.h ${SRCDIR}/Capteur.h ${SRCDIR}/FileReader.h ${SRCDIR}/Mesure.h ${SRCDIR}/Point.h ${SRCDIR}/Service.h ${SRCDIR}/Territoire.h ${SRCDIR}/Attribut.h
