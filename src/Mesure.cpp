@@ -13,6 +13,7 @@
 //--------------------------------------------------------- System include
 
 #include <iostream>
+#include<string>
 using namespace std;
 
 //------------------------------------------------------ Personnal include
@@ -25,39 +26,20 @@ using namespace std;
 
 //----------------------------------------------------- Public methodes
 
-Date Mesure::timestamp()
+
 // Algorithm :
 //
 {
 
     
 
-}//-----End of timestamp
+}//-----End of 
 
-Attribut Mesure::attribute()
-// Algorithm :
-//
-{
 
-}//-----End of attribute
-
-int Mesure::value()
-// Algorithm :
-//
-{
-
-}//-----End of value
-
-string Mesure::sensorID()
-// Algorithm :
-//
-{
-
-}//-----End of sensorID
 
 //-------------------------------------------- Constructors - destructor
 
-Mesure::Mesure ( )
+Mesure::Mesure (Date timestamp, Attribut attribute, int value, const std ::string sensorID )
 // Algorithm :
 //
 {
@@ -67,7 +49,7 @@ Mesure::Mesure ( )
 #endif
 }//-----End of Mesure
 
-Mesure::~Mesure ( )
+Mesure::~Mesure ()
 // Algorithm :
 //
 {

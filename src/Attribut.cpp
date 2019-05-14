@@ -14,7 +14,7 @@
 
 //------------------------------------------------------ Personnal include
 #include "Attribut.h"
-
+#include<string>
 using namespace std;
 
 //------------------------------------------------------------- Constantes
@@ -23,7 +23,7 @@ using namespace std;
 
 //----------------------------------------------------- Public methodes
 
-string Attribut::attributID()
+
 // Algorithm :
 //
 {
@@ -32,38 +32,25 @@ string Attribut::attributID()
 
 }//-----End of attributID
 
-string Attribut::unit()
 
-// Algorithm :
-//
-{
-
-    
-
-}//-----End of unit
-
-string Attribut::description()
-// Algorithm :
-//
-{
-
-    
-
-}//-----End of description
 
 
 
 //-------------------------------------------- Constructors - destructor
-Attribut:: Attribut ()
+Attribut:: Attribut (std ::string attributID, std ::string unit, std ::string description)
 {
 	#ifdef MAP
 	    cerr << "Constructor of <Attribut>" << endl;
 	#endif
 	    
+	this.attributID = attributID;
+	this.unit = unit;
+	this.description = description;
+	    
 	
 }//End of constructor
 
-Attribut :: ~Attribut ( )
+Attribut :: ~Attribut ()
 {
 
 }// End of destructor 

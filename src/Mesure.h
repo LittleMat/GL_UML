@@ -14,7 +14,8 @@
 //--------------------------------------------------- Interfaces used
 #include <iostream>
 using namespace std;
-#include "Attribute.h"
+#include <string>
+#include "Attribut.h"
 #include "Capteur.h"
 
 
@@ -31,36 +32,19 @@ public :
 
 //----------------------------------------------------- Public methods
 
-	Date timestamp();
 	// Mode d'emploi :
 	//
     // Contrat :
     //
 
-	Attribut attribute();
-	// Mode d'emploi :
-	//
-    // Contrat :
-    //
-
-	int value();
-	// Mode d'emploi :
-	//
-    // Contrat :
-    //
-
-	string sensorID();
-	// Mode d'emploi :
-	//
-    // Contrat :
-    //
+	
 
 
 //-------------------------------------------- Constructor - destructor
 
 protected :  
 		
-		Mesure ();
+		Mesure (Date timestamp, Attribut attribute, int value, const std ::string sensorID);
 		// Mode d'emploi :
 		//
     	// Contrat :
@@ -76,6 +60,11 @@ protected :
 
 //----------------------------------------------------- Protected attributes
 
+protected :
+	Date timestamp;
+	Attribut attribute;
+	int value;
+	std ::string sensorID;
 
 };
 

@@ -13,8 +13,9 @@
 
 //--------------------------------------------------- Interfaces used
 #include <iostream>
+#include<string>
 using namespace std;
-#include "Mesure.h"
+#include "Attribut.h"
 
 
 //------------------------------------------------------------------------
@@ -30,19 +31,7 @@ public :
 
 //----------------------------------------------------- Public methods
 
-	string attributID();
-	// Mode d'emploi :
-	//
-    // Contrat :
-    //
 
-	string unit();
-	// Mode d'emploi :
-	//
-    // Contrat :
-    //
-
-	string description();
 	// Mode d'emploi :
 	//
     // Contrat :
@@ -53,7 +42,7 @@ public :
 
 protected :  
 		
-		Attribut ();
+		Attribut (const std ::string attributID, const std ::string unit, const std ::string description);
 		// Mode d'emploi :
 		//
     	// Contrat :
@@ -68,7 +57,11 @@ protected :
 
 
 //----------------------------------------------------- Protected attributes
+protected :
 
+    std ::string attributID;
+    std ::string unit;
+    std ::string description;
 
 };
 
