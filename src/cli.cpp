@@ -28,11 +28,23 @@ using namespace std;
 */
 int main ( int argc, char ** argv )
 {
-	cout << "Hello world 2" << endl;
+	menu();
 	return 0;
 } // End of main
 
 int menu ( ) 
 {
+	std::string lecture;
+	cout << "Menu Principal" << endl;
+	cout << "[1] Obtenir la qualite moyenne de l’air" << endl;
+	cout << "[2] Obtenir capteurs similaires" << endl;
+	cout << "[3] Vérifier comportement capteurs" << endl;
+	cout << "[4] Quitter application" << endl;
+	do {
+		cin >> lecture;
+
+	} while (std::stoi(lecture) != 1 && std::stoi(lecture) != 2 && std::stoi(lecture) != 3 && std::stoi(lecture) != 4);
+	cout << "Option["<<lecture<<"] selectionnée " << endl;
+
 	return 0;
 } // End of menu
