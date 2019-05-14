@@ -38,7 +38,7 @@ public:
 	// Contrat :
 	//
 
-	float distance(Point p);
+	float distance(Point * p);
 	// Mode d'emploi :
 	// 
 	// Contrat :

@@ -28,7 +28,7 @@ class Territoire
 public:
 
 	//----------------------------------------------------- Public methods
-	Point getCentre();
+	Point * getCentre();
 	// Mode d'emploi :
 	// 
 	// Contrat :
@@ -40,7 +40,7 @@ public:
 	// Contrat :
 	//
 
-	bool contient(Point p);
+	bool contient(Point * p);
 	// Mode d'emploi :
 	// 
 	// Contrat :

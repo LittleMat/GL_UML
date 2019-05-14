@@ -9,6 +9,9 @@ FLAGS=
 SRCDIR=src
 BINDIR=bin
 
+SRC=$(wildcard ${SRCDIR}/*.cpp)
+OBJECTS=$(SRC:.cpp=.o)
+
 # man config
 #MANPAGE=${EXENAME}.1
 #MANDIR=/usr/share/man/man1
@@ -17,12 +20,12 @@ DEFAULT=main
 
 default: ${DEFAULT}
 
-main: cli.o %.o
+main: $(OBJECTS)
 	@echo -e "\033[33mCompilation de main\033[0m"
 	cd ${BINDIR} && \
 	g++ ${CPPFLAGS} ${FLAGS} \
 		*.o \
-        -o ${EXENAME} \
+        -o ${EXENAME} $(OBJECTS)\
 	&& chmod +x ${EXENAME}
 
 %.o: ${SRCDIR}/%.cpp

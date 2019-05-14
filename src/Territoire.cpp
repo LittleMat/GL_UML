@@ -22,7 +22,7 @@ using namespace std;
 //----------------------------------------------------------------- PUBLIC
 
 //----------------------------------------------------- Public methods
-Point Territoire::getCentre()
+Point * Territoire::getCentre()
 // Algorithm : 
 {
 	return centre;
@@ -37,7 +37,7 @@ int Territoire::getRayon()
 bool Territoire::contient(Point * p)
 // Algorithm : 
 {
-	if (p.distance(centre) <= rayon)
+	if (p->distance(centre) <= rayon)
 		return true;
 	else
 		return false;

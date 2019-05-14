@@ -12,6 +12,7 @@ e-mail               : guilhem.cerba@insa-lyon.fr, zihang.ye@insa-lyon.fr, linda
 
 //--------------------------------------------------------- System include
 #include <iostream>
+#include <math.h>
 using namespace std;
 
 //------------------------------------------------------ Personnal include
@@ -32,10 +33,10 @@ float Point::getLatitude()
 	return latitude;
 }//----- End of getLatitude
 
-float Point::distance(Point p)
+float Point::distance(Point * p)
 {
-	float long2 = longitude * longitude;
-	float lat2 = latitude * latitude;
+	float long2 = (longitude - p->getLongitude())* (longitude - p->getLongitude());
+	float lat2 = (latitude - p->getLatitude()) * (latitude - p->getLatitude());
 	return sqrt(long2 + lat2);
 
 }//----- End of distance 
