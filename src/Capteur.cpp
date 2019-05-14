@@ -14,6 +14,7 @@
 
 //------------------------------------------------------ Personnal include
 #include "Capteur.h"
+#include "Point.h"
 
 using namespace std;
 
