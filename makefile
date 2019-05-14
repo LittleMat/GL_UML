@@ -1,5 +1,4 @@
-SHELL=/bin/bash
-EXENAME=analog
+﻿EXENAME=exec
 
 # default compiler flags
 CPPFLAGS=-Wall -Wextra -pedantic -std=c++11
@@ -9,8 +8,6 @@ FLAGS=
 # directories
 SRCDIR=src
 BINDIR=bin
-INSTALLDIR=/usr/bin
-TESTDIR=tests
 
 # man config
 MANPAGE=${EXENAME}.1
@@ -20,7 +17,7 @@ DEFAULT=main
 
 default: ${DEFAULT}
 
-main: main.o Parser.o
+main: %.o
 	@echo -e "\033[33mCompilation de main\033[0m"
 	cd ${BINDIR} && \
 	g++ ${CPPFLAGS} ${FLAGS} \
@@ -42,22 +39,6 @@ clean:
 		echo -e "\033[33mRépertoire de travail inexistant\033[0m"; \
 	fi;
 
-install:
-	@echo -e "Installing \033[36m${EXENAME}\033[0m to \033[33m${INSTALLDIR}\033[0m"
-	cp ${BINDIR}/${EXENAME} ${INSTALLDIR}
-	@echo -e "Installing \033[36mman\033[0m page"
-	gzip -k ${MANPAGE}
-	cp ${MANPAGE}.gz ${MANDIR}
-
-uninstall:
-	@echo -e "Deleting \033[36m${EXENAME}\033[0m from \033[33m${INSTALLDIR}\033[0m"
-	rm ${INSTALLDIR}/${EXENAME}
-	@echo -e "Deleting \033[36mman\033[0m page"
-	rm ${MANDIR}/${MANPAGE}.gz
-
-test:
-	cd ${TESTDIR} && \
-	./mktest.sh
 
 help:
 	@echo -e "\033[36mRègles make disponibles :\033[0m\n"
@@ -77,20 +58,8 @@ help:
 	@echo -e "\033[33mclean :\033[0m"
 	@echo -e "\tsupprime tous les fichiers objets du répertoire \033[01m${BINDIR}\033[0m\n"
 
-	@echo -e "\033[33minstall :\033[0m"
-	@echo -e "\tinstalle l'exécutable \033[01m${EXENAME}\033[0m dans le répertoire \033[01m${INSTALLDIR}\033[0m"
-	@echo -e "\tinstalle la page de manuel \033[01m${MANPAGE}\033[0m dans le répertoire \033[01m${MANDIR}\033[0m"
-	@echo -e "\tpeut nécessiter des droits d'administrateur\n"
-
-	@echo -e "\033[33muninstall :\033[0m"
-	@echo -e "\tdésinstalle l'exécutable \033[01m${EXENAME}\033[0m du répertoire \033[01m${INSTALLDIR}\033[0m"
-	@echo -e "\tdésinstalle la page de manuel \033[01m${MANPAGE}\033[0m du répertoire \033[01m${MANDIR}\033[0m"
-	@echo -e "\tpeut nécessiter des droits d'administrateur\n"
-
 	@echo -e "\033[33mtest :\033[0m"
 	@echo -e "\texécute le script \033[01mmktest.sh\033[0m du répertoire \033[01m${TESTDIR}\033[0m\n"
 
 	@echo -e "\033[33mhelp :\033[0m"
 	@echo -e "\taffiche ce message d'aide\n"
-
-main.o: ${SRCDIR}/main.h ${SRCDIR}/Parser.h ${SRCDIR}/Graph.h ${SRCDIR}/Node.h
