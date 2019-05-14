@@ -30,7 +30,7 @@ Capteur :: Capteur ( const std :: string & sensorID, const Point & position, con
 	#ifdef MAP
 	    cerr << "Constructor of <Capteur>" << endl;
 	#endif
-	    
+
 	this.sensorID = sensorID;
 	this.position = position;
 	this.description = description;

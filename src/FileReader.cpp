@@ -55,6 +55,19 @@ FileReader :: FileReader ( const std :: string & nomFichierCapteurs, const strin
 
 } // End of constructor
 
+FileReader :: FileReader ( )
+{	
+	#ifdef MAP
+	    cerr << "Default constructor of <FileReader>" << endl;
+	#endif
+
+	this.nomFichierCapteurs = nomFichierCapteurs;
+	this.nomFichierAttributs = nomFichierAttributs;
+	this.nomFichiersMesures = nomFichiersMesures;
+	this.fichierMesureEnCours = fichierMesureEnCours;
+	int numLigne = 0;
+}
+
 FileReader :: ~FileReader ( )
 {
 

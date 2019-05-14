@@ -51,6 +51,11 @@ public :
 	/*
 	 *	
 	 */
+	FileReader ( );
+
+	/*
+	 *	
+	 */
 	~FileReader ( );
 
 protected :
