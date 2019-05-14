@@ -23,13 +23,31 @@ using namespace std;
 
 //----------------------------------------------------- Public methods
 
+bool Service::surveillerComportementCapteur(string capteurID)
+{
+	return true;
+}//----- End of surveillerComportementCapteur 
+list<Capteur> surveillerComportementCapteurs(list<string> capteursID)
+{
+
+}//----- End of surveillerComportementCapteurs
+list<pair<Capteur, Capteur>> obtenirCapteursSimilaires(struct tm Date, int nbMesures)
+{
+
+}//----- End of obtenirCapteursSimilaires
+tuple<int, list<float>, int> calculerQualite(struct tm tempsInf, struct tm tempsSup)
+{
+
+}//----- End of calculerQualite
+
  //-------------------------------------------- Constructor - destructor
-Service::Service()
+Service::Service(FileReader & f)
 // Algorithm : 
 {
 #ifdef MAP
 	cout << "Appel au constructeur de <Service>" << endl;
 #endif
+	fileReader = f;
 
 }//----- End of Service 
 
