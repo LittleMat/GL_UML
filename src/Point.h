@@ -51,6 +51,12 @@ public:
 	// Contrat :
 	//
 
+	Point();
+	// Mode d'emploi :
+	// 
+	// Contrat :
+	//
+
 	~Point();
 	// Mode d'emploi :
 	// 

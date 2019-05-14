@@ -41,6 +41,16 @@ float Point::distance(Point p)
 }//----- End of distance 
 
 //-------------------------------------------- Constructor - destructor
+Point::Point()
+// Algorithm : 
+{
+#ifdef MAP
+	cout << "Appel au constructeur par défaut de <Point>" << endl;
+#endif
+	longitude = 0.0;
+	latitude = 0.0;
+}//----- End of Point 
+
 Point::Point(float longt, float lat)
 // Algorithm : 
 {
@@ -50,6 +60,8 @@ Point::Point(float longt, float lat)
 	longitude = longt;
 	latitude = lat;
 }//----- End of Point 
+
+
 
 Point::~Point()
 // Algorithm : 
