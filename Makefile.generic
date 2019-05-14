@@ -1,0 +1,25 @@
+CC=gcc
+LD=gcc
+
+CFLAGS=-Wall -Werror -g -O0
+LDFLAGS=-lm
+
+
+EXEC=exec
+SRC=$(wildcard *.cpp)
+OBJECTS=$(SRC:.cpp=.o)
+
+.PHONY: target clean realclean
+
+target:$(EXEC)
+
+%.o: %.c
+	$(CC) -o $@ -c $< $(CFLAGS)
+
+$(EXEC): $(OBJECTS)
+	$(LD) -o $(EXEC) $(OBJECTS) $(LDFLAGS)
+	
+clean:
+	rm -f *.o core
+realclean: clean
+	rm -f *~
