@@ -41,7 +41,7 @@ tuple<int, list<float>, int> *  Service::calculerQualite(struct tm tempsInf, str
 }//----- End of calculerQualite
 
  //-------------------------------------------- Constructor - destructor
-Service::Service(FileReader & f)
+Service::Service(FileReader * f)
 // Algorithm : 
 {
 #ifdef MAP

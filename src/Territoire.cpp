@@ -34,7 +34,7 @@ int Territoire::getRayon()
 	return rayon;
 }//----- End of getRayon 
 
-bool Territoire::contient(Point p)
+bool Territoire::contient(Point * p)
 // Algorithm : 
 {
 	if (p.distance(centre) <= rayon)
@@ -45,7 +45,7 @@ bool Territoire::contient(Point p)
 }//----- End of contient 
 
  //-------------------------------------------- Constructor - destructor
-Territoire::Territoire(Point c, int r)
+Territoire::Territoire(Point * c, int r)
 // Algorithm : 
 {
 #ifdef MAP
@@ -58,9 +58,10 @@ Territoire::Territoire(Point c, int r)
 Territoire::~Territoire()
 // Algorithm : 
 {
-#ifdef MAP
-	cout << "Appel au destructeur de <Territoire>" << endl;
-#endif
+	#ifdef MAP
+		cout << "Appel au destructeur de <Territoire>" << endl;
+	#endif
+	delete centre;
 }//----- End of ~Territoire 
 
 

@@ -30,7 +30,7 @@ using namespace std;
 
 //-------------------------------------------- Constructors - destructor
 
-Mesure :: Mesure (struct tm  timestamp, Attribut & attribute, int value, std ::string sensorID )
+Mesure :: Mesure (struct tm  timestamp, Attribut * const attribut, int value, std ::string sensorID )
 // Algorithm :
 //
 {
@@ -40,7 +40,7 @@ Mesure :: Mesure (struct tm  timestamp, Attribut & attribute, int value, std ::s
 #endif
 
 	this->timestamp = timestamp;
-	this->attribute = attribute;
+	this->attribut = attribut;
 	this->value = value;
 	this->sensorID = sensorID;
 	
@@ -50,8 +50,9 @@ Mesure:: ~Mesure ()
 // Algorithm :
 //
 {
-#ifdef MAP
-cout << "Appel au destructeur de <Mesure>" << endl;
-#endif
+	#ifdef MAP
+	cout << "Appel au destructeur de <Mesure>" << endl;
+	#endif
 
+	delete attribut;
 }//----- End of ~Mesure 

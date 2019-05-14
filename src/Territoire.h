@@ -47,7 +47,7 @@ public:
 	//
 
 	//-------------------------------------------- Constructor - destructor
-	Territoire(Point c, int r);
+	Territoire(Point * c, int r);
 	// Mode d'emploi :
 	// 
 	// Contrat :
@@ -62,7 +62,7 @@ public:
 
 protected:
 	//----------------------------------------------------- Protected attributes
-	Point centre;
+	Point * centre;
 	int rayon;
 
 };
