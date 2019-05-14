@@ -42,13 +42,13 @@ public :
 
 protected :  
 		
-		Attribut (const std ::string attributID, const std ::string unit, const std ::string description)
+		Attribut (const std ::string attributID, const std ::string unit, const std ::string description);
 		// Mode d'emploi :
 		//
     	// Contrat :
     	//
 
- 		~Attribut ()
+ 		~Attribut ();
  		// Mode d'emploi :
 		//
     	// Contrat :
