@@ -15,7 +15,7 @@
 #include <iostream>
 using namespace std;
 #include <string>
-#include "Attribute.h"
+#include "Attribut.h"
 #include "Capteur.h"
 
 
