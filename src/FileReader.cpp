@@ -24,7 +24,7 @@ using namespace std;
 	//TODO mettre paramêtre
 	const list < Capteur > lireCapteurs ( )
 	{
-		return null;
+		return list < Capteur >();
 	}
 
 	//TODO mettre paramêtre
@@ -61,10 +61,9 @@ FileReader :: FileReader ( )
 	    cerr << "Default constructor of <FileReader>" << endl;
 	#endif
 
-	this->nomFichierCapteurs = new string();
-	this->nomFichierAttributs = new string();
-	this->nomFichiersMesures = new list<string>();
-	this->fichierMesureEnCours = new string();
+	this->nomFichierCapteurs = "";
+	this->nomFichierAttributs = "";
+	this->fichierMesureEnCours = "";
 	int numLigne = 0;
 }
 
