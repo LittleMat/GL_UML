@@ -39,28 +39,23 @@ public :
 
 
 //-------------------------------------------- Constructor - destructor
+	Attribut();
+	// Mode d'emploi :
+	//
+	// Contrat :
+	//
 
-protected :  
+	Attribut(std::string attributID, std::string unit, std::string description);
+	// Mode d'emploi :
+	//
+	// Contrat :
+	//
 
-		Attribut();
-		// Mode d'emploi :
-		//
-		// Contrat :
-		//
-		
-		Attribut (const std ::string & attributID, const std ::string & unit, const std ::string & description);
-		// Mode d'emploi :
-		//
-    	// Contrat :
-    	//
-
- 		~Attribut ();
- 		// Mode d'emploi :
-		//
-    	// Contrat :
-    	//
-
-
+	~Attribut();
+	// Mode d'emploi :
+	//
+	// Contrat :
+	//
 
 //----------------------------------------------------- Protected attributes
 protected :

@@ -38,7 +38,7 @@ Attribut::Attribut()
 
 }//End of constructor
 
-Attribut:: Attribut (const std ::string & attributID, const std ::string & unit, const std ::string & description)
+Attribut::Attribut (std ::string attributID, std ::string unit, std ::string description)
 {
 	#ifdef MAP
 	    cerr << "Constructor of <Attribut>" << endl;
