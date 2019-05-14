@@ -29,14 +29,15 @@ bool Service::surveillerComportementCapteur(string capteurID)
 }//----- End of surveillerComportementCapteur 
 list<Capteur> * Service::surveillerComportementCapteurs(list<string> capteursID)
 {
-
+	return nullptr;
 }//----- End of surveillerComportementCapteurs
 list<pair<Capteur, Capteur>> * Service:: obtenirCapteursSimilaires(struct tm Date, int nbMesures)
 {
-
+	return nullptr;
 }//----- End of obtenirCapteursSimilaires
 tuple<int, list<float>, int> *  Service::calculerQualite(struct tm tempsInf, struct tm tempsSup)
 {
+	return nullptr;
 
 }//----- End of calculerQualite
 

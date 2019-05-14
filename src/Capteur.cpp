@@ -22,7 +22,7 @@ using namespace std;
 //----------------------------------------------------------------- PUBLIC
 
 //----------------------------------------------------- Public methodes
-	const std :: string Capteur :: getSensorID()
+	const std :: string Capteur :: getSensorID() const
 	{
 		return sensorID;
 	}
