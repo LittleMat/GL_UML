@@ -21,6 +21,6 @@ int main ( int argc, char ** argv );
 /*
  * main function
  */
-int menu ( );
+int menu ( ); 
 
 #endif // CLI_H
