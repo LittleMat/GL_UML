@@ -13,8 +13,9 @@
 
 //--------------------------------------------------- Interfaces used
 #include <iostream>
+#include<cstring>
 using namespace std;
-#include "Mesure.h"
+#include "Attribut.h"
 
 
 //------------------------------------------------------------------------
@@ -41,13 +42,13 @@ public :
 
 protected :  
 		
-		Attribut (string aid, string u, string des);
+		Attribut (const std ::string attributID, const std ::string unit, const std ::string description)
 		// Mode d'emploi :
 		//
     	// Contrat :
     	//
 
- 		~Attribut (string aid, string u, string des);
+ 		~Attribut ();
  		// Mode d'emploi :
 		//
     	// Contrat :
@@ -58,9 +59,9 @@ protected :
 //----------------------------------------------------- Protected attributes
 protected :
 
-    string attributID;
-    string unit;
-    string description;
+    std ::string attributID;
+    std ::string unit;
+    std ::string description;
 
 };
 

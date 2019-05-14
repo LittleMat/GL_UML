@@ -13,6 +13,7 @@
 //--------------------------------------------------------- System include
 
 #include <iostream>
+#include<cstring>
 using namespace std;
 
 //------------------------------------------------------ Personnal include
@@ -48,7 +49,7 @@ Mesure::Mesure (Date t, Attribut a, int v, string sid )
 #endif
 }//-----End of Mesure
 
-Mesure::~Mesure ( Date t, Attribut a, int v, string sid)
+Mesure::~Mesure ()
 // Algorithm :
 //
 {

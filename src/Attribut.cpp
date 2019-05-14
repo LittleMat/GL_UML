@@ -14,7 +14,7 @@
 
 //------------------------------------------------------ Personnal include
 #include "Attribut.h"
-
+#include<cstring>
 using namespace std;
 
 //------------------------------------------------------------- Constantes
@@ -37,16 +37,20 @@ using namespace std;
 
 
 //-------------------------------------------- Constructors - destructor
-Attribut:: Attribut (string aid, string u, string des)
+Attribut:: Attribut (std ::string attributID, std ::string unit, std ::string description)
 {
 	#ifdef MAP
 	    cerr << "Constructor of <Attribut>" << endl;
 	#endif
 	    
+	this.attributID = attributID;
+	this.unit = unit;
+	this.description = description;
+	    
 	
 }//End of constructor
 
-Attribut :: ~Attribut (string aid, string u, string des )
+Attribut :: ~Attribut ()
 {
 
 }// End of destructor 

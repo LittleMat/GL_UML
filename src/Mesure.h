@@ -14,6 +14,7 @@
 //--------------------------------------------------- Interfaces used
 #include <iostream>
 using namespace std;
+#include <cstring>
 #include "Attribute.h"
 #include "Capteur.h"
 
@@ -43,13 +44,13 @@ public :
 
 protected :  
 		
-		Mesure (Date t, Attribut a, int v, string sid);
+		Mesure (Date timestamp, Attribut attribute, int value, const std ::string sensorID)
 		// Mode d'emploi :
 		//
     	// Contrat :
     	//
 
- 		~Mesure (Date t, Attribut a, int v, string sid);
+ 		~Mesure ()
  		// Mode d'emploi :
 		//
     	// Contrat :
@@ -63,7 +64,7 @@ protected :
 	Date timestamp;
 	Attribut attribute;
 	int value;
-	string sensorID;
+	std ::string sensorID;
 
 };
 
