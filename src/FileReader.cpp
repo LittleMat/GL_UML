@@ -14,7 +14,7 @@ using namespace std;
 //--------------------------------------------------------- System include
 
 //------------------------------------------------------ Personnal include
-
+#include "FileReader.h"
 //------------------------------------------------------------- Constantes
 
 //----------------------------------------------------------------- PUBLIC
@@ -47,10 +47,10 @@ FileReader :: FileReader ( const std :: string & nomFichierCapteurs, const strin
 	    cerr << "Constructor of <FileReader>" << endl;
 	#endif
 
-	this.nomFichierCapteurs = nomFichierCapteurs;
-	this.nomFichierAttributs = nomFichierAttributs;
-	this.nomFichiersMesures = nomFichiersMesures;
-	this.fichierMesureEnCours = fichierMesureEnCours;
+	this->nomFichierCapteurs = nomFichierCapteurs;
+	this->nomFichierAttributs = nomFichierAttributs;
+	this->nomFichiersMesures = nomFichiersMesures;
+	this->fichierMesureEnCours = fichierMesureEnCours;
 	int numLigne = 0;
 
 } // End of constructor
@@ -61,10 +61,10 @@ FileReader :: FileReader ( )
 	    cerr << "Default constructor of <FileReader>" << endl;
 	#endif
 
-	this.nomFichierCapteurs = nomFichierCapteurs;
-	this.nomFichierAttributs = nomFichierAttributs;
-	this.nomFichiersMesures = nomFichiersMesures;
-	this.fichierMesureEnCours = fichierMesureEnCours;
+	this->nomFichierCapteurs = new string();
+	this->nomFichierAttributs = new string();
+	this->nomFichiersMesures = new list<string>();
+	this->fichierMesureEnCours = new string();
 	int numLigne = 0;
 }
 
