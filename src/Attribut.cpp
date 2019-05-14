@@ -14,7 +14,7 @@
 
 //------------------------------------------------------ Personnal include
 #include "Attribut.h"
-#include<cstring>
+#include<string>
 using namespace std;
 
 //------------------------------------------------------------- Constantes

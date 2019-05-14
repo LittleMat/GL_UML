@@ -13,7 +13,7 @@
 
 //--------------------------------------------------- Interfaces used
 #include <iostream>
-#include<cstring>
+#include<string>
 using namespace std;
 #include "Attribut.h"
 
@@ -48,7 +48,7 @@ protected :
     	// Contrat :
     	//
 
- 		~Attribut ();
+ 		~Attribut ()
  		// Mode d'emploi :
 		//
     	// Contrat :

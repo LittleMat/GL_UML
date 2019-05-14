@@ -14,7 +14,7 @@
 //--------------------------------------------------- Interfaces used
 #include <iostream>
 using namespace std;
-#include <cstring>
+#include <string>
 #include "Attribute.h"
 #include "Capteur.h"
 

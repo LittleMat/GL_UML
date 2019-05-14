@@ -13,7 +13,7 @@
 //--------------------------------------------------------- System include
 
 #include <iostream>
-#include<cstring>
+#include<string>
 using namespace std;
 
 //------------------------------------------------------ Personnal include
@@ -39,7 +39,7 @@ using namespace std;
 
 //-------------------------------------------- Constructors - destructor
 
-Mesure::Mesure (Date t, Attribut a, int v, string sid )
+Mesure::Mesure (Date timestamp, Attribut attribute, int value, const std ::string sensorID )
 // Algorithm :
 //
 {
