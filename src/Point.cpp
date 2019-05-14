@@ -27,10 +27,10 @@ float Point::getLongitude()
 	return longitude;
 }//----- End of getLongitude 
 
-float Point::getLatitude
-(
+float Point::getLatitude()
+{
 	return latitude;
-)//----- End of getLatitude
+}//----- End of getLatitude
 
 float Point::distance(Point p)
 {
