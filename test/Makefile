@@ -21,6 +21,9 @@ GTEST_LIB_DIR = .
 
 # Where to find user code.
 USER_DIR = .
+SRC_DIR = ../src
+SRC_FILES = $(wildcard $(SRC_DIR)/*.cpp)
+OBJ_FILES = $(patsubst $(SRC_DIR)/%.cpp,$(USER_DIR)/%.o,$(SRC_FILES))
 
 # Flags passed to the preprocessor.
 # Set Google Test's header directory as a system directory, such that
@@ -35,7 +38,7 @@ GTEST_LIBS = libgtest.a libgtest_main.a
 
 # All tests produced by this Makefile.  Remember to add new tests you
 # created to the list.
-TESTS = sample1_unittest
+TESTS = sample1_unittest unitTest
 
 # All Google Test headers.  Usually you shouldn't change this
 # definition.
@@ -85,5 +88,17 @@ sample1_unittest.o : $(USER_DIR)/sample1_unittest.cc \
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c $(USER_DIR)/sample1_unittest.cc
 
 sample1_unittest : sample1.o sample1_unittest.o $(GTEST_LIBS)
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -L$(GTEST_LIB_DIR) -lgtest_main -lpthread $^ -o $@
+
+# Builds the unit test
+
+# Compiles all the source file needed to be tested
+$(USER_DIR)/%.o: $(SRC_DIR)/%.cpp
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c -o $@ $<
+
+unitTest.o : $(USER_DIR)/unitTest.cpp $(GTEST_HEADERS)
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -I../src -c $(USER_DIR)/unitTest.cpp
+
+unitTest : unitTest.o $(GTEST_LIBS) $(OBJ_FILES)
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -L$(GTEST_LIB_DIR) -lgtest_main -lpthread $^ -o $@
 
