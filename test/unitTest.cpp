@@ -1,5 +1,5 @@
-#include <gtest/gtest.h>
-#include <Point.h>
+#include "gtest/gtest.h"
+#include "Point.h"
 
 namespace {
     TEST(PointUnitTest, Constructor) {
@@ -55,4 +55,10 @@ namespace {
         Point p5(180, 0);
         EXPECT_NEAR(20020, p4.distance(&p5), 100);
     }
+
+    /* If on windows
+    int main() {
+        return ::RUN_ALL_TESTS();
+    }
+    */
 }
