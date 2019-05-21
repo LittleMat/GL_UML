@@ -1,5 +1,7 @@
 #include "gtest/gtest.h"
 #include "Point.h"
+#include "Capteur.h"
+#include "Territoire.h"
 
 namespace {
     TEST(PointUnitTest, Constructor) {
@@ -54,11 +56,46 @@ namespace {
         Point p4(0, 0);
         Point p5(180, 0);
         EXPECT_NEAR(20020, p4.distance(&p5), 100);
+
+        Point p6(35, 46);
+        Point p7(97, -4);
+        EXPECT_NEAR(8240, p6.distance(&p7), 100);
     }
 
-    /* If on windows
-    int main() {
-        return ::RUN_ALL_TESTS();
+    TEST(CapteurUnitTest, Constructor_IllegalArgument) {
+        EXPECT_ANY_THROW(Capteur c0("", new Point(0, 0), ""));
+        EXPECT_ANY_THROW(Capteur c1("c1", nullptr, ""));
     }
-    */
+    TEST(CapteurUnitTest, Constructor) {
+        Capteur c0("c0", new Point(10, -10), "Description");
+        EXPECT_EQ(c0.getSensorID(), "c0");
+        /* TODO: can't compile due to wrong code
+        EXPECT_FLOAT_EQ(c0.getPosition()->getLatitude(), -10);
+        EXPECT_FLOAT_EQ(c0.getPosition()->getLongitude(), 10);
+        */
+        EXPECT_EQ(c0.getDescription(), "Description");
+    }
+
+    TEST(TerritoireUnitTest, Constructor_IllegalArgument) {
+        EXPECT_ANY_THROW(Territoire t0(new Point(0, 0), -10));
+        EXPECT_ANY_THROW(Territoire t1(new Point(0, 0), 0));
+        EXPECT_ANY_THROW(Territoire t2(nullptr, 10));
+    }
+    TEST(TerritoireUnitTest, Constructor) {
+        Territoire t0(new Point(0.14, 0.59), 125);
+        EXPECT_FLOAT_EQ(t0.getRayon(), 125);
+        EXPECT_FLOAT_EQ(t0.getCentre()->getLongitude(), 0.14);
+        EXPECT_FLOAT_EQ(t0.getCentre()->getLatitude(), 0.59);
+    }
+    TEST(TerritoireUnitTest, Contient_IllegalArgument) {
+        Territoire t0(new Point(0, 0), 10);
+        EXPECT_ANY_THROW(t0.contient(nullptr));
+    }
+    TEST(TerritoireUnitTest, Contient) {
+        Territoire t0(new Point(0, 0), 10);
+        Point p0(0, 0);
+        EXPECT_TRUE(t0.contient(&p0));
+        Point p1(0, 90);
+        EXPECT_FALSE(t0.contient(&p1));
+    }
 }
