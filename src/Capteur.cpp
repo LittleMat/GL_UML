@@ -49,6 +49,8 @@ Capteur :: Capteur ( const std :: string sensorID, Point * const position, const
 	this->sensorID = sensorID;
 	this->position = position;
 	this->description = description;
+	//Liste de point??
+	
 }//End of constructor
 
 Capteur :: ~Capteur ( )

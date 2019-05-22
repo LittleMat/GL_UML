@@ -71,6 +71,7 @@ protected :
 	Attribut * attribut;
 	int value;
 	std ::string sensorID;
+	//Le capteur?
 
 };
 

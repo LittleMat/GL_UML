@@ -16,11 +16,6 @@
 /*
  * main function
  */
-int main ( int argc, char ** argv );
-
-/*
- * main function
- */
 int menu ( );  
 
 #endif // CLI_H
