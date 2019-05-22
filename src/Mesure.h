@@ -45,12 +45,14 @@ public :
 
 	const std::string getSensorID() const;
 
+	const Capteur * getCapteur() const;
+
 
 //-------------------------------------------- Constructor - destructor
 
 protected :  
 		
-	Mesure (struct tm timestamp, Attribut * const attribut, int value, const std ::string sensorID);
+	Mesure (struct tm timestamp, Attribut * const attribut, int value, const std ::string sensorID, Capteur * capteur);
 	// Mode d'emploi :
 	//
 	// Contrat :
@@ -71,7 +73,7 @@ protected :
 	Attribut * attribut;
 	int value;
 	std ::string sensorID;
-	//Le capteur?
+	Capteur * capteur;
 
 };
 

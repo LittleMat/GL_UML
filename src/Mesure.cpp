@@ -41,9 +41,14 @@ const std::string Mesure :: getSensorID() const
 	return this->sensorID;
 }
 
+const Capteur * Mesure :: getCapteur() const
+{
+	return this->capteur;
+}
+
 //-------------------------------------------- Constructors - destructor
 
-Mesure :: Mesure (struct tm  timestamp, Attribut * const attribut, int value, std ::string sensorID )
+Mesure :: Mesure (struct tm  timestamp, Attribut * const attribut, int value, std ::string sensorID, Capteur * capteur)
 // Algorithm :
 //
 {
@@ -56,6 +61,7 @@ Mesure :: Mesure (struct tm  timestamp, Attribut * const attribut, int value, st
 	this->attribut = attribut;
 	this->value = value;
 	this->sensorID = sensorID;
+	this->capteur = capteur;
 	
 }//-----End of Mesure
 
