@@ -53,6 +53,12 @@ public:
 	// Contrat :
 	//
 
+	Territoire();
+	// Mode d'emploi :
+	// 
+	// Contrat :
+	//
+
 	~Territoire();
 	// Mode d'emploi :
 	// 

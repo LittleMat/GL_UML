@@ -11,10 +11,12 @@
 #define FILEREADER_H
 
 #include <list>
+#include <sstream>
+#include <string>
+#include <fstream>
 #include "Capteur.h"
 #include "Mesure.h"
 #include "Attribut.h"
-
 //------------------------------------------------------------------------
 // Goal of the <FileReader> class
 //------------------------------------------------------------------------
@@ -31,12 +33,12 @@ public :
 	/*
 	 * Lit les capteurs du fichiers contenant les capteurs et retourne une liste de capteurs
 	 */
-	const list < Capteur >* lireCapteurs ( ); //TODO mettre parametre
+	const list < Capteur * > lireCapteurs ( ) const; //TODO mettre parametre
 
 	/*
 	 * Lit les différents attributs du fichier contenant les attributs et retourne une liste d'attributs
 	 */
-	const list < Attribut >* lireAttributs ( ); //TODO mettre parametre
+	const list < Attribut * > lireAttributs ( ) const; //TODO mettre parametre
 
 	/*
 	 * Lit la prochaine mesure des fichiers contenant les mesures
@@ -46,7 +48,7 @@ public :
 	/*
 	 *	
 	 */
-	FileReader ( const std :: string & nomFichierCapteurs, const string & nomFichierAttributs, const std :: list < std :: string > & nomFichiersMesures, const std :: string & fichierMesureEnCours);
+	FileReader ( const std :: string & nomFichierCapteurs, const string & nomFichierAttributs, const std :: list < std :: string > & nomFichiersMesures);
 
 	/*
 	 *	
@@ -64,8 +66,7 @@ protected :
 	std :: string nomFichierCapteurs;
 	std :: string nomFichierAttributs;
 	std :: list < std :: string > nomFichiersMesures;
-	std :: string fichierMesureEnCours;
-	int numLigne;
+	ifstream fichierMesureEnCours;
 
 };
 

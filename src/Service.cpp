@@ -25,6 +25,9 @@ using namespace std;
 
 bool Service::surveillerComportementCapteur(string capteurID)
 {
+	bool bonEtat = true;
+	fileReader->prochaineMesure();
+
 	return true;
 }//----- End of surveillerComportementCapteur 
 list<Capteur> * Service::surveillerComportementCapteurs(list<string> capteursID)
@@ -64,4 +67,52 @@ Service::~Service()
  //------------------------------------------------------------------ PRIVE
 
  //----------------------------------------------------- Protected methods
+
+bool Service::filtrageCapteur(Capteur capteur, Territoire territoire , string capteurId )
+// Algorithm :
+// On regarde les attributs de mesure
+// Si capteurId == null, 
+	// On récupère la position du capteur avec posCapteur = mesure.getCapteur()->getPosition()
+
+	// Si territoire.getRayon() == 0 (point considéré)
+		// On regarde si la distance entre posCapteur et territoire.getCentre <= 10 km
+			// Si oui : on retourne true
+			// Sinon : on retourne false
+
+	// Si terrtoire.getRayon() != 0 et territoire.getCentre() != (0,0) (territoire considéré)
+		// On regarde si la distance entre posCapteur et (territoire.getCentre() + territoire.getRayon()) <= 50 + territoire.getRayon()
+			// Si oui : on retourne true
+			// Sinon : on retourne false
+
+	// Si terrtoire.getRayon() == 0 et territoire.getCentre() == (0,0) (aire totale considérée)
+		// on retourne true;
+
+// Si capteurId != null
+	// On regarde si capteurId == mesure.getCapteur()->getSensorID()
+		// Si oui : on retourne true
+		// Sinon : on retourne false
+{
+	
+	return true;
+}
+
+// Comment combiner les deux ???
+// prochaineMesure ne prend en paramètre qu'une seule fonction
+// Faire en sorte que filtrageMesure() appelle filtrageCapteur() ?
+
+bool Service::filtrageMesure(Mesure mesure, struct tm dateInf = struct tm(), struct tm dateSup = struct tm ())
+// Algorithm :
+// Si dateSup == null && dateInf != null
+	// On regarde si mesure.getTimestamp() (à implémenter) >= dateInf
+		// Si oui : on retourne true
+		// Sinon : on retourne false
+// Si  dateSup != null && dateInf != null
+	// On regarde si mesure.getTimestamp() >= dateInf et mesure.getTimestamp() <= dateSup
+		// Si oui : on retourne true
+		// Sinon : on retourne false
+// Si dateSup == null && dateInf == null
+	// on retourne true
+{
+	return true;
+}
 

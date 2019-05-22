@@ -12,15 +12,17 @@ e-mail               : guilhem.cerba@insa-lyon.fr, zihang.ye@insa-lyon.fr, linda
 
 //--------------------------------------------------- Interfaces used
 #include <iostream>
-using namespace std;
+
 
 #include "FileReader.h"
 #include <list>
 #include "Capteur.h"
+#include "Territoire.h"
 #include <tuple>
 #include <utility> 
 #include <string>
 #include <ctime>
+using namespace std;
 
 //------------------------------------------------------------------------
 // Goals of the <Service> class
@@ -47,6 +49,10 @@ public:
 protected:
 	//----------------------------------------------------- Protected attributes
 	FileReader * fileReader;
+
+	//----------------------------------------------------- Protected methods
+	bool filtrageCapteur(Capteur capteur, Territoire territoire = Territoire(), string capteurId = string());
+	bool filtrageMesure(Mesure m, struct tm dateInf, struct tm dateSup);
 };
 
 #endif // SERVICE_H

@@ -49,8 +49,6 @@ public :
 
 
 //-------------------------------------------- Constructor - destructor
-
-protected :  
 		
 	Mesure (struct tm timestamp, Attribut * const attribut, int value, const std ::string sensorID, Capteur * capteur);
 	// Mode d'emploi :
