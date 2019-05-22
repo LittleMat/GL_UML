@@ -22,7 +22,20 @@ using namespace std;
 //----------------------------------------------------------------- PUBLIC
 
 //----------------------------------------------------- Public methodes
+std::string Attribut :: getAttributID() const
+{
+	return this->attributID;
+}
 
+std::string Attribut :: getUnit() const
+{
+	return this->unit;
+}
+
+std::string Attribut :: getDescription() const
+{
+	return this->description;
+}
 
 //-------------------------------------------- Constructors - destructor
 Attribut::Attribut()

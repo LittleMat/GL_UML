@@ -37,6 +37,11 @@ public :
     // Contrat :
     //
 
+	std::string getAttributID() const;
+
+	std::string getUnit() const;
+
+	std::string getDescription() const;
 
 //-------------------------------------------- Constructor - destructor
 	Attribut();
