@@ -53,6 +53,7 @@ protected:
 	//----------------------------------------------------- Protected methods
 	bool filtrageCapteur(Capteur capteur, Territoire territoire = Territoire(), string capteurId = string());
 	bool filtrageMesure(Mesure m, struct tm dateInf, struct tm dateSup);
+	bool dateNull(struct tm date);
 };
 
 #endif // SERVICE_H
