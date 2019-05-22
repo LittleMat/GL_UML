@@ -18,6 +18,7 @@ using namespace std;
 #include "Service.h"
 #include "cli.h"
 #include <regex>
+#include <cmath>
 //------------------------------------------------------------- Constantes
 
 //----------------------------------------------------------------- PUBLIC
@@ -40,8 +41,8 @@ bool is_date(string s) {
 	int jour, mois, annee;
 	regex e("([0-3][0-9])/([0-1][0-9])/([0-9][0-9][0-9][0-9])");
 	std::smatch matches;
-	
-	/*cout << "rapport REGEX " << endl;
+	/*
+	cout << "rapport REGEX " << endl;
 	if (regex_search(s, matches, e)) {
 		cout << "Match found\n";
 
@@ -54,13 +55,46 @@ bool is_date(string s) {
 	}*/
 
 
-
+	regex_search(s, matches, e);
 	if (regex_match(s, e)) {
 		jour = stoi(matches[1].str());
 		mois = stoi(matches[2].str());
 		annee = stoi(matches[3].str());
 
-		return jour <= 31 && mois <= 12;
+		return jour <= 31 && mois <= 12 && jour > 0 && mois > 0 && annee > 0;
+
+	}
+	else {
+		return false;
+	}
+}
+
+bool is_heure(string s) {
+
+	int heures, minutes;
+	regex e("([0-2][0-9]):([0-9][0-9])");
+	std::smatch matches;
+	/*
+	cout << "rapport REGEX " << endl;
+	if (regex_search(s, matches, e)) {
+		cout << "Match found\n";
+
+		for (size_t i = 0; i < matches.size(); ++i) {
+			cout << i << ": '" << matches[i].str() << "'\n";
+		}
+	}
+	else {
+		cout << "Match not found\n";
+	}*/
+
+
+	regex_search(s, matches, e);
+	if (regex_match(s, e)) {
+		heures = stoi(matches[1].str());
+		minutes = stoi(matches[2].str());
+
+
+		return heures <= 23 && minutes < 60;
 
 	}
 	else {
@@ -72,10 +106,10 @@ int menu ( )
 {
 	std::string lecture = "-1";
 	std::string longitude, latitude;;
-	std::string date1, date2;
-	std::string rayon;
-	std::string captorId;
-	std::string type_date;
+	std::string date1, date2,heure;
+	std::string rayon,nb_mesures;
+	std::string captorId,list_captorID;
+	std::string type_date, type_zone;
 	int index;
 	bool flag = true;
 
@@ -91,14 +125,14 @@ int menu ( )
 			if(is_number(lecture))index = std::stoi(lecture);
 
 		} while (!is_number(lecture) || index != 1 && index != 2 && index != 3 && index != 4);
-		cout << "Option[" << lecture << "] selectionnee " << endl;
+		//cout << "Option[" << lecture << "] selectionnee " << endl;
 		cout <<  endl;
 
 		switch (index)
 		{
 
 			case 1 :
-				std::string type_zone = "-1";
+				
 				int valeur;
 				cout << "Choississez le type de zone a etudier" << endl;
 				cout << "[1] Point precis (lat, long)" << endl;
@@ -176,16 +210,19 @@ int menu ( )
 						break;
 
 				}
-
+				cout << endl;
 				cout << "Indiquer la periode temporelle" << endl;
 				cout << "[1]Depuis la mise en place des capteurs jusqu a une date donnee : date" << endl;
 				cout << "[2]Sur une plage de temps donnee delimitee par deux dates : date1 date2" << endl;
 				cout << "[*]Sur l integralite des mesures  * " << endl;
-				cout << "Les dates sont au format : JJ/MM/AAAA" << endl;
+				
+				flag = false;
 				do {
+					if(flag)cout << "entree invalide" << endl;
 					cin >> type_date;
+					flag = (!is_number(type_date) );
 
-				} while (type_date != "*" && std::stoi(type_date) != 1 && std::stoi(type_date) != 2 );
+				} while (flag || type_date != "*" && std::stoi(type_date) != 1 && std::stoi(type_date) != 2 );
 
 				if (type_date == "*")valeur = 0;
 				else valeur = std::stoi(type_date);
@@ -210,6 +247,7 @@ int menu ( )
 						flag = (!is_date(date1) );
 					} while (flag);
 					cout << "date selectionnee : " << date1 << endl;
+					cout << endl;
 
 					break;
 
@@ -226,11 +264,83 @@ int menu ( )
 
 						flag = (!is_date(date1) || !is_date(date2));
 					} while (flag);
-					cout << "datee selectionneee : " << date1 << " " << date2 << endl;
+					cout << "date selectionnee : " << date1 << " " << date2 << endl;
+					cout << endl;
 
 					break;
 
 				}
+				break;
+
+			case 2 :
+				//cout << "Obtenir capteurs similaires" << endl;
+				cout << "Rentrez l'id du capteur de reference" << endl;
+				flag = false;
+
+
+				do {
+
+					if (flag)cout << "Rentrez un id non vide" << endl;
+					cin >> captorId;
+					flag = (captorId.empty());
+				} while (flag);
+
+				cout << "Rentrez une date de depart au format : JJ/MM/AAAA HH:MM" << endl;
+				cout << "exemple : 02/06/1996 16:30" << endl;
+				flag = false;
+
+
+				do {
+
+					if (flag)cout << "date invalide" << endl;
+					cin >> date1 >> heure;
+
+					flag = (!is_date(date1) || !is_heure(heure));
+				} while (flag);
+				cout << "date selectionnee : " << date1 << " " << heure << endl;
+
+
+				cout << "Rentrez le nombre de mesures pour la comparaison" << endl;
+				flag = false;
+				do {
+
+					if (flag)cout << "entree invalide" << endl;
+					cin >> nb_mesures;
+
+					flag = (!is_number(nb_mesures) ||stoi( nb_mesures) <= 0 || (std::floor(stof(nb_mesures)) != stof( nb_mesures)) );
+				} while (flag);
+				cout << "nombre de mesures demandees : " << nb_mesures << endl;
+				cout << endl;
+				break;
+
+			case 3:
+				cout << "Listez les id des capteurs que vous voulez surveiller" << endl;
+				cout << "Le caractere * designe l integralite des capteurs" << endl;
+
+
+				list_captorID = "";
+				captorId = "";
+				flag = false;
+				do {
+					do {
+
+						if (flag)cout << "Rentrez un id non vide" << endl;
+						cin >> captorId;
+						flag = (captorId.empty());
+					} while (flag);
+					if (captorId != "-1") {
+						if (!list_captorID.empty())list_captorID.append(" ");
+						list_captorID.append(captorId);
+					}
+					
+
+				} while (captorId != "*" && captorId != "-1");
+				if (captorId == "*")list_captorID = "*";
+				cout << "liste des id : " << list_captorID << endl;
+				cout << endl;
+				
+
+				break;
 		}
 	}
 	
