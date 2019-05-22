@@ -40,7 +40,8 @@ bool is_date(string s) {
 	int jour, mois, annee;
 	regex e("([0-3][0-9])/([0-1][0-9])/([0-9][0-9][0-9][0-9])");
 	std::smatch matches;
-	cout << "rapport REGEX " << endl;
+	
+	/*cout << "rapport REGEX " << endl;
 	if (regex_search(s, matches, e)) {
 		cout << "Match found\n";
 
@@ -50,10 +51,10 @@ bool is_date(string s) {
 	}
 	else {
 		cout << "Match not found\n";
-	}
+	}*/
 
-	//return regex_match(s, e);
-	
+
+
 	if (regex_match(s, e)) {
 		jour = stoi(matches[1].str());
 		mois = stoi(matches[2].str());
@@ -65,20 +66,6 @@ bool is_date(string s) {
 	else {
 		return false;
 	}
-	
-	/*
-	if (regex_search(s, matches, e)) {
-		cout << "Match found\n";
-
-		for (size_t i = 0; i < matches.size(); ++i) {
-			cout << i << ": '" << matches[i].str() << "'\n";
-		}
-	}
-	else {
-		cout << "Match not found\n";
-	}
-	return regex_match(s, e);*/
-
 }
 
 int menu ( ) 
@@ -95,7 +82,7 @@ int menu ( )
 	while (std::stoi(lecture) != 4) {
 
 		cout << "Menu Principal" << endl;
-		cout << "[1] Obtenir la qualite moyenne de l’air" << endl;
+		cout << "[1] Obtenir la qualite moyenne de l air" << endl;
 		cout << "[2] Obtenir capteurs similaires" << endl;
 		cout << "[3] Verifier comportement capteurs" << endl;
 		cout << "[4] Quitter application" << endl;
@@ -136,18 +123,13 @@ int menu ( )
 						cout << "Rentrez une latitude et une longitude" << endl;
 						flag = false;
 						
-
 						do {
-
 							if(flag)cout << "Donnees invalides" << endl;
 							cin >> longitude >> latitude;
 							
 							flag = (!is_number(longitude) || !is_number(latitude) || abs(stoi(longitude)) > 90 || abs(stoi(latitude)) > 90);
 						} while (flag);
 						cout << "Point selectionne : "<<longitude << "," << latitude  << endl;
-
-						
-
 						break;
 
 					case 2:
@@ -155,16 +137,15 @@ int menu ( )
 						cout << "Rentrez une latitude et une longitude" << endl;
 						flag = false;
 
-
 						do {
 
 							if (flag)cout << "Donnees invalides" << endl;
 							cin >> longitude >> latitude;
-
 							flag = (!is_number(longitude) || !is_number(latitude) || abs(stoi(longitude)) > 90 || abs(stoi(latitude)) > 90);
-						} while (flag);
-						cout << "Point selectionne : " << longitude << "," << latitude << endl;
 
+						} while (flag);
+
+						cout << "Point selectionne : " << longitude << "," << latitude << endl;
 						cout << "Rentrez un rayon" << endl;
 						flag = false;
 						do {
@@ -173,14 +154,10 @@ int menu ( )
 							cin >> rayon;
 							flag = (!is_number(rayon) || stoi(rayon) < 0); 
 						} while (flag);
-
 						break;
 
 					case 3:
-
 						cout << "Aire totale selectionnee" << endl;
-						
-
 						break;
 
 					case 4:
@@ -193,13 +170,13 @@ int menu ( )
 
 							if (flag)cout << "Rentrez un id non vide" << endl;
 							cin >> captorId;
-
 							flag = (captorId.empty());
 						} while (flag);
 
 						break;
 
 				}
+
 				cout << "Indiquer la periode temporelle" << endl;
 				cout << "[1]Depuis la mise en place des capteurs jusqu a une date donnee : date" << endl;
 				cout << "[2]Sur une plage de temps donnee delimitee par deux dates : date1 date2" << endl;
@@ -237,6 +214,20 @@ int menu ( )
 					break;
 
 				case 2:
+
+					cout << "Rentrez deux dates au format : JJ/MM/AAAA" << endl;
+					flag = false;
+
+
+					do {
+
+						if (flag)cout << "date invalide" << endl;
+						cin >> date1 >> date2;
+
+						flag = (!is_date(date1) || !is_date(date2));
+					} while (flag);
+					cout << "datee selectionneee : " << date1 << " " << date2 << endl;
+
 					break;
 
 				}
