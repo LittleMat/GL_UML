@@ -55,6 +55,17 @@ Territoire::Territoire(Point * c, int r)
 	rayon = r;
 }//----- End of Territoire 
 
+Territoire::Territoire()
+// Algorithm : 
+{
+#ifdef MAP
+	cout << "Appel au constructeur par défaut de <Territoire>" << endl;
+#endif
+	rayon = 0;
+	centre = new Point();
+}
+
+
 Territoire::~Territoire()
 // Algorithm : 
 {

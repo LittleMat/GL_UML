@@ -48,7 +48,7 @@ const Capteur * Mesure :: getCapteur() const
 
 //-------------------------------------------- Constructors - destructor
 
-Mesure :: Mesure (struct tm  timestamp, Attribut * const attribut, int value, std ::string sensorID, Capteur * capteur)
+Mesure :: Mesure (struct tm timestamp, Attribut * const attribut, int value, std ::string sensorID, Capteur * capteur)
 // Algorithm :
 //
 {
