@@ -231,8 +231,6 @@ int menu ( )
 					break;
 
 				}
-
-
 		}
 	}
 	

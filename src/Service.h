@@ -51,7 +51,7 @@ protected:
 	FileReader * fileReader;
 
 	//----------------------------------------------------- Protected methods
-	bool filtrageCapteur(Mesure mesure, Territoire territoire = Territoire(), string capteurId = string());
+	bool filtrageCapteur(Capteur capteur, Territoire territoire = Territoire(), string capteurId = string());
 	bool filtrageMesure(Mesure m, struct tm dateInf, struct tm dateSup);
 };
 

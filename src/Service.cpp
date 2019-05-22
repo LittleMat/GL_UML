@@ -26,7 +26,7 @@ using namespace std;
 bool Service::surveillerComportementCapteur(string capteurID)
 {
 	bool bonEtat = true;
-	fileReader->prochaineMesure()
+	fileReader->prochaineMesure();
 
 	return true;
 }//----- End of surveillerComportementCapteur 
@@ -68,7 +68,7 @@ Service::~Service()
 
  //----------------------------------------------------- Protected methods
 
-bool Service::filtrageCapteur(Mesure mesure, Territoire territoire = Territoire (), string capteurId = string())
+bool Service::filtrageCapteur(Capteur capteur, Territoire territoire , string capteurId )
 // Algorithm :
 // On regarde les attributs de mesure
 // Si capteurId == null, 
@@ -80,7 +80,7 @@ bool Service::filtrageCapteur(Mesure mesure, Territoire territoire = Territoire 
 			// Sinon : on retourne false
 
 	// Si terrtoire.getRayon() != 0 et territoire.getCentre() != (0,0) (territoire considéré)
-		// On regarde si la distance entre posCapteur et (territoire.getCentre() + territoire.getRayon()) <= 50
+		// On regarde si la distance entre posCapteur et (territoire.getCentre() + territoire.getRayon()) <= 50 + territoire.getRayon()
 			// Si oui : on retourne true
 			// Sinon : on retourne false
 
