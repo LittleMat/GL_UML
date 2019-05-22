@@ -101,47 +101,50 @@ namespace {
 
     TEST(FileReaderUnitTest, ConstructorIllegalArgument) {
         list<string> listS;
+        listS.push_back("resources/Data10.csv");
+        EXPECT_ANY_THROW(FileReader reader("", "resources/AttributeType.csv", listS));
+        EXPECT_ANY_THROW(FileReader reader("resources/Sensor10.csv", "", listS));
+        listS.clear();
+        EXPECT_ANY_THROW(FileReader reader("resources/Sensor10.csv", "resources/AttributeType.csv", listS));
 
-        EXPECT_ANY_THROW(FileReader reader("", "resources/AttributeType.csv", listS, "resources/Data10.csv"));
-        EXPECT_ANY_THROW(FileReader reader("resources/Sensor10.csv", "", listS, "resources/Data10.csv"));
-        EXPECT_ANY_THROW(FileReader reader("resources/Sensor10.csv", "resources/AttributeType.csv", listS, ""));
-
-        EXPECT_ANY_THROW(FileReader reader("meaningless", "resources/AttributeType.csv", listS, "resources/Data10.csv"));
-        EXPECT_ANY_THROW(FileReader reader("resources/Sensor10.csv", "meaningless", listS, "resources/Data10.csv"));
-        EXPECT_ANY_THROW(FileReader reader("resources/Sensor10.csv", "resources/AttributeType.csv", listS, "meaningless"));
-        listS.push_back("meaningless");
-        EXPECT_ANY_THROW(FileReader reader("resources/Sensor10.csv", "resources/AttributeType.csv", listS, "resources/Data10.csv"));
+        listS.push_back("resources/Data10.csv");
+        EXPECT_ANY_THROW(FileReader reader("meaningless.csv", "resources/AttributeType.csv", listS));
+        EXPECT_ANY_THROW(FileReader reader("resources/Sensor10.csv", "meaningless.csv", listS));
+        listS.clear();
+        listS.push_back("meaningless.csv");
+        EXPECT_ANY_THROW(FileReader reader("resources/Sensor10.csv", "resources/AttributeType.csv", listS));
     }
     TEST(FileReaderUnitTest, ConstructorIllegalFile) {
         list<string> listS;
         // Invalid CSV
         listS.push_back("resources/InvalidCSV.csv");
-        EXPECT_ANY_THROW(FileReader reader0("resources/Sensor10.csv", "resources/AttributeType.csv", listS, "resources/Data10.csv"));
+        EXPECT_ANY_THROW(FileReader reader0("resources/Sensor10.csv", "resources/AttributeType.csv", listS));
         listS.clear();
         listS.push_back("resources/Data10.csv");
-        EXPECT_ANY_THROW(FileReader reader0("resources/InvalidCSV.csv", "resources/AttributeType.csv", listS, "resources/Data10.csv"));
-        EXPECT_ANY_THROW(FileReader reader0("resources/Sensor10.csv", "resources/InvalidCSV.csv", listS, "resources/Data10.csv"));
-        EXPECT_ANY_THROW(FileReader reader0("resources/Sensor10.csv", "resources/AttributeType.csv", listS, "resources/InvalidCSV.csv"));
+        EXPECT_ANY_THROW(FileReader reader0("resources/InvalidCSV.csv", "resources/AttributeType.csv", listS));
+        EXPECT_ANY_THROW(FileReader reader0("resources/Sensor10.csv", "resources/InvalidCSV.csv", listS));
         
         // Invalid Data
         listS.clear();
-        EXPECT_ANY_THROW(FileReader reader("resources/InvalidSensor.csv", "resources/AttributeType.csv", listS, "resources/Data10.csv"));
-        EXPECT_ANY_THROW(FileReader reader("resources/Sensor10.csv", "resources/InvalidAttributeType.csv", listS, "resources/Data10.csv"));
-        EXPECT_ANY_THROW(FileReader reader("resources/Sensor10.csv", "resources/AttributeType.csv", listS, "resources/InvalidData.csv"));
         listS.push_back("resources/InvalidData.csv");
-        EXPECT_ANY_THROW(FileReader reader("resources/Sensor10.csv", "resources/AttributeType.csv", listS, "resources/Data10.csv"));
+        EXPECT_ANY_THROW(FileReader reader("resources/Sensor10.csv", "resources/AttributeType.csv", listS));
+        listS.clear();
+        listS.push_back("resources/Data10.csv");
+        EXPECT_ANY_THROW(FileReader reader("resources/InvalidSensor.csv", "resources/AttributeType.csv", listS));
+        EXPECT_ANY_THROW(FileReader reader("resources/Sensor10.csv", "resources/InvalidAttributeType.csv", listS));
 
         // Broken File
         listS.clear();
-        EXPECT_ANY_THROW(FileReader reader("resources/BrokenSensor.csv", "resources/AttributeType.csv", listS, "resources/Data10.csv"));
-        EXPECT_ANY_THROW(FileReader reader("resources/Sensor10.csv", "resources/BrokenAttributeType.csv", listS, "resources/Data10.csv"));
-        EXPECT_ANY_THROW(FileReader reader("resources/Sensor10.csv", "resources/AttributeType.csv", listS, "resources/BrokenData.csv"));
+        listS.push_back("resources/Data10.csv");
+        EXPECT_ANY_THROW(FileReader reader("resources/BrokenSensor.csv", "resources/AttributeType.csv", listS));
+        EXPECT_ANY_THROW(FileReader reader("resources/Sensor10.csv", "resources/BrokenAttributeType.csv", listS));
+        listS.clear();
         listS.push_back("resources/BrokenData.csv");
-        EXPECT_ANY_THROW(FileReader reader("resources/Sensor10.csv", "resources/AttributeType.csv", listS, "resources/Data10.csv"));
+        EXPECT_ANY_THROW(FileReader reader("resources/Sensor10.csv", "resources/AttributeType.csv", listS));
 
     }
     TEST(FileReaderUnitTest, Constructor) {
         list<string> listS;
-        EXPECT_NO_THROW(FileReader reader("resources/Sensor10.csv", "resources/AttributeType.csv", listS, "resources/Data10.csv"));
+        EXPECT_NO_THROW(FileReader reader("resources/Sensor10.csv", "resources/AttributeType.csv", listS));
     }
 }
