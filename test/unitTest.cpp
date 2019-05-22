@@ -69,10 +69,8 @@ namespace {
     TEST(CapteurUnitTest, Constructor) {
         Capteur c0("c0", new Point(10, -10), "Description");
         EXPECT_EQ(c0.getSensorID(), "c0");
-        /* TODO: can't compile due to wrong code
         EXPECT_FLOAT_EQ(c0.getPosition()->getLatitude(), -10);
         EXPECT_FLOAT_EQ(c0.getPosition()->getLongitude(), 10);
-        */
         EXPECT_EQ(c0.getDescription(), "Description");
     }
 
