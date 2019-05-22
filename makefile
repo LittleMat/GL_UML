@@ -18,7 +18,7 @@ DEFAULT=main
 
 default: ${DEFAULT}
 
-main: cli.o Capteur.o FileReader.o Mesure.o Point.o Service.o Territoire.o Attribut.o
+main: main.o cli.o Capteur.o FileReader.o Mesure.o Point.o Service.o Territoire.o Attribut.o
 	@echo -e "\033[33mCompilation de main\033[0m"
 	cd ${BINDIR} && \
 	g++ ${CPPFLAGS} ${FLAGS} \
@@ -65,4 +65,4 @@ help:
 	@echo -e "\033[33mhelp :\033[0m"
 	@echo -e "\taffiche ce message d'aide\n"
 
-cli.o: ${SRCDIR}/cli.h ${SRCDIR}/Capteur.h ${SRCDIR}/FileReader.h ${SRCDIR}/Mesure.h ${SRCDIR}/Point.h ${SRCDIR}/Service.h ${SRCDIR}/Territoire.h ${SRCDIR}/Attribut.h
+main.o: ${SRCDIR}/main.cpp ${SRCDIR}/cli.h ${SRCDIR}/Capteur.h ${SRCDIR}/FileReader.h ${SRCDIR}/Mesure.h ${SRCDIR}/Point.h ${SRCDIR}/Service.h ${SRCDIR}/Territoire.h ${SRCDIR}/Attribut.h

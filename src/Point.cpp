@@ -23,17 +23,17 @@ using namespace std;
 //----------------------------------------------------------------- PUBLIC
 
 //----------------------------------------------------- Public methods
-float Point::getLongitude()
+float Point::getLongitude() const
 {
 	return longitude;
 }//----- End of getLongitude 
 
-float Point::getLatitude()
+float Point::getLatitude() const
 {
 	return latitude;
 }//----- End of getLatitude
 
-float Point::distance(Point * p)
+float Point::distance(const Point * p) const
 {
 	float long2 = (longitude - p->getLongitude())* (longitude - p->getLongitude());
 	float lat2 = (latitude - p->getLatitude()) * (latitude - p->getLatitude());

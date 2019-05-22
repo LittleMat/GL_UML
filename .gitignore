@@ -31,3 +31,4 @@
 *.out
 *.app
 /GL_UML/*
+*exec

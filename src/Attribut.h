@@ -60,9 +60,9 @@ public :
 //----------------------------------------------------- Protected attributes
 protected :
 
-    std ::string attributID;
-    std ::string unit;
-    std ::string description;
+    std::string attributID;
+    std::string unit;
+    std::string description;
 
 };
 
