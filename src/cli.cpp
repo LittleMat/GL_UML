@@ -23,9 +23,6 @@ using namespace std;
 
 //----------------------------------------------------- Public methodes
 
-/*
- *
-*/
 int menu ( ) 
 {
 	std::string lecture;
