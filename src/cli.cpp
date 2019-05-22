@@ -102,6 +102,37 @@ bool is_heure(string s) {
 	}
 }
 
+bool check_dates(string sA, string sB) {
+
+//Post condition : sA est plus ancienne que sB
+	int jourA, moisA, anneeA;
+	int jourB, moisB, anneeB;
+	regex e("([0-3][0-9])/([0-1][0-9])/([0-9][0-9][0-9][0-9])");
+	std::smatch matchesA;
+	std::smatch matchesB;
+	regex_search(sA, matchesA, e);
+	regex_search(sB, matchesB, e);
+	if (regex_match(sA, e) && regex_match(sB, e)) {
+		jourA = stoi(matchesA[1].str());
+		moisA = stoi(matchesA[2].str());
+		anneeA = stoi(matchesA[3].str());
+
+		jourB = stoi(matchesB[1].str());
+		moisB = stoi(matchesB[2].str());
+		anneeB = stoi(matchesB[3].str());
+
+
+		return ( (anneeB >= anneeA     ) && ( moisB >= moisA  )  && ( jourB > jourA )  );
+
+	}
+	else {
+		return false;
+	}
+
+
+	return false;
+}
+
 int menu ( ) 
 {
 	std::string lecture = "-1";
@@ -220,10 +251,10 @@ int menu ( )
 				do {
 					if(flag)cout << "entree invalide" << endl;
 					cin >> type_date;
-					flag = (!is_number(type_date) );
+					flag = ( (!is_number(type_date) && type_date != "*") || (is_number(type_date) && std::stoi(type_date) != 1 && std::stoi(type_date) != 2) );
 
-				} while (flag || type_date != "*" && std::stoi(type_date) != 1 && std::stoi(type_date) != 2 );
-
+				} while (flag  );
+				cout <<"type date vaut " <<type_date << endl;
 				if (type_date == "*")valeur = 0;
 				else valeur = std::stoi(type_date);
 
