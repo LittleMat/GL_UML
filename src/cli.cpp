@@ -27,7 +27,7 @@ int menu ( )
 {
 	std::string lecture;
 	cout << "Menu Principal" << endl;
-	cout << "[1] Obtenir la qualite moyenne de l’air" << endl;
+	cout << "[1] Obtenir la qualite moyenne de lï¿½air" << endl;
 	cout << "[2] Obtenir capteurs similaires" << endl;
 	cout << "[3] Verifier comportement capteurs" << endl;
 	cout << "[4] Quitter application" << endl;
