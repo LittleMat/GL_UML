@@ -28,19 +28,19 @@ class Territoire
 public:
 
 	//----------------------------------------------------- Public methods
-	Point * getCentre();
+	const Point * getCentre() const;
 	// Mode d'emploi :
 	// 
 	// Contrat :
 	//
 
-	int getRayon();
+	int getRayon() const;
 	// Mode d'emploi :
 	// 
 	// Contrat :
 	//
 
-	bool contient(Point * p);
+	bool contient(const Point * p) const;
 	// Mode d'emploi :
 	// 
 	// Contrat :

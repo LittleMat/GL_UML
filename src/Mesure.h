@@ -37,24 +37,30 @@ public :
     // Contrat :
     //
 
-	
+	//Faire le get du timestamp
+
+	const Attribut * getAttribut() const;
+
+	int getValue() const;
+
+	const std::string getSensorID() const;
 
 
 //-------------------------------------------- Constructor - destructor
 
 protected :  
 		
-		Mesure (struct tm timestamp, Attribut * const attribut, int value, const std ::string sensorID);
-		// Mode d'emploi :
-		//
-    	// Contrat :
-    	//
+	Mesure (struct tm timestamp, Attribut * const attribut, int value, const std ::string sensorID);
+	// Mode d'emploi :
+	//
+	// Contrat :
+	//
 
- 		~Mesure ();
- 		// Mode d'emploi :
-		//
-    	// Contrat :
-    	//
+	~Mesure ();
+	// Mode d'emploi :
+	//
+	// Contrat :
+	//
 
 
 

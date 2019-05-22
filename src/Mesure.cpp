@@ -26,7 +26,20 @@ using namespace std;
 
 //----------------------------------------------------- Public methodes
 
+const Attribut * Mesure :: getAttribut() const
+{
+	return this->attribut;
+}
 
+int Mesure :: getValue() const
+{
+	return this->value;
+}
+
+const std::string Mesure :: getSensorID() const
+{
+	return this->sensorID;
+}
 
 //-------------------------------------------- Constructors - destructor
 

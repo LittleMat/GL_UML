@@ -22,19 +22,19 @@ using namespace std;
 //----------------------------------------------------------------- PUBLIC
 
 //----------------------------------------------------- Public methods
-Point * Territoire::getCentre()
+const Point * Territoire::getCentre() const
 // Algorithm : 
 {
 	return centre;
 }//----- End of getCentre 
 
-int Territoire::getRayon()
+int Territoire::getRayon()const
 // Algorithm : 
 {
 	return rayon;
 }//----- End of getRayon 
 
-bool Territoire::contient(Point * p)
+bool Territoire::contient(const Point * p) const
 // Algorithm : 
 {
 	if (p->distance(centre) <= rayon)

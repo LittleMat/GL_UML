@@ -26,19 +26,19 @@ class Point
 public:
 
 	//----------------------------------------------------- Public methods
-	float getLongitude();
+	float getLongitude() const;
 	// Mode d'emploi :
 	// 
 	// Contrat :
 	//
 
-	float getLatitude();
+	float getLatitude() const;
 	// Mode d'emploi :
 	// 
 	// Contrat :
 	//
-
-	float distance(Point * p);
+	
+	float distance(const Point * p) const;
 	// Mode d'emploi :
 	// 
 	// Contrat :
