@@ -18,6 +18,7 @@ using namespace std;
 #include "Service.h"
 #include "cli.h"
 #include <regex>
+#include <cmath>
 //------------------------------------------------------------- Constantes
 
 //----------------------------------------------------------------- PUBLIC
