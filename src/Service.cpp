@@ -149,23 +149,31 @@ bool Service::filtrageMesure(Mesure mesure, struct tm dateInf, struct tm dateSup
 // Si dateSup == null && dateInf == null
 	// on retourne true
 {
+	bool mesureAPrendre = false;
+	//time_t timeMes = mktime(&mesure.getTimestamp()); A implémenter au plus vite
+	time_t timeMes = mktime(&dateInf); // Faux : juste là pour que ça compile
 	if ((dateNull(dateSup) == true) && (dateNull(dateInf) == false))
 	{
+		time_t timeInf = mktime(&dateInf);
+
+		if (timeMes >= timeInf)
+			mesureAPrendre = true;
 
 	}
 	else if ((dateNull(dateSup) == false) && (dateNull(dateInf) == false))
 	{
+		time_t timeInf = mktime(&dateInf);
+		time_t timeSup = mktime(&dateSup);
+		if (timeMes >= timeInf && timeMes <= timeSup)
+			mesureAPrendre = true;
 		 
 	}
 	else if ((dateNull(dateSup) == true) && (dateNull(dateInf) == true))
 	{
+		mesureAPrendre = true;
 
 	}
-
-
-
-
-	return true;
+	return mesureAPrendre;
 }
 
 bool Service::dateNull(struct tm date)
