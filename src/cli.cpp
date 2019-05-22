@@ -125,7 +125,7 @@ int menu ( )
 			if(is_number(lecture))index = std::stoi(lecture);
 
 		} while (!is_number(lecture) || index != 1 && index != 2 && index != 3 && index != 4);
-		cout << "Option[" << lecture << "] selectionnee " << endl;
+		//cout << "Option[" << lecture << "] selectionnee " << endl;
 		cout <<  endl;
 
 		switch (index)
@@ -215,11 +215,14 @@ int menu ( )
 				cout << "[1]Depuis la mise en place des capteurs jusqu a une date donnee : date" << endl;
 				cout << "[2]Sur une plage de temps donnee delimitee par deux dates : date1 date2" << endl;
 				cout << "[*]Sur l integralite des mesures  * " << endl;
-				cout << "Les dates sont au format : JJ/MM/AAAA" << endl;
+				
+				flag = false;
 				do {
+					if(flag)cout << "entree invalide" << endl;
 					cin >> type_date;
+					flag = (!is_number(type_date) );
 
-				} while (type_date != "*" && std::stoi(type_date) != 1 && std::stoi(type_date) != 2 );
+				} while (flag || type_date != "*" && std::stoi(type_date) != 1 && std::stoi(type_date) != 2 );
 
 				if (type_date == "*")valeur = 0;
 				else valeur = std::stoi(type_date);
@@ -244,6 +247,7 @@ int menu ( )
 						flag = (!is_date(date1) );
 					} while (flag);
 					cout << "date selectionnee : " << date1 << endl;
+					cout << endl;
 
 					break;
 
@@ -261,6 +265,7 @@ int menu ( )
 						flag = (!is_date(date1) || !is_date(date2));
 					} while (flag);
 					cout << "date selectionnee : " << date1 << " " << date2 << endl;
+					cout << endl;
 
 					break;
 
@@ -305,6 +310,7 @@ int menu ( )
 					flag = (!is_number(nb_mesures) ||stoi( nb_mesures) <= 0 || (std::floor(stof(nb_mesures)) != stof( nb_mesures)) );
 				} while (flag);
 				cout << "nombre de mesures demandees : " << nb_mesures << endl;
+				cout << endl;
 				break;
 
 			case 3:
@@ -331,6 +337,7 @@ int menu ( )
 				} while (captorId != "*" && captorId != "-1");
 				if (captorId == "*")list_captorID = "*";
 				cout << "liste des id : " << list_captorID << endl;
+				cout << endl;
 				
 
 				break;
