@@ -13,13 +13,13 @@ namespace {
         EXPECT_FLOAT_EQ(p1.getLongitude(), -54);
         EXPECT_FLOAT_EQ(p1.getLatitude(), -16);
     }
-    TEST(PointUnitTest, Constructor_IllegalArgument) {
+    TEST(PointUnitTest, ConstructorIllegalArgument) {
         EXPECT_ANY_THROW(Point p(-181, 0));
         EXPECT_ANY_THROW(Point p(181, 0));
         EXPECT_ANY_THROW(Point p(0, 91));
         EXPECT_ANY_THROW(Point p(0, -91));
     }
-    TEST(PointUnitTest, Distance_IllegalArgument) {
+    TEST(PointUnitTest, DistanceIllegalArgument) {
         Point p(0, 0);
         EXPECT_ANY_THROW(p.distance(nullptr));
     }
@@ -62,7 +62,7 @@ namespace {
         EXPECT_NEAR(8240, p6.distance(&p7), 100);
     }
 
-    TEST(CapteurUnitTest, Constructor_IllegalArgument) {
+    TEST(CapteurUnitTest, ConstructorIllegalArgument) {
         EXPECT_ANY_THROW(Capteur c0("", new Point(0, 0), ""));
         EXPECT_ANY_THROW(Capteur c1("c1", nullptr, ""));
     }
@@ -76,7 +76,7 @@ namespace {
         EXPECT_EQ(c0.getDescription(), "Description");
     }
 
-    TEST(TerritoireUnitTest, Constructor_IllegalArgument) {
+    TEST(TerritoireUnitTest, ConstructorIllegalArgument) {
         EXPECT_ANY_THROW(Territoire t0(new Point(0, 0), -10));
         EXPECT_ANY_THROW(Territoire t1(new Point(0, 0), 0));
         EXPECT_ANY_THROW(Territoire t2(nullptr, 10));
@@ -87,7 +87,7 @@ namespace {
         EXPECT_FLOAT_EQ(t0.getCentre()->getLongitude(), 0.14);
         EXPECT_FLOAT_EQ(t0.getCentre()->getLatitude(), 0.59);
     }
-    TEST(TerritoireUnitTest, Contient_IllegalArgument) {
+    TEST(TerritoireUnitTest, ContientIllegalArgument) {
         Territoire t0(new Point(0, 0), 10);
         EXPECT_ANY_THROW(t0.contient(nullptr));
     }
