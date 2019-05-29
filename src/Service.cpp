@@ -120,7 +120,7 @@ bool Service::filtrageCapteur(Capteur capteur, Territoire territoire , string ca
 			}
 			delete centre_zoneAcceptee;
 		}
-		// cas 3 : aire totale considée
+		// cas 3 : aire totale considérée
 		else if (territoire.getRayon() == 0
 			&& territoire.getCentre()->getLatitude() == 0 && territoire.getCentre()->getLongitude() == 0)
 		{
@@ -150,8 +150,7 @@ bool Service::filtrageMesure(Mesure mesure, struct tm dateInf, struct tm dateSup
 	// on retourne true
 {
 	bool mesureAPrendre = false;
-	//time_t timeMes = mktime(&mesure.getTimestamp()); A implémenter au plus vite
-	time_t timeMes = mktime(&dateInf); // Faux : juste là pour que ça compile
+	time_t timeMes = mktime(&mesure.getTimestamp()); 
 	if ((dateNull(dateSup) == true) && (dateNull(dateInf) == false))
 	{
 		time_t timeInf = mktime(&dateInf);

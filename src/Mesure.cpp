@@ -46,6 +46,11 @@ const Capteur * Mesure :: getCapteur() const
 	return this->capteur;
 }
 
+struct tm  Mesure:: getTimestamp() const
+{
+	return this->timestamp;
+}
+
 //-------------------------------------------- Constructors - destructor
 
 Mesure :: Mesure (struct tm timestamp, Attribut * const attribut, int value, std ::string sensorID, Capteur * capteur)
