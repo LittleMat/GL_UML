@@ -22,128 +22,180 @@ using namespace std;
 //----------------------------------------------------- Public methodes
 
 	//TODO mettre paramêtre
-	const list < Capteur * > FileReader :: lireCapteurs ( ) const
+	const unordered_map < string , Capteur * > FileReader :: lireCapteurs ( ) const
 	{
 		std::ifstream infile(this->nomFichierCapteurs);
 
-		list < Capteur *> list_capteurs;
+		unordered_map < string , Capteur * > map_capteurs;
 
 		string line;
-
-		// Première ligne de description, on passe
-		getline(infile, line);
 
 		while ( getline ( infile , line ) )
 		{
-			string delimiter ( ";" );
+			smatch matches;
+			regex_search(line, matches, reg_capt);
 
-			size_t pos = line.find ( delimiter );
-			string sensorID = line.substr ( 0 , pos );
+			if(regex_match(line, reg_capt))
+			{
+				string sensorID = matches[1].str();
+				float latitude = stof(matches[2].str());
+				float longitude = stof(matches[3].str());
+				string description = matches[4].str();
 
-			pos ++;
-			size_t new_pos = line.find ( delimiter, pos );
-			float latitude = stof(line.substr ( pos, new_pos - pos ) );
+				Point * position = new Point ( latitude, longitude );
+				Capteur * c = new Capteur ( sensorID, position, description );
 
-			pos = new_pos + 1;
-			new_pos = line.find ( delimiter, pos );
-			float longitude = stof ( line.substr ( pos, new_pos - pos ) );
-			
-			pos = new_pos + 1;
-			new_pos = line.find ( delimiter , pos );
-			string description = line.substr ( pos, new_pos - pos );
-
-			Point * position = new Point ( latitude, longitude );
-			Capteur * c = new Capteur ( sensorID, position, description );
-			list_capteurs.push_back ( c );
+				map_capteurs[sensorID] = c ;
+			}
 		}
 
-		return list_capteurs;
+		return map_capteurs;
 	}
 
 	//TODO mettre paramêtre
-	const list < Attribut * > FileReader :: lireAttributs ( ) const
+	const unordered_map < string , Attribut * > FileReader :: lireAttributs ( ) const
 	{
 		ifstream infile(this->nomFichierAttributs);
 
-		list < Attribut * > list_attributs;
+	    unordered_map < string , Attribut * > map_attributs;
 
 		string line;
-
-		// Première ligne de description, on passe
-		getline(infile, line);
 
 		while ( getline ( infile , line ) )
 		{
 			//AttributeID;Unit;Description;
-			string delimiter ( ";" );
+			regex reg_attr( "(.*);(.*\/.*);(.*);" );
 
-			size_t pos = line.find ( delimiter );
-			string attributeID = line.substr ( 0 , pos );
+			smatch matches;
+			regex_search(line, matches, reg_attr);
 
-			pos ++;
-			size_t new_pos = line.find ( delimiter, pos );
-			string unit = line.substr ( pos, new_pos - pos ) ;
+			if(regex_match(line, reg_attr))
+			{
+				string attributeID = matches[1].str();
+				string unit = matches[2].str();
+				string description = matches[3].str();
 
-			pos = new_pos + 1;
-			new_pos = line.find ( delimiter, pos );
-			string description = line.substr ( pos, new_pos - pos );
-	
-			Attribut * a = new Attribut ( attributeID, unit, description );
+				Attribut * a = new Attribut ( attributeID, unit, description );
 
-			list_attributs.push_back ( a );
+				map_attributs [ attributeID ] = a;
+			}
 		}
 
-		return list_attributs;
+		return map_attributs;
+	}
+
+
+	bool FileReader :: fichierLisible() 
+	{
+		bool res = true;
+		
+		if(fichierMesureEnCours.eof())
+		{
+			//cout << "Reached end of file" << endl;
+			//regarde si encore fichier
+			if(nomFichiersMesures.size() > 0)
+			{
+				//cout << "Nb : " << nomFichiersMesures.size() << "  name : " << nomFichiersMesures.front() << endl;
+				fichierMesureEnCours.clear();
+				fichierMesureEnCours.close();
+				
+				fichierMesureEnCours.open(nomFichiersMesures.front());
+				
+				nomFichiersMesures.pop_front();
+			}
+			else // Arrivée à la fin de tous les fichiers 
+			{
+				res = false;
+				cout << "fini" << endl;
+			}
+		}
+
+		return res;
+	}
+
+	void FileReader :: getLineModifie ( ifstream& fichierMesureEnCours, string& line )
+	{
+		string line_read;
+		line = "";
+		getline ( fichierMesureEnCours , line_read );
+		for (string::iterator it = line_read.begin(); it < line_read.end(); ++it)
+		{
+			if((*it) != 0 && *(it) != 13) // Filtrage d'un caractère fantome et du caractère saut de ligne
+			{
+				line+=*it;
+			}
+			//printf("%x|-|%c\n", (*it) & 0xff, (*it));
+		}
 	}
 
 	//TODO mettre paramêtre
-	const Mesure * FileReader :: prochaineMesure ( )
+	Mesure * FileReader :: prochaineMesure ( unordered_map < string, Attribut * > & map_attributs, unordered_map < string, Capteur * > & map_capteurs ) //Dictionnaire <int, Attributs>, les differents paramêtres pour le filtrage
 	{
+		Mesure * m = nullptr;
+
+		string line;
+		smatch matches;
+		smatch time_match;
+
 		if(fichierMesureEnCours.is_open())
 		{
-			string line;
-			getline ( fichierMesureEnCours , line );
-			
-			//Fin de fichier
-			if(fichierMesureEnCours.eof())
+			if(fichierLisible())
 			{
-				cout << "Reached end of file" << endl;
-				//regarde si encore fichier
-				if(nomFichiersMesures.size() > 0)
-				{
-					fichierMesureEnCours.open(nomFichiersMesures.front());
-					nomFichiersMesures.pop_front();
-					getline ( fichierMesureEnCours , line );
-				}
-				else
-				{
-					cout << "End of all files" << endl;
-				}
-			}
 
-			else
-			{
-				string delimiter ( ";" );
-				size_t pos = line.find ( delimiter );
-				string timestamp = line.substr ( 0 , pos );
+				do{
+					getLineModifie ( fichierMesureEnCours , line );
+					if(!regex_match(line, reg_mesure))
+					{
+						cout << "AAAAAH : " << line << endl;
+					}
 
-				pos ++;
-				size_t new_pos = line.find ( delimiter, pos );
-				string sensorID = line.substr ( pos, new_pos - pos ) ;
-
-				pos = new_pos + 1;
-				new_pos = line.find ( delimiter, pos );
-				string attributeID = line.substr ( pos, new_pos - pos );
+				}while(!regex_match(line, reg_mesure) && fichierLisible());
 				
-				pos = new_pos + 1;
-				new_pos = line.find ( delimiter, pos );
-				string value = line.substr ( pos, new_pos - pos );
+				if(regex_match(line, reg_mesure))
+				{
+					regex_search(line, matches, reg_mesure);
+					string timestamp = matches[1].str();
+					string sensorID = matches[2].str();
+					string attributeID = matches[3].str();
+					float value = stof(matches[4].str());
 
-				cout << timestamp << " " << sensorID << " " << attributeID << " " << value << endl;
+					//cout << timestamp << " - " << sensorID << " - " << attributeID << " - " << value << endl;
+					
+					//Search for the date
+					regex_search(timestamp, time_match, reg_date);
+
+					if(regex_match(timestamp, reg_date))
+					{
+						struct tm * time = new tm();
+						time->tm_year = stoi(time_match[1].str());
+						time->tm_mon = stoi(time_match[2].str());
+						time->tm_mday = stoi(time_match[3].str());
+						time->tm_hour = stoi(time_match[4].str());
+						time->tm_min = stoi(time_match[5].str());
+						time->tm_sec = floor(stof(time_match[6].str()));
+
+						//cout << time->tm_year << " - " << time->tm_mon << " - " << time->tm_mday << " - " << time->tm_hour << " - " << time->tm_min << " - " << time->tm_sec << endl;
+						
+						if(map_attributs.count(attributeID) == 0)
+						{
+							cout << "Pb avec attributeID" << endl;
+						}
+
+						if(map_capteurs.count(sensorID) == 0)
+						{
+							cout << "Pb avec attributeID" << endl;
+						}
+
+						if(map_attributs.count(attributeID) == 1 && map_capteurs.count(sensorID) == 1)
+						{
+							m = new Mesure(time, map_attributs[attributeID], value, sensorID, map_capteurs[sensorID]);
+						}
+					}
+				}
 			}
 		}
 
-		return nullptr;
+		return m;
 	}
 
 //-------------------------------------------- Constructors - destructor
@@ -158,6 +210,21 @@ FileReader :: FileReader ( const std :: string & nomFichierCapteurs, const strin
 	this->nomFichierAttributs = nomFichierAttributs;
 	this->nomFichiersMesures = nomFichiersMesures; //Fait une copie
 
+	if(this->nomFichiersMesures.size()>0)
+	{
+		this->fichierMesureEnCours.open(this->nomFichiersMesures.front());
+		this->nomFichiersMesures.pop_front();
+	}
+	else
+	{
+		cerr << "List nomFichiersMesures vide" << endl;
+	}
+
+	reg_mesure = regex( "(.*);(.*);(.*);(.*[0-9]+.*);" );
+	reg_date = regex( "([0-9]*)-([0-9]{2})-([0-9]{2})T([0-9]{2}):([0-9]{2}):([0-9]{2}.[0-9]*)" );
+	reg_capt = regex( "(.*);(.*[0-9]+);(.*[0-9]+);(.*);" );
+	reg_attr = regex( "(.*);(.*\/.*);(.*);" );
+
 } // End of constructor
 
 FileReader :: FileReader ( )
@@ -168,6 +235,11 @@ FileReader :: FileReader ( )
 
 	this->nomFichierCapteurs = "";
 	this->nomFichierAttributs = "";
+
+	reg_mesure = regex( "(.*);(.*);(.*);(.*[0-9]+);" );
+	reg_date = regex( "([0-9]*)-([0-9]{2})-([0-9]{2})T([0-9]{2}):([0-9]{2}):([0-9]{2}.[0-9]*)" );
+	reg_capt = regex( "(.*);(.*[0-9]+);(.*[0-9]+);(.*);" );
+	reg_attr = regex( "(.*);(.*\/.*);(.*);" );
 }
 
 FileReader :: ~FileReader ( )

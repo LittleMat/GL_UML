@@ -14,9 +14,13 @@
 #include <sstream>
 #include <string>
 #include <fstream>
+#include <regex>
+#include <math.h>
+#include <unordered_map> 
 #include "Capteur.h"
 #include "Mesure.h"
 #include "Attribut.h"
+
 //------------------------------------------------------------------------
 // Goal of the <FileReader> class
 //------------------------------------------------------------------------
@@ -31,19 +35,19 @@ public :
 //----------------------------------------------------- Public methods
 
 	/*
-	 * Lit les capteurs du fichiers contenant les capteurs et retourne une liste de capteurs
+	 * Lit les capteurs du fichiers contenant les capteurs et retourne une map de capteurs
 	 */
-	const list < Capteur * > lireCapteurs ( ) const; //TODO mettre parametre
+	const std :: unordered_map < std :: string , Capteur * > lireCapteurs ( ) const; //TODO mettre parametre
 
 	/*
-	 * Lit les différents attributs du fichier contenant les attributs et retourne une liste d'attributs
+	 * Lit les différents attributs du fichier contenant les attributs et retourne une map d'attributs
 	 */
-	const list < Attribut * > lireAttributs ( ) const; //TODO mettre parametre
+	const std :: unordered_map < std :: string , Attribut * > lireAttributs ( ) const; //TODO mettre parametre
 
 	/*
 	 * Lit la prochaine mesure des fichiers contenant les mesures
 	 */
-	const Mesure* prochaineMesure ( ); //TODO mettre paramêtre
+	Mesure* prochaineMesure ( std :: unordered_map < std :: string, Attribut * > & map_attributs, std :: unordered_map < std :: string, Capteur * > & map_capteurs ); //TODO mettre paramêtre
 //-------------------------------------------- Constructor - destructor
 	/*
 	 *	
@@ -61,12 +65,19 @@ public :
 	~FileReader ( );
 
 protected :
+	bool fichierLisible();
+	void getLineModifie ( ifstream& fichierMesureEnCours, string& line );
 
 //----------------------------------------------------- Protected attributes
 	std :: string nomFichierCapteurs;
 	std :: string nomFichierAttributs;
 	std :: list < std :: string > nomFichiersMesures;
 	ifstream fichierMesureEnCours;
+
+	regex reg_mesure;
+	regex reg_date;
+	regex reg_capt;
+	regex reg_attr;
 
 };
 
