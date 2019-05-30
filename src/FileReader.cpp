@@ -198,6 +198,11 @@ const std::unordered_map < std::string, Capteur * > FileReader ::lireCapteurs(pa
 		return m;
 	}
 
+	const list < std::string > FileReader :: getNomFichiersMesures() const 
+	{
+		return this->nomFichiersMesures;
+	}
+
 //-------------------------------------------- Constructors - destructor
 
 FileReader :: FileReader ( const std :: string & nomFichierCapteurs, const string & nomFichierAttributs, const std :: list < std :: string > & nomFichiersMesures)

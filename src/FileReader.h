@@ -60,6 +60,9 @@ public :
 	 * Lit la prochaine mesure des fichiers contenant les mesures
 	 */
 	Mesure* prochaineMesure (paramFiltrage parametres, bool (*filtrageMesure) (Mesure, struct tm, struct tm)); //TODO mettre paramêtre
+
+	const list < std::string > getNomFichiersMesures() const;
+
 //-------------------------------------------- Constructor - destructor
 	/*
 	 *	
