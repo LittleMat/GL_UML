@@ -31,7 +31,7 @@ const Attribut * Mesure :: getAttribut() const
 	return this->attribut;
 }
 
-int Mesure :: getValue() const
+float Mesure :: getValue() const
 {
 	return this->value;
 }
@@ -48,7 +48,7 @@ const Capteur * Mesure :: getCapteur() const
 
 //-------------------------------------------- Constructors - destructor
 
-Mesure :: Mesure (struct tm timestamp, Attribut * const attribut, int value, std ::string sensorID, Capteur * capteur)
+Mesure :: Mesure (struct tm * timestamp, Attribut * const attribut, float value, std ::string sensorID, Capteur * capteur)
 // Algorithm :
 //
 {
