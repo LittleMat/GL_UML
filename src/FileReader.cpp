@@ -22,8 +22,8 @@ using namespace std;
 //----------------------------------------------------- Public methodes
 
 	//TODO mettre paramêtre
-	const unordered_map < string , Capteur * > FileReader :: lireCapteurs ( ) const
-	{
+const std::unordered_map < std::string, Capteur * > FileReader ::lireCapteurs(paramFiltrage parametres, bool(*filtrageCapteur) (Capteur, Territoire, string)) const //TODO mettre parametre
+{
 		std::ifstream infile(this->nomFichierCapteurs);
 
 		unordered_map < string , Capteur * > map_capteurs;
@@ -129,7 +129,7 @@ using namespace std;
 	}
 
 	//TODO mettre paramêtre
-	Mesure * FileReader :: prochaineMesure ( unordered_map < string, Attribut * > & map_attributs, unordered_map < string, Capteur * > & map_capteurs ) //Dictionnaire <int, Attributs>, les differents paramêtres pour le filtrage
+	Mesure * FileReader :: prochaineMesure(paramFiltrage parametres, bool(*filtrageMesure) (Mesure, struct tm, struct tm))
 	{
 		Mesure * m = nullptr;
 
@@ -176,19 +176,19 @@ using namespace std;
 
 						//cout << time->tm_year << " - " << time->tm_mon << " - " << time->tm_mday << " - " << time->tm_hour << " - " << time->tm_min << " - " << time->tm_sec << endl;
 						
-						if(map_attributs.count(attributeID) == 0)
+						if(this->map_attributs.count(attributeID) == 0)
 						{
 							cout << "Pb avec attributeID" << endl;
 						}
 
-						if(map_capteurs.count(sensorID) == 0)
+						if(this->map_capteurs.count(sensorID) == 0)
 						{
 							cout << "Pb avec attributeID" << endl;
 						}
 
-						if(map_attributs.count(attributeID) == 1 && map_capteurs.count(sensorID) == 1)
+						if(this->map_attributs.count(attributeID) == 1 && this->map_capteurs.count(sensorID) == 1)
 						{
-							m = new Mesure(time, map_attributs[attributeID], value, sensorID, map_capteurs[sensorID]);
+							m = new Mesure(time, this->map_attributs[attributeID], value, sensorID, this->map_capteurs[sensorID]);
 						}
 					}
 				}

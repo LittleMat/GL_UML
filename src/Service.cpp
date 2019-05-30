@@ -16,29 +16,127 @@ using namespace std;
 
 //------------------------------------------------------ Personnal include
 #include "Service.h"
-
 //------------------------------------------------------------- Constantes
 
 //----------------------------------------------------------------- PUBLIC
 
 //----------------------------------------------------- Public methods
 
-bool Service::surveillerComportementCapteur(string capteurID)
+bool Service::surveillerComportementCapteur(string capteurID, paramFiltrage parametres)
 {
 	bool bonEtat = true;
-	fileReader->prochaineMesure();
+	bool finLecture = false;
+	list <string> fichierLu; // Demander à Mathieu de retourner la liste des fichiers de mesure
+	while (finLecture == false)
+	{
+		// On sélectionne les mesures qui satisfont les critères de sélection temporelles
+		const Mesure * m = fileReader->prochaineMesure(parametres, filtrageMesure); //TODO : mettre paramètres
 
-	return true;
+		// On regarde si la mesure sélectionnée est concerne le capteur à surveiller
+		if (capteurID.compare(m->getCapteur()->getSensorID()) == 0)
+		{
+			// Dossier de spé
+			//Observe les données générées par le capteur pour détecter 
+			// - une absence de données(capteur HS) => OK
+			// - ou la présence de données aberrantes(capteur défectueux) :
+			// - valeurs négatives => OK 
+			// valeurs trop élevées => impossible car dépend de l'unité 
+			// (rien ne dit que les unités seront toujours les mêmes)  
+			// oscillations trop rapides => c'est-à-dire ??
+
+			if (m->getValue() == NULL || m->getValue() < 0)
+			{
+				bonEtat = false;
+				break;
+			}
+
+		}
+		
+		finLecture = true; // TEMP : là juste en attendant de trouver une solution
+	}
+
+	// Quand finLecture == true ??? 
+	// Regarder quand filtrageMesure == false ?? mais comment faire pour les param ??
+	// Ne fonctionne pas quand il a une date inf car filtrageMesure retourne false false ... true
+
+	// Regarder si on est arrivé à la fin de tous les fichiers de mesure à considérer ??
+	// Mais perf...
+	// et listeFichierMesure non implémenté dans FileReader
+
+	return bonEtat;
+
 }//----- End of surveillerComportementCapteur 
-list<Capteur> * Service::surveillerComportementCapteurs(list<string> capteursID)
+
+
+list<Capteur> * Service::surveillerComportementCapteurs(list<string> capteursID, paramFiltrage parametres)
 {
-	return nullptr;
+
+	// Pour le mettre dans le tas sinon la liste se fait détruire à la fin de l'appel de la méthode
+	list<Capteur> * liste_capteursDefectueux = new list<Capteur>;
+
+
+	// id des capteurs défectueux
+	list<string> liste_id_capteursDefectueux;
+	for (list<string>::iterator i = capteursID.begin(); i != capteursID.end(); i++)
+	{
+		paramFiltrage param = { NULL, NULL, NULL, NULL};
+		param.capteurId = *i;
+		if (surveillerComportementCapteur(*i, param) == false)
+		{
+			liste_id_capteursDefectueux.push_back(*i);
+		}
+	}
+
+	// id -> Capteur
+	unordered_map < std::string, Capteur * > capteurs = fileReader->lireCapteurs(parametres, filtrageCapteur); //TODO : param filtrageCapteur
+	// Pas nécessaire si géré dans lireCapteurs();
+	/* A MODIFIER EN FONCTION DU FONCTIONNEMENT FINAL DE FILEREADER
+	Ci-dessous version avec list de string retournée
+	for (list <Capteur*> ::const_iterator it = capteurs.cbegin(); it != capteurs.cend(); it++)
+	{
+		for (list<string> ::iterator it_id = liste_id_capteursDefectueux.begin(); it_id != liste_id_capteursDefectueux.end(); it++)
+		{
+			if ((*it)->getSensorID().compare(*(it_id)) == 0)
+			{
+				liste_capteursDefectueux->push_back(**it); 
+				break;
+			}
+
+		}
+	}
+	*/
+
+	//!\\ Attention : dans le CLI, ne pas oublier le delete
+	return liste_capteursDefectueux;
+
 }//----- End of surveillerComportementCapteurs
+
+
+
 list<pair<Capteur, Capteur>> * Service:: obtenirCapteursSimilaires(struct tm Date, int nbMesures)
+// Algorithm :
+// On récupère la liste de tous les capteurs : listeCapteurs
+// On récupère les mesures à traiter dans une liste : listeMesures 
+// et après ??
 {
+
+	paramFiltrage parametres = {Date, NULL, NULL, NULL};
+	unordered_map < std::string, Capteur * > capteurs = fileReader->lireCapteurs(parametres, filtrageCapteur); //TODO : ajouter paramètre filtrageCapteur()
+	list<const Mesure*> listeMesures; // parce que fileReader->prochaineMesure() retourne un const Mesure * 
+	int nbMesureConsiderees = 0;
+	while (nbMesureConsiderees <= nbMesures * 4) // Hyp : on a une valeur pour O3, NO2, SO2, PM10 pour chaque mesure
+	{
+		const Mesure * m = fileReader->prochaineMesure(parametres, filtrageMesure); //TODO : ajouter paramètre filtrageMesure()
+		nbMesureConsiderees++;
+		listeMesures.push_back(m);
+	}
+
+	// On fait comment après ??
+
 	return nullptr;
 }//----- End of obtenirCapteursSimilaires
-tuple<int, list<float>, int> *  Service::calculerQualite(struct tm tempsInf, struct tm tempsSup)
+
+tuple<int, list<float>, int> *  Service::calculerQualite(struct tm tempsInf, struct tm tempsSup, paramFiltrage parametres)
 {
 	return nullptr;
 
@@ -70,7 +168,6 @@ Service::~Service()
 
 bool Service::filtrageCapteur(Capteur capteur, Territoire territoire , string capteurId )
 // Algorithm :
-// On regarde les attributs de mesure
 // Si capteurId == null, 
 	// On récupère la position du capteur avec posCapteur = capteur.getPosition()
 
@@ -150,7 +247,7 @@ bool Service::filtrageMesure(Mesure mesure, struct tm dateInf, struct tm dateSup
 	// on retourne true
 {
 	bool mesureAPrendre = false;
-	time_t timeMes = mktime(&mesure.getTimestamp()); 
+	time_t timeMes = mktime(mesure.getTimestamp()); 
 	if ((dateNull(dateSup) == true) && (dateNull(dateInf) == false))
 	{
 		time_t timeInf = mktime(&dateInf);

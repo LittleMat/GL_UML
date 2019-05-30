@@ -53,6 +53,13 @@ Capteur :: Capteur ( const std :: string sensorID, Point * const position, const
 	
 }//End of constructor
 
+Capteur::Capteur()
+{
+	this->sensorID = string ();
+	this->position = nullptr;
+	this->description = string();
+}
+
 Capteur :: ~Capteur ( )
 {
 	delete position;

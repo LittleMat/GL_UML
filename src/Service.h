@@ -24,6 +24,7 @@ e-mail               : guilhem.cerba@insa-lyon.fr, zihang.ye@insa-lyon.fr, linda
 #include <ctime>
 using namespace std;
 
+
 //------------------------------------------------------------------------
 // Goals of the <Service> class
 //------------------------------------------------------------------------
@@ -36,10 +37,15 @@ class Service
 public:
 
 	//----------------------------------------------------- Public methods
-	bool surveillerComportementCapteur(string capteurID);
-	list<Capteur> * surveillerComportementCapteurs(list<string> capteursID );
+	bool surveillerComportementCapteur(string capteurID, paramFiltrage parametres);
+	list<Capteur> * surveillerComportementCapteurs(list<string> capteursID, paramFiltrage parametres);
 	list<pair<Capteur, Capteur>> * obtenirCapteursSimilaires(struct tm Date, int nbMesures);
-	tuple<int, list<float>, int> * calculerQualite(struct tm tempsInf, struct tm tempsSup);
+	tuple<int, list<float>, int> * calculerQualite(struct tm tempsInf, struct tm tempsSup, paramFiltrage parametres);
+
+	static bool filtrageCapteur(Capteur capteur = Capteur(), Territoire territoire = Territoire(), string capteurId = string());
+	static bool filtrageMesure(Mesure m, struct tm dateInf = struct tm(), struct tm dateSup = struct tm());
+	static bool dateNull(struct tm date);
+
 
 	//-------------------------------------------- Constructor - destructor
 	Service(FileReader * f);
@@ -51,9 +57,6 @@ protected:
 	FileReader * fileReader;
 
 	//----------------------------------------------------- Protected methods
-	bool filtrageCapteur(Capteur capteur, Territoire territoire = Territoire(), string capteurId = string());
-	bool filtrageMesure(Mesure m, struct tm dateInf, struct tm dateSup);
-	bool dateNull(struct tm date);
 };
 
 #endif // SERVICE_H

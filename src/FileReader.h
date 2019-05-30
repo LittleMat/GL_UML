@@ -20,6 +20,17 @@
 #include "Capteur.h"
 #include "Mesure.h"
 #include "Attribut.h"
+#include "Territoire.h"
+typedef struct
+{
+	// Pour filtrageMesure
+	struct tm dateInf;
+	struct tm dateSup;
+	//Pour filtrageCapteur
+	Territoire territoire;
+	string capteurId;
+} paramFiltrage;
+
 
 //------------------------------------------------------------------------
 // Goal of the <FileReader> class
@@ -37,7 +48,8 @@ public :
 	/*
 	 * Lit les capteurs du fichiers contenant les capteurs et retourne une map de capteurs
 	 */
-	const std :: unordered_map < std :: string , Capteur * > lireCapteurs ( ) const; //TODO mettre parametre
+	const std :: unordered_map < std :: string , Capteur * > lireCapteurs (paramFiltrage parametres, bool(*filtrageCapteur) (Capteur, Territoire, string)) const; //TODO mettre parametre
+	
 
 	/*
 	 * Lit les différents attributs du fichier contenant les attributs et retourne une map d'attributs
@@ -47,7 +59,7 @@ public :
 	/*
 	 * Lit la prochaine mesure des fichiers contenant les mesures
 	 */
-	Mesure* prochaineMesure ( std :: unordered_map < std :: string, Attribut * > & map_attributs, std :: unordered_map < std :: string, Capteur * > & map_capteurs ); //TODO mettre paramêtre
+	Mesure* prochaineMesure (paramFiltrage parametres, bool (*filtrageMesure) (Mesure, struct tm, struct tm)); //TODO mettre paramêtre
 //-------------------------------------------- Constructor - destructor
 	/*
 	 *	
@@ -73,6 +85,9 @@ protected :
 	std :: string nomFichierAttributs;
 	std :: list < std :: string > nomFichiersMesures;
 	ifstream fichierMesureEnCours;
+
+	unordered_map < string, Attribut * > map_attributs;
+	unordered_map < string, Capteur * > map_capteurs;
 
 	regex reg_mesure;
 	regex reg_date;

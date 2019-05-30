@@ -47,7 +47,7 @@ public :
 
 	const Capteur * getCapteur() const;
 
-	struct tm getTimestamp() const;
+	struct tm * getTimestamp() const;
 
 
 //-------------------------------------------- Constructor - destructor
@@ -57,6 +57,8 @@ public :
 	//
 	// Contrat :
 	//
+
+	Mesure();
 
 	~Mesure ();
 	// Mode d'emploi :

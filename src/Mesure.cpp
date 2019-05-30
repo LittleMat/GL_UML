@@ -46,7 +46,7 @@ const Capteur * Mesure :: getCapteur() const
 	return this->capteur;
 }
 
-struct tm  Mesure:: getTimestamp() const
+struct tm * Mesure:: getTimestamp() const
 {
 	return this->timestamp;
 }
@@ -69,6 +69,16 @@ Mesure :: Mesure (struct tm * timestamp, Attribut * const attribut, float value,
 	this->capteur = capteur;
 	
 }//-----End of Mesure
+
+Mesure::Mesure()
+{
+	this->timestamp = NULL;
+	this->attribut = NULL;
+	this->value = NULL;
+	this->sensorID = string ();
+	this->capteur = NULL;
+	
+}
 
 Mesure:: ~Mesure ()
 // Algorithm :
