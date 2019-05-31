@@ -99,6 +99,34 @@ namespace {
         EXPECT_FALSE(t0.contient(&p1));
     }
 
+    TEST(AttributUnitTest, ConstructorIllegalArgument) {
+        EXPECT_ANY_THROW(Attribut("", "unit", "description"));
+        EXPECT_ANY_THROW(Attribut("id", "", "description"));
+    }
+    TEST(AttributUnitTest, Constructor) {
+        Attribut attribut("id", "unit", "description");
+        EXPECT_EQ(attribut.getAttributID(), "id");
+        EXPECT_EQ(attribut.getUnit(), "unit");
+        EXPECT_EQ(attribut.getDescription(), "description");
+    }
+
+    TEST(MesureUnitTest, ConstructorIllegalArgument) {
+        time_t now = time(NULL);
+        time_t future = now + 86400;
+        struct tm* now_t = localtime(&now);
+        struct tm* future_t = localtime(&future);
+        struct tm empty;
+        Attribut attribut("id", "unit", "description");
+        Capteur capteur("sensorId", new Point(0, 0), "");
+        EXPECT_ANY_THROW(Mesure(empty, &attribut, 0, "sensorId", &capteur));
+        EXPECT_ANY_THROW(Mesure(*now_t, nullptr, 0, "sensorId", &capteur));
+        EXPECT_ANY_THROW(Mesure(*now_t, &attribut, -100, "sensorId", &capteur));
+        EXPECT_ANY_THROW(Mesure(*now_t, &attribut, 0, "", &capteur));
+        EXPECT_ANY_THROW(Mesure(*now_t, &attribut, 0, "meaningless", &capteur));
+        EXPECT_ANY_THROW(Mesure(*now_t, &attribut, 0, "sensorId", nullptr));
+        EXPECT_ANY_THROW(Mesure(*future_t, &attribut, 0, "sensorId", &capteur));
+    }
+
     TEST(FileReaderUnitTest, ConstructorIllegalArgument) {
         list<string> listS;
         listS.push_back("resources/Data10.csv");
