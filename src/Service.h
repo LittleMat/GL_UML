@@ -43,7 +43,7 @@ public:
 	tuple<int, list<float>, int> * calculerQualite(struct tm tempsInf, struct tm tempsSup, paramFiltrage parametres);
 
 	static bool filtrageCapteur(Capteur capteur = Capteur(), Territoire territoire = Territoire(), string capteurId = string());
-	static bool filtrageMesure(Mesure m, struct tm dateInf = struct tm(), struct tm dateSup = struct tm());
+	static bool filtrageMesure(Mesure m, struct tm dateInf = tm(), struct tm dateSup = tm());
 	static bool dateNull(struct tm date);
 
 
