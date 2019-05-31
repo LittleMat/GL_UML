@@ -118,13 +118,13 @@ namespace {
         struct tm empty;
         Attribut attribut("id", "unit", "description");
         Capteur capteur("sensorId", new Point(0, 0), "");
-        EXPECT_ANY_THROW(Mesure(empty, &attribut, 0, "sensorId", &capteur));
-        EXPECT_ANY_THROW(Mesure(*now_t, nullptr, 0, "sensorId", &capteur));
-        EXPECT_ANY_THROW(Mesure(*now_t, &attribut, -100, "sensorId", &capteur));
-        EXPECT_ANY_THROW(Mesure(*now_t, &attribut, 0, "", &capteur));
-        EXPECT_ANY_THROW(Mesure(*now_t, &attribut, 0, "meaningless", &capteur));
-        EXPECT_ANY_THROW(Mesure(*now_t, &attribut, 0, "sensorId", nullptr));
-        EXPECT_ANY_THROW(Mesure(*future_t, &attribut, 0, "sensorId", &capteur));
+        EXPECT_ANY_THROW(Mesure(&empty, &attribut, 0, "sensorId", &capteur));
+        EXPECT_ANY_THROW(Mesure(now_t, nullptr, 0, "sensorId", &capteur));
+        EXPECT_ANY_THROW(Mesure(now_t, &attribut, -100, "sensorId", &capteur));
+        EXPECT_ANY_THROW(Mesure(now_t, &attribut, 0, "", &capteur));
+        EXPECT_ANY_THROW(Mesure(now_t, &attribut, 0, "meaningless", &capteur));
+        EXPECT_ANY_THROW(Mesure(now_t, &attribut, 0, "sensorId", nullptr));
+        EXPECT_ANY_THROW(Mesure(future_t, &attribut, 0, "sensorId", &capteur));
     }
 
     TEST(FileReaderUnitTest, ConstructorIllegalArgument) {
