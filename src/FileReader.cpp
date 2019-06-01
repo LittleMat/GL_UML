@@ -22,7 +22,7 @@ using namespace std;
 //----------------------------------------------------- Public methodes
 
 	//TODO mettre paramêtre
-const std::unordered_map < std::string, Capteur * > FileReader ::lireCapteurs(paramFiltrage parametres, bool(*filtrageCapteur) (Capteur, Territoire, string)) const //TODO mettre parametre
+const std::unordered_map < std::string, Capteur * > FileReader ::lireCapteurs(paramFiltrage parametres, bool(*filtrageCapteur) (Capteur &, Territoire &, string)) const //TODO mettre parametre
 {
 		std::ifstream infile(this->nomFichierCapteurs);
 
@@ -129,7 +129,7 @@ const std::unordered_map < std::string, Capteur * > FileReader ::lireCapteurs(pa
 	}
 
 	//TODO mettre paramêtre
-	Mesure * FileReader :: prochaineMesure(paramFiltrage parametres, bool(*filtrageMesure) (Mesure, struct tm, struct tm))
+	Mesure * FileReader :: prochaineMesure(paramFiltrage parametres, bool(*filtrageMesure) (Mesure &, struct tm &, struct tm &))
 	{
 		Mesure * m = nullptr;
 

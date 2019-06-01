@@ -37,14 +37,14 @@ class Service
 public:
 
 	//----------------------------------------------------- Public methods
-	bool surveillerComportementCapteur(string capteurID, paramFiltrage parametres);
-	list<Capteur> * surveillerComportementCapteurs(list<string> capteursID, paramFiltrage parametres);
-	list<pair<Capteur, Capteur>> * obtenirCapteursSimilaires(struct tm Date, int nbMesures);
-	tuple<int, list<float>, int> * calculerQualite(struct tm tempsInf, struct tm tempsSup, paramFiltrage parametres);
+	bool surveillerComportementCapteur(string capteurID, paramFiltrage & parametres);
+	list<Capteur> * surveillerComportementCapteurs(list<string> & capteursID, paramFiltrage & parametres);
+	list<pair<Capteur, Capteur>> * obtenirCapteursSimilaires(struct tm & Date, int nbMesures);
+	tuple<int, list<float>, int> * calculerQualite(struct tm & tempsInf, struct tm  & tempsSup, paramFiltrage & parametres);
 
-	static bool filtrageCapteur(Capteur capteur = Capteur(), Territoire territoire = Territoire(), string capteurId = string());
-	static bool filtrageMesure(Mesure m, struct tm dateInf = tm(), struct tm dateSup = tm());
-	static bool dateNull(struct tm date);
+	static bool filtrageCapteur(Capteur & capteur, Territoire & territoire, string capteurId);
+	static bool filtrageMesure(Mesure & m, struct tm & dateInf, struct tm & dateSup);
+	static bool dateNull(struct tm & date);
 
 
 	//-------------------------------------------- Constructor - destructor

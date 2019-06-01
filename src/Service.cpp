@@ -22,7 +22,7 @@ using namespace std;
 
 //----------------------------------------------------- Public methods
 
-bool Service::surveillerComportementCapteur(string capteurID, paramFiltrage parametres)
+bool Service::surveillerComportementCapteur(string capteurID, paramFiltrage & parametres)
 {
 	bool bonEtat = true;
 	bool finLecture = false;
@@ -68,7 +68,7 @@ bool Service::surveillerComportementCapteur(string capteurID, paramFiltrage para
 }//----- End of surveillerComportementCapteur 
 
 
-list<Capteur> * Service::surveillerComportementCapteurs(list<string> capteursID, paramFiltrage parametres)
+list<Capteur> * Service::surveillerComportementCapteurs(list<string> & capteursID, paramFiltrage & parametres)
 {
 
 	// Pour le mettre dans le tas sinon la liste se fait détruire à la fin de l'appel de la méthode
@@ -113,7 +113,7 @@ list<Capteur> * Service::surveillerComportementCapteurs(list<string> capteursID,
 
 
 
-list<pair<Capteur, Capteur>> * Service:: obtenirCapteursSimilaires(struct tm Date, int nbMesures)
+list<pair<Capteur, Capteur>> * Service:: obtenirCapteursSimilaires(struct tm & Date, int nbMesures)
 // Algorithm :
 // On récupère la liste de tous les capteurs : listeCapteurs
 // On récupère les mesures à traiter dans une liste : listeMesures 
@@ -136,7 +136,7 @@ list<pair<Capteur, Capteur>> * Service:: obtenirCapteursSimilaires(struct tm Dat
 	return nullptr;
 }//----- End of obtenirCapteursSimilaires
 
-tuple<int, list<float>, int> *  Service::calculerQualite(struct tm tempsInf, struct tm tempsSup, paramFiltrage parametres)
+tuple<int, list<float>, int> *  Service::calculerQualite(struct tm & tempsInf, struct tm & tempsSup, paramFiltrage & parametres)
 {
 	return nullptr;
 
@@ -166,7 +166,7 @@ Service::~Service()
 
  //----------------------------------------------------- Protected methods
 
-bool Service::filtrageCapteur(Capteur capteur, Territoire territoire , string capteurId )
+bool Service::filtrageCapteur(Capteur & capteur, Territoire & territoire , string capteurId )
 // Algorithm :
 // Si capteurId == null, 
 	// On récupère la position du capteur avec posCapteur = capteur.getPosition()
@@ -233,7 +233,7 @@ bool Service::filtrageCapteur(Capteur capteur, Territoire territoire , string ca
 	return capteurAPrendre;
 }
 
-bool Service::filtrageMesure(Mesure mesure, struct tm dateInf, struct tm dateSup)
+bool Service::filtrageMesure(Mesure & mesure, struct tm & dateInf, struct tm & dateSup)
 // Algorithm :
 // Si dateSup == null && dateInf != null
 	// On regarde si mesure.getTimestamp() (à implémenter) >= dateInf
@@ -272,7 +272,7 @@ bool Service::filtrageMesure(Mesure mesure, struct tm dateInf, struct tm dateSup
 	return mesureAPrendre;
 }
 
-bool Service::dateNull(struct tm date)
+bool Service::dateNull(struct tm & date)
 {
 	if (date.tm_hour == 0 && date.tm_min == 0 && date.tm_sec == 0
 		&& date.tm_mday == 0 && date.tm_mon == 0 && date.tm_year == 0)
