@@ -22,11 +22,11 @@ using namespace std;
 //----------------------------------------------------- Public methodes
 
 	//TODO mettre paramêtre
-const std::unordered_map < std::string, Capteur * > FileReader ::lireCapteurs(paramFiltrage parametres, bool(*filtrageCapteur) (Capteur &, Territoire &, string)) const //TODO mettre parametre
+const std::unordered_map < std::string, Capteur * > FileReader ::lireCapteurs(paramFiltrage& parametres, bool(*filtrageCapteur) (Capteur &, Territoire &, string)) //TODO mettre parametre
 {
 		std::ifstream infile(this->nomFichierCapteurs);
-
-		unordered_map < string , Capteur * > map_capteurs;
+		
+		this->map_capteurs.clear(); //Bien clear
 
 		string line;
 
@@ -45,19 +45,27 @@ const std::unordered_map < std::string, Capteur * > FileReader ::lireCapteurs(pa
 				Point * position = new Point ( latitude, longitude );
 				Capteur * c = new Capteur ( sensorID, position, description );
 
-				map_capteurs[sensorID] = c ;
+
+				if(filtrageCapteur(*c, parametres.territoire, parametres.capteurId))
+				{
+					this->map_capteurs[sensorID] = c ;
+				}
+				else
+				{
+					delete c;
+				}
 			}
 		}
 
-		return map_capteurs;
+		return this->map_capteurs;
 	}
 
 	//TODO mettre paramêtre
-	const unordered_map < string , Attribut * > FileReader :: lireAttributs ( ) const
+	const unordered_map < string , Attribut * > FileReader :: lireAttributs ( )
 	{
 		ifstream infile(this->nomFichierAttributs);
 
-	    unordered_map < string , Attribut * > map_attributs;
+	    this->map_attributs.clear(); //Bien clear
 
 		string line;
 
@@ -77,11 +85,11 @@ const std::unordered_map < std::string, Capteur * > FileReader ::lireCapteurs(pa
 
 				Attribut * a = new Attribut ( attributeID, unit, description );
 
-				map_attributs [ attributeID ] = a;
+				this->map_attributs [ attributeID ] = a;
 			}
 		}
 
-		return map_attributs;
+		return this->map_attributs;
 	}
 
 
@@ -129,7 +137,7 @@ const std::unordered_map < std::string, Capteur * > FileReader ::lireCapteurs(pa
 	}
 
 	//TODO mettre paramêtre
-	Mesure * FileReader :: prochaineMesure(paramFiltrage parametres, bool(*filtrageMesure) (Mesure &, struct tm &, struct tm &))
+	Mesure * FileReader :: prochaineMesure(paramFiltrage& parametres, bool(*filtrageMesure) (Mesure &, struct tm &, struct tm &))
 	{
 		Mesure * m = nullptr;
 
@@ -189,6 +197,11 @@ const std::unordered_map < std::string, Capteur * > FileReader ::lireCapteurs(pa
 						if(this->map_attributs.count(attributeID) == 1 && this->map_capteurs.count(sensorID) == 1)
 						{
 							m = new Mesure(time, this->map_attributs[attributeID], value, sensorID, this->map_capteurs[sensorID]);
+
+							if(!filtrageMesure(*m, parametres.dateSup, parametres.dateInf))
+							{
+								delete m;
+							}
 						}
 					}
 				}
