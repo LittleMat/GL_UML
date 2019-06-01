@@ -26,12 +26,22 @@ bool Service::surveillerComportementCapteur(string capteurID, paramFiltrage & pa
 {
 	bool bonEtat = true;
 	bool finLecture = false;
-	list <string> fichierLu; // Demander à Mathieu de retourner la liste des fichiers de mesure
 	while (finLecture == false)
 	{
 		// On sélectionne les mesures qui satisfont les critères de sélection temporelles
-		const Mesure * m = fileReader->prochaineMesure(parametres, filtrageMesure); //TODO : mettre paramètres
+		const Mesure * m = fileReader->prochaineMesure(parametres, filtrageMesure);
+		
+		
+		// !!!!! \\ Est-ce que c'est vraiment une bonne idée de passer par une ptr ?? 
+		// Il y aura beaucoup beaucoup beaucoup de new/delete donc très très bof en perf 
 
+		//Si m == nullptr, alors il n'y a plus rien à lire 
+		if (m == nullptr)
+		{
+			finLecture = true; 
+			break;
+		}
+		
 		// On regarde si la mesure sélectionnée est concerne le capteur à surveiller
 		if (capteurID.compare(m->getCapteur()->getSensorID()) == 0)
 		{
@@ -51,17 +61,10 @@ bool Service::surveillerComportementCapteur(string capteurID, paramFiltrage & pa
 			}
 
 		}
+
+		delete m;
 		
-		finLecture = true; // TEMP : là juste en attendant de trouver une solution
 	}
-
-	// Quand finLecture == true ??? 
-	// Regarder quand filtrageMesure == false ?? mais comment faire pour les param ??
-	// Ne fonctionne pas quand il a une date inf car filtrageMesure retourne false false ... true
-
-	// Regarder si on est arrivé à la fin de tous les fichiers de mesure à considérer ??
-	// Mais perf...
-	// et listeFichierMesure non implémenté dans FileReader
 
 	return bonEtat;
 
@@ -90,8 +93,11 @@ list<Capteur> * Service::surveillerComportementCapteurs(list<string> & capteursI
 	// id -> Capteur
 	unordered_map < std::string, Capteur * > capteurs = fileReader->lireCapteurs(parametres, filtrageCapteur); //TODO : param filtrageCapteur
 	// Pas nécessaire si géré dans lireCapteurs();
-	/* A MODIFIER EN FONCTION DU FONCTIONNEMENT FINAL DE FILEREADER
-	Ci-dessous version avec list de string retournée
+
+	/* A MODIFIER EN FONCTION DU FONCTIONNEMENT FINAL DE FILEREADER */
+
+	/*
+	Ci-dessous version avec list de string retournée (version précédente de lireCapteurs où il était nécessaire de faire capteur_id-> capteur)
 	for (list <Capteur*> ::const_iterator it = capteurs.cbegin(); it != capteurs.cend(); it++)
 	{
 		for (list<string> ::iterator it_id = liste_id_capteursDefectueux.begin(); it_id != liste_id_capteursDefectueux.end(); it++)
@@ -106,6 +112,35 @@ list<Capteur> * Service::surveillerComportementCapteurs(list<string> & capteursI
 	}
 	*/
 
+	/* Version si map 
+	*/
+
+	// !!!!!!!!! \\  Quand on delete les Capteurs de la map ???
+	for (unordered_map <string, Capteur*>::iterator it_map = capteurs.begin(); it_map != capteurs.end(); it_map++)
+	{
+		for (list<string> ::iterator it_id = liste_id_capteursDefectueux.begin(); it_id != liste_id_capteursDefectueux.end(); it_id++)
+		{
+			if (it_map->first.compare(*it_id) == 0
+				&& find(liste_id_capteursDefectueux.begin(), liste_id_capteursDefectueux.end(), it_map->first) != liste_id_capteursDefectueux.end())
+			{
+				/* A décommenter quand problème avec const réglé 
+				Capteur c = Capteur(it_map->second->getSensorID(), it_map->second->getPosition(), it_map->second->getDescription());
+
+				liste_capteursDefectueux->push_back(c);
+				*/
+
+			}
+		}
+	}
+
+	// delete les capteurs de la map pas possible à faire alors qu'il le faut car la map est CONST ... 
+	for (unordered_map <string, Capteur*>::iterator it = capteurs.begin(); it != capteurs.end(); it++)
+	{
+		/* A décommenter quand problème avec const réglé */
+		//delete it->second;
+		// et clear() ???
+	}
+	
 	//!\\ Attention : dans le CLI, ne pas oublier le delete
 	return liste_capteursDefectueux;
 
@@ -114,27 +149,164 @@ list<Capteur> * Service::surveillerComportementCapteurs(list<string> & capteursI
 
 
 list<pair<Capteur, Capteur>> * Service:: obtenirCapteursSimilaires(struct tm & Date, int nbMesures)
-// Algorithm :
-// On récupère la liste de tous les capteurs : listeCapteurs
-// On récupère les mesures à traiter dans une liste : listeMesures 
-// et après ??
-{
+// HYPOTHESES APPLIQUEES DANS L'ALGORITHME
+// hypothèse 0 : les concentrations des particules mesurées à un instant t sont regroupées les unes à la suite des autres
+// hypothèse 1 : on considère que deux capteurs ont pris leurs mesures au même moment si la différence entre leurs mesures est de +- 1 minute
+// hypothèse 2 : un capteur à un instant t doit a des valeurs non null pour les 4 particules de l'air
+// hypothèse 3 : en considérant l'hypothèse 1 valide, on suppose que tous les capteurs prennent leurs mesures en même temps
+// (vrai dans le début du fichier .csv de mesures que j'ai lu)
 
-	paramFiltrage parametres = {Date, NULL, NULL, NULL};
-	unordered_map < std::string, Capteur * > capteurs = fileReader->lireCapteurs(parametres, filtrageCapteur); //TODO : ajouter paramètre filtrageCapteur()
-	list<const Mesure*> listeMesures; // parce que fileReader->prochaineMesure() retourne un const Mesure * 
-	int nbMesureConsiderees = 0;
-	while (nbMesureConsiderees <= nbMesures * 4) // Hyp : on a une valeur pour O3, NO2, SO2, PM10 pour chaque mesure
+// Algorithm :
+{
+	//On récupère tous les capteurs
+	paramFiltrage param_capteurs = { NULL, NULL, NULL, NULL };
+	unordered_map < std::string, Capteur * > map_capteurs = fileReader->lireCapteurs(param_capteurs, filtrageCapteur); // ne pas oublier de delete
+
+	//On récupère tous les attributs
+	unordered_map < std::string, Attribut * > map_attributs = fileReader->lireAttributs(); // ne pas oublier de delete
+
+	unordered_map<string, unordered_map<string, vector<float> > > capteurs_mesures;
+	//unordered_map<sensorID, unordered_map<AttributId, vector<value> > > capteurs_mesures;
+	// AttributID = O3 etc.
+
+	paramFiltrage parametres = { Date, NULL, NULL, NULL };
+
+	// On classe les données pour faciliter le traitement
+	for (int i = 0; i < nbMesures; i++)
 	{
-		const Mesure * m = fileReader->prochaineMesure(parametres, filtrageMesure); //TODO : ajouter paramètre filtrageMesure()
-		nbMesureConsiderees++;
-		listeMesures.push_back(m);
+		Mesure * m = fileReader->prochaineMesure(parametres, filtrageMesure);
+
+		unordered_map<string, unordered_map<string, vector<float> > >::iterator iterateur_sensorID = capteurs_mesures.find(m->getSensorID());
+		
+		if (iterateur_sensorID != capteurs_mesures.end())
+		{			
+			//unordered_map<string, vector<float>> attributId_valeur = iterateur_sensorID->second; // juste là pour m'aider à coder
+			unordered_map<string, vector<float>> ::iterator iterateur_attributId = iterateur_sensorID->second.find(m->getAttribut()->getAttributID());
+			
+			if (iterateur_attributId != iterateur_sensorID->second.end())
+			{
+				//vector<float> N_valeurs = iterateur_attributId->second; // juste là pour m'aider à coder
+				//N_valeurs[i] = m->getValue(); // juste là pour m'aider à coder
+
+				iterateur_attributId->second[i] = m->getValue();
+			}
+			else
+			{
+				//A inserer
+				vector <float> v;
+				v[i] = m->getValue();
+				iterateur_sensorID->second.insert(make_pair(m->getAttribut()->getAttributID(), v));
+			}
+		}
+		else
+		{
+			//inserer
+			vector <float> v;
+			v[i] = m->getValue();
+			unordered_map<string, vector<float> > map_a_inserer;
+			map_a_inserer.insert(make_pair(m->getAttribut()->getAttributID(), v));
+			capteurs_mesures.insert(make_pair(m->getCapteur()->getSensorID(), map_a_inserer));
+		}
+
+		delete m;
 	}
 
-	// On fait comment après ??
+	// Traitement
+	list<pair<Capteur, Capteur>> * capteurs_similaires = new list<pair<Capteur, Capteur>>;
+	//capteurs_mesures
+	for (unordered_map<string, unordered_map<string, vector<float> > > ::iterator it_capteur1 = capteurs_mesures.begin(); it_capteur1 != capteurs_mesures.end(); it_capteur1++)
+	{
+		for (unordered_map<string, unordered_map<string, vector<float> > > ::iterator it_capteur2 = capteurs_mesures.begin(); it_capteur2 != capteurs_mesures.end(); it_capteur2++)
+		{
+			if (it_capteur1->first.compare(it_capteur2->first) != 0) 
+			{
+				unordered_map<string, vector<float> > ::iterator it_c1_O3 = it_capteur1->second.find("O3");
+				unordered_map<string, vector<float> > ::iterator it_c1_NO2 = it_capteur1->second.find("NO2");
+				unordered_map<string, vector<float> > ::iterator it_c1_SO2 = it_capteur1->second.find("SO2");
+				unordered_map<string, vector<float> > ::iterator it_c1_PM10 = it_capteur1->second.find("PM10");
 
-	return nullptr;
+				unordered_map<string, vector<float> > ::iterator it_c2_O3 = it_capteur2->second.find("O3");
+				unordered_map<string, vector<float> > ::iterator it_c2_NO2 = it_capteur2->second.find("NO2");
+				unordered_map<string, vector<float> > ::iterator it_c2_SO2 = it_capteur2->second.find("SO2");
+				unordered_map<string, vector<float> > ::iterator it_c2_PM10 = it_capteur2->second.find("PM10");
+
+				bool similaire = true;
+				for (int i = 0; i < nbMesures; i++)
+				{
+
+					// Que faire si les unités varient........ ?
+					if (
+						! (plusOuMoins(it_c1_O3->second[i], it_c2_O3->second[i], 15) &&
+						plusOuMoins(it_c1_NO2->second[i], it_c2_NO2->second[i], 20) &&
+						plusOuMoins(it_c1_SO2->second[i], it_c2_SO2->second[i], 15) &&
+						plusOuMoins(it_c1_PM10->second[i], it_c2_PM10->second[i], 4))
+						)
+					{
+						similaire = false;
+					}
+
+				}
+
+				if (similaire == true)
+				{
+					//Vérfier si le couple n'est pas déjà présent
+					for (list<pair<Capteur, Capteur>> ::iterator it_list = capteurs_similaires->begin(); it_list != capteurs_similaires->end(); it_list++)
+					{
+						if (
+							! ((it_list->first.getSensorID().compare(it_capteur1->first) && it_list->second.getSensorID().compare(it_capteur2->first))
+							||
+							(it_list->first.getSensorID().compare(it_capteur2->first) && it_list->second.getSensorID().compare(it_capteur1->first))
+							))
+						{
+							/* A décommenter dès que le problème avec les const sont réglés
+							Capteur * c1_ptr = map_capteurs.find(it_capteur1->first)->second;
+							Capteur c1 = Capteur(c1_ptr->getSensorID(), c1->getPosition(), c1->getDescription());
+							Capteur * c2_ptr = map_capteurs.find(it_capteur2->first)->second;
+							Capteur c2 = Capteur(c2_ptr->getSensorID(), c2->getPosition(), c2->getDescription());
+
+							list.push_back(make_pair(c1, c2));
+							*/
+						}
+					}
+
+				}
+
+
+			}
+
+		}
+
+
+	}
+
+	// delete les capteurs de la map
+	for (unordered_map <string, Capteur*>::iterator it = map_capteurs.begin(); it != map_capteurs.end(); it++)
+	{
+		/* A décommenter quand problème avec const réglé */
+		//delete it->second;
+		// et clear() ???
+	}
+
+	// delete les attributs de la map
+	for (unordered_map <string, Attribut*>::iterator it = map_attributs.begin(); it != map_attributs.end(); it++)
+	{
+		/* A décommenter quand problème avec const réglé */
+		//delete it->second;
+		// et clear() ???
+	}
+
+	return capteurs_similaires;
+
 }//----- End of obtenirCapteursSimilaires
+
+
+bool Service::plusOuMoins(float v1, float v2, float ecart)
+{
+	if (abs(v1 - v2) <= ecart)
+		return true;
+	else
+		return false;
+}
 
 tuple<int, list<float>, int> *  Service::calculerQualite(struct tm & tempsInf, struct tm & tempsSup, paramFiltrage & parametres)
 {

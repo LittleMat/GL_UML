@@ -42,7 +42,7 @@ public :
 	
 	Capteur();
 
-	/*
+	/*s
 	 *	
 	 */
 	~Capteur ( );

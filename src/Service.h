@@ -22,6 +22,7 @@ e-mail               : guilhem.cerba@insa-lyon.fr, zihang.ye@insa-lyon.fr, linda
 #include <utility> 
 #include <string>
 #include <ctime>
+#include "Math.h"
 using namespace std;
 
 
@@ -45,6 +46,7 @@ public:
 	static bool filtrageCapteur(Capteur & capteur, Territoire & territoire, string capteurId);
 	static bool filtrageMesure(Mesure & m, struct tm & dateInf, struct tm & dateSup);
 	static bool dateNull(struct tm & date);
+	static bool plusOuMoins(float v1, float v2, float ecart);
 
 
 	//-------------------------------------------- Constructor - destructor

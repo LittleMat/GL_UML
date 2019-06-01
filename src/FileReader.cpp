@@ -22,12 +22,12 @@ using namespace std;
 //----------------------------------------------------- Public methodes
 
 	//TODO mettre paramêtre
-const std::unordered_map < std::string, Capteur * > FileReader ::lireCapteurs(paramFiltrage& parametres, bool(*filtrageCapteur) (Capteur &, Territoire &, string)) //TODO mettre parametre
+std::unordered_map < std::string, Capteur * > FileReader ::lireCapteurs(paramFiltrage& parametres, bool(*filtrageCapteur) (Capteur &, Territoire &, string)) //TODO mettre parametre
 {
 		std::ifstream infile(this->nomFichierCapteurs);
 		
-		this->map_capteurs.clear(); //Bien clear
-
+		this->map_capteurs.clear(); //Bien clear 
+		//Question (L) : il ne faut pas explicitement delete le second membre avant de clear() ? ou clear appelle automatiquement delete ??
 		string line;
 
 		while ( getline ( infile , line ) )
@@ -61,7 +61,7 @@ const std::unordered_map < std::string, Capteur * > FileReader ::lireCapteurs(pa
 	}
 
 	//TODO mettre paramêtre
-	const unordered_map < string , Attribut * > FileReader :: lireAttributs ( )
+	unordered_map < string , Attribut * > FileReader :: lireAttributs ( )
 	{
 		ifstream infile(this->nomFichierAttributs);
 
@@ -262,5 +262,6 @@ FileReader :: FileReader ( )
 
 FileReader :: ~FileReader ( )
 {
+	///!!!\\\ Ne pas oublier de delete les pointeurs dans les map si la map n'est pas vide ///!!!\\\
 
 } // End of destructor

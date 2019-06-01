@@ -48,13 +48,13 @@ public :
 	/*
 	 * Lit les capteurs du fichiers contenant les capteurs et retourne une map de capteurs
 	 */
-	const std :: unordered_map < std :: string , Capteur * > lireCapteurs (paramFiltrage& parametres, bool(*filtrageCapteur) (Capteur & , Territoire &, string)); 
+	std :: unordered_map < std :: string , Capteur * > lireCapteurs (paramFiltrage& parametres, bool(*filtrageCapteur) (Capteur & , Territoire &, string)); 
 	
 
 	/*
 	 * Lit les différents attributs du fichier contenant les attributs et retourne une map d'attributs
 	 */
-	const std :: unordered_map < std :: string , Attribut * > lireAttributs ( ); 
+	std :: unordered_map < std :: string , Attribut * > lireAttributs ( ); 
 
 	/*
 	 * Lit la prochaine mesure des fichiers contenant les mesures
