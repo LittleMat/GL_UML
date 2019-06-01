@@ -184,39 +184,39 @@ namespace {
         time_t now = time(NULL);
         time_t yesterday = now - 86400;
         time_t tomorrow = now + 86400;
-        struct tm* now_tm = localtime(&now);
-        struct tm* yesterday_tm = localtime(&yesterday);
-        struct tm* tomorrow_tm = localtime(&tomorrow);
+        struct tm empty_tm;
+        struct tm now_tm = *localtime(&now);
+        struct tm yesterday_tm = *localtime(&yesterday);
+        struct tm tomorrow_tm = *localtime(&tomorrow);
         Attribut attribut("id", "unit", "description");
         Capteur capteur("sensorId", new Point(0, 0), "description");
-        Mesure mesureNow(now_tm, &attribut, 10, "sensorId", &capteur);
-        Mesure mesureYesterday(yesterday_tm, &attribut, 10, "sensorId", &capteur);
-        Mesure mesureTomorrow(tomorrow_tm, &attribut, 10, "sensorId", &capteur);
+        Mesure mesureNow(&now_tm, &attribut, 10, "sensorId", &capteur);
+        Mesure mesureYesterday(&yesterday_tm, &attribut, 10, "sensorId", &capteur);
+        Mesure mesureTomorrow(&tomorrow_tm, &attribut, 10, "sensorId", &capteur);
 
-        EXPECT_TRUE(Service::filtrageMesure(mesureNow, *yesterday_tm, *tomorrow_tm));
-        EXPECT_TRUE(Service::filtrageMesure(mesureYesterday, tm(), *tomorrow_tm));
-        EXPECT_TRUE(Service::filtrageMesure(mesureTomorrow, *now_tm));
-        EXPECT_TRUE(Service::filtrageMesure(mesureNow));
+        EXPECT_TRUE(Service::filtrageMesure(mesureNow, yesterday_tm, tomorrow_tm));
+        EXPECT_TRUE(Service::filtrageMesure(mesureYesterday, empty_tm, tomorrow_tm));
+        EXPECT_TRUE(Service::filtrageMesure(mesureTomorrow, now_tm, empty_tm));
+        EXPECT_TRUE(Service::filtrageMesure(mesureNow, empty_tm, empty_tm));
 
-        EXPECT_FALSE(Service::filtrageMesure(mesureNow, *tomorrow_tm));
-        EXPECT_FALSE(Service::filtrageMesure(mesureNow, tm(), *yesterday_tm));
+        EXPECT_FALSE(Service::filtrageMesure(mesureNow, tomorrow_tm, empty_tm));
+        EXPECT_FALSE(Service::filtrageMesure(mesureNow, empty_tm, yesterday_tm));
     }
     TEST(ServiceUnitTest, FiltrageCapteur) {
         Capteur capteurOrigin("sensorId", new Point(0, 0), "description");
         Capteur capteurParis("sensorId", new Point(2.21, 48.51), "descrption");
 
+        Territoire empty(new Point(0, 0), 0);
         Territoire point(new Point(2.21, 48.51), 0);
         Territoire circle(new Point(2, 48), 100);
 
-        EXPECT_TRUE(Service::filtrageCapteur(capteurOrigin));
-        EXPECT_TRUE(Service::filtrageCapteur(capteurParis));
-        EXPECT_TRUE(Service::filtrageCapteur(capteurParis, point));
-        EXPECT_TRUE(Service::filtrageCapteur(capteurParis, circle));
+        EXPECT_TRUE(Service::filtrageCapteur(capteurOrigin, empty, "sensorId"));
+        EXPECT_TRUE(Service::filtrageCapteur(capteurParis, empty, "sensorId"));
         EXPECT_TRUE(Service::filtrageCapteur(capteurParis, point, "sensorId"));
         EXPECT_TRUE(Service::filtrageCapteur(capteurParis, circle, "sensorId"));
 
-        EXPECT_FALSE(Service::filtrageCapteur(capteurOrigin, point));
-        EXPECT_FALSE(Service::filtrageCapteur(capteurOrigin, circle));
+        EXPECT_FALSE(Service::filtrageCapteur(capteurOrigin, point, "sensorId"));
+        EXPECT_FALSE(Service::filtrageCapteur(capteurOrigin, circle, "sensorId"));
         EXPECT_FALSE(Service::filtrageCapteur(capteurOrigin, point, "sensorId"));
         EXPECT_FALSE(Service::filtrageCapteur(capteurOrigin, circle, "sensorId"));
         EXPECT_FALSE(Service::filtrageCapteur(capteurParis, point, "meaningless"));
