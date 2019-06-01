@@ -29,7 +29,7 @@ namespace {
     TEST(PointUnitTest, Distance_ZERO) {
         Point p0(0, 0);
         Point p1(0, 0);
-        
+
         EXPECT_FLOAT_EQ(0, p0.distance(&p1));
 
         // The Earth isn't flat
@@ -114,8 +114,8 @@ namespace {
     TEST(MesureUnitTest, ConstructorIllegalArgument) {
         time_t now = time(NULL);
         time_t future = now + 86400;
-        struct tm* now_t = localtime(&now);
-        struct tm* future_t = localtime(&future);
+        struct tm *now_t = localtime(&now);
+        struct tm *future_t = localtime(&future);
         struct tm empty;
         Attribut attribut("id", "unit", "description");
         Capteur capteur("sensorId", new Point(0, 0), "");
@@ -152,7 +152,7 @@ namespace {
         listS.push_back("resources/Data10.csv");
         EXPECT_ANY_THROW(FileReader reader0("resources/InvalidCSV.csv", "resources/AttributeType.csv", listS));
         EXPECT_ANY_THROW(FileReader reader0("resources/Sensor10.csv", "resources/InvalidCSV.csv", listS));
-        
+
         // Invalid Data
         listS.clear();
         listS.push_back("resources/InvalidData.csv");
@@ -174,7 +174,77 @@ namespace {
     }
     TEST(FileReaderUnitTest, Constructor) {
         list<string> listS;
+        listS.push_back("resources/Data10.csv");
         EXPECT_NO_THROW(FileReader reader("resources/Sensor10.csv", "resources/AttributeType.csv", listS));
+    }
+    TEST(FileReaderUnitTest, LireAttributs) {
+        list<string> listS;
+        listS.push_back("resources/Data10.csv");
+        FileReader reader("resources/Sensor10.csv", "resources/AttributeType.csv", listS);
+        unordered_map<string, Attribut *> attributs = reader.lireAttributs();
+        Attribut *tmp = nullptr;
+        ASSERT_NO_THROW(tmp = attributs.at("O3"));
+        tmp = attributs.at("O3");
+        EXPECT_EQ("µg/m3", tmp->getUnit());
+        EXPECT_EQ("concentration d'ozone", tmp->getDescription());
+        ASSERT_NO_THROW(tmp = attributs.at("SO2"));
+        tmp = attributs.at("SO2");
+        EXPECT_EQ("µg/m3", tmp->getUnit());
+        EXPECT_EQ("concentration de dioxyde de soufre", tmp->getDescription());
+        ASSERT_NO_THROW(tmp = attributs.at("NO2"));
+        tmp = attributs.at("NO2");
+        EXPECT_EQ("µg/m3", tmp->getUnit());
+        EXPECT_EQ("concentration de dioxyde d'azote", tmp->getDescription());
+        ASSERT_NO_THROW(tmp = attributs.at("PM10"));
+        tmp = attributs.at("PM10");
+        EXPECT_EQ("µg/m3", tmp->getUnit());
+        EXPECT_EQ("concentration de particules fines", tmp->getDescription());
+    }
+    TEST(FileReaderUnitTest, LireCapteur) {
+        list<string> listS;
+        listS.push_back("resources/Data10.csv");
+        FileReader reader("resources/Sensor10.csv", "resources/AttributeType.csv", listS);
+        paramFiltrage passAll;
+        unordered_map<string, Capteur *> capteurs;
+
+        EXPECT_ANY_THROW(capteurs = reader.lireCapteurs(passAll, NULL));
+
+        capteurs = reader.lireCapteurs(passAll, Service::filtrageCapteur);
+        EXPECT_EQ(10, capteurs.size());
+        Capteur *capteur = nullptr;
+        ASSERT_NO_THROW(capteur = capteurs.at("Sensor0"));
+        capteur = capteurs.at("Sensor0");
+        EXPECT_FLOAT_EQ(-34.7692487876719, capteur->getPosition()->getLongitude());
+        EXPECT_FLOAT_EQ(-8.15758888291083, capteur->getPosition()->getLatitude());
+        EXPECT_TRUE(capteur->getDescription().empty());
+        ASSERT_NO_THROW(capteur = capteurs.at("Sensor9"));
+        capteur = capteurs.at("Sensor9");
+        EXPECT_FLOAT_EQ(36.2756694672982, capteur->getPosition()->getLongitude());
+        EXPECT_FLOAT_EQ(1.33005024461543, capteur->getPosition()->getLatitude());
+        EXPECT_TRUE(capteur->getDescription().empty());
+    }
+    TEST(FileReaderUnitTest, ProchaineMesure) {
+        list<string> listS;
+        listS.push_back("resources/Data10.csv");
+        FileReader reader("resources/Sensor10.csv", "resources/AttributeType.csv", listS);
+        paramFiltrage passAll;
+        Mesure *mesure = nullptr;
+
+        EXPECT_ANY_THROW(mesure = reader.prochaineMesure(passAll, NULL));
+
+        mesure = reader.prochaineMesure(passAll, Service::filtrageMesure);
+        EXPECT_EQ(2017, mesure->getTimestamp()->tm_year);
+        EXPECT_EQ("Sensor0", mesure->getCapteur()->getSensorID());
+        EXPECT_FLOAT_EQ(17.8902017543936, mesure->getValue());
+
+        for (int i = 0; i < 9; i++)
+        {
+            EXPECT_TRUE(reader.prochaineMesure(passAll, Service::filtrageMesure) != nullptr);
+        }
+        mesure = reader.prochaineMesure(passAll, Service::filtrageMesure);
+        EXPECT_EQ(2017, mesure->getTimestamp()->tm_year);
+        EXPECT_EQ("Sensor0", mesure->getCapteur()->getSensorID());
+        EXPECT_FLOAT_EQ(17.8902017543936, mesure->getValue());
     }
 
     TEST(ServiceUnitTest, Constructor) {
@@ -222,11 +292,11 @@ namespace {
         EXPECT_FALSE(Service::filtrageCapteur(capteurParis, point, "meaningless"));
         EXPECT_FALSE(Service::filtrageCapteur(capteurParis, circle, "meaningless"));
     }
-    TEST(ServiceUnitTest, DateNull) {
+    TEST(ServiceUnitTest, DateNull){
         struct tm empty;
         time_t now = time(NULL);
-        struct tm* today = localtime(&now);
+        struct tm *today = localtime(&now);
         EXPECT_TRUE(Service::dateNull(empty));
         EXPECT_FALSE(Service::dateNull(*today));
     }
-}
+} // namespace
