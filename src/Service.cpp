@@ -92,31 +92,8 @@ list<Capteur> * Service::surveillerComportementCapteurs(list<string> & capteursI
 	}
 
 	// id -> Capteur
-	unordered_map < std::string, Capteur * > capteurs = fileReader->lireCapteurs(parametres, filtrageCapteur); //TODO : param filtrageCapteur
-	// Pas nécessaire si géré dans lireCapteurs();
+	unordered_map < std::string, Capteur * > capteurs = fileReader->lireCapteurs(parametres, filtrageCapteur); 
 
-	/* A MODIFIER EN FONCTION DU FONCTIONNEMENT FINAL DE FILEREADER */
-
-	/*
-	Ci-dessous version avec list de string retournée (version précédente de lireCapteurs où il était nécessaire de faire capteur_id-> capteur)
-	for (list <Capteur*> ::const_iterator it = capteurs.cbegin(); it != capteurs.cend(); it++)
-	{
-		for (list<string> ::iterator it_id = liste_id_capteursDefectueux.begin(); it_id != liste_id_capteursDefectueux.end(); it++)
-		{
-			if ((*it)->getSensorID().compare(*(it_id)) == 0)
-			{
-				liste_capteursDefectueux->push_back(**it); 
-				break;
-			}
-
-		}
-	}
-	*/
-
-	/* Version si map 
-	*/
-
-	// !!!!!!!!! \\  Quand on delete les Capteurs de la map ???
 	for (unordered_map <string, Capteur*>::iterator it_map = capteurs.begin(); it_map != capteurs.end(); it_map++)
 	{
 		for (list<string> ::iterator it_id = liste_id_capteursDefectueux.begin(); it_id != liste_id_capteursDefectueux.end(); it_id++)
@@ -124,22 +101,13 @@ list<Capteur> * Service::surveillerComportementCapteurs(list<string> & capteursI
 			if (it_map->first.compare(*it_id) == 0
 				&& find(liste_id_capteursDefectueux.begin(), liste_id_capteursDefectueux.end(), it_map->first) != liste_id_capteursDefectueux.end())
 			{
-				/* A décommenter quand problème avec const réglé 
-				Capteur c = Capteur(it_map->second->getSensorID(), it_map->second->getPosition(), it_map->second->getDescription());
-
+				Point * pos = new Point(it_map->second->getPosition()->getLongitude(), it_map->second->getPosition()->getLatitude());
+				Capteur c = Capteur(it_map->second->getSensorID(), pos, it_map->second->getDescription());
 				liste_capteursDefectueux->push_back(c);
-				*/
+				
 
 			}
 		}
-	}
-
-	// delete les capteurs de la map pas possible à faire alors qu'il le faut car la map est CONST ... 
-	for (unordered_map <string, Capteur*>::iterator it = capteurs.begin(); it != capteurs.end(); it++)
-	{
-		/* A décommenter quand problème avec const réglé */
-		//delete it->second;
-		// et clear() ???
 	}
 	
 	//!\\ Attention : dans le CLI, ne pas oublier le delete
@@ -161,10 +129,10 @@ list<pair<Capteur, Capteur>> * Service:: obtenirCapteursSimilaires(struct tm & D
 {
 	//On récupère tous les capteurs
 	paramFiltrage param_capteurs = { NULL, NULL, NULL, NULL };
-	unordered_map < std::string, Capteur * > map_capteurs = fileReader->lireCapteurs(param_capteurs, filtrageCapteur); // ne pas oublier de delete
+	unordered_map < std::string, Capteur * > map_capteurs = fileReader->lireCapteurs(param_capteurs, filtrageCapteur);
 
 	//On récupère tous les attributs
-	unordered_map < std::string, Attribut * > map_attributs = fileReader->lireAttributs(); // ne pas oublier de delete
+	unordered_map < std::string, Attribut * > map_attributs = fileReader->lireAttributs(); 
 
 	unordered_map<string, unordered_map<string, vector<float> > > capteurs_mesures;
 	//unordered_map<sensorID, unordered_map<AttributId, vector<value> > > capteurs_mesures;
@@ -214,7 +182,7 @@ list<pair<Capteur, Capteur>> * Service:: obtenirCapteursSimilaires(struct tm & D
 
 	// Traitement
 	list<pair<Capteur, Capteur>> * capteurs_similaires = new list<pair<Capteur, Capteur>>;
-	//capteurs_mesures
+	
 	for (unordered_map<string, unordered_map<string, vector<float> > > ::iterator it_capteur1 = capteurs_mesures.begin(); it_capteur1 != capteurs_mesures.end(); it_capteur1++)
 	{
 		for (unordered_map<string, unordered_map<string, vector<float> > > ::iterator it_capteur2 = capteurs_mesures.begin(); it_capteur2 != capteurs_mesures.end(); it_capteur2++)
@@ -259,14 +227,18 @@ list<pair<Capteur, Capteur>> * Service:: obtenirCapteursSimilaires(struct tm & D
 							(it_list->first.getSensorID().compare(it_capteur2->first) && it_list->second.getSensorID().compare(it_capteur1->first))
 							))
 						{
-							/* A décommenter dès que le problème avec les const sont réglés
-							Capteur * c1_ptr = map_capteurs.find(it_capteur1->first)->second;
-							Capteur c1 = Capteur(c1_ptr->getSensorID(), c1->getPosition(), c1->getDescription());
-							Capteur * c2_ptr = map_capteurs.find(it_capteur2->first)->second;
-							Capteur c2 = Capteur(c2_ptr->getSensorID(), c2->getPosition(), c2->getDescription());
 
-							list.push_back(make_pair(c1, c2));
-							*/
+							// On instancie des nouveaux objet capteur dans la liste parce que sinon c'est ingérable (delete)
+							Capteur * c1_ptr = map_capteurs.find(it_capteur1->first)->second;
+							Point * p1 = new Point(c1_ptr->getPosition()->getLongitude(), c1_ptr->getPosition()->getLatitude());
+							Capteur c1 = Capteur(c1_ptr->getSensorID(), p1, c1_ptr->getDescription());
+
+							Capteur * c2_ptr = map_capteurs.find(it_capteur2->first)->second;
+							Point * p2 = new Point(c2_ptr->getPosition()->getLongitude(), c2_ptr->getPosition()->getLatitude());
+							Capteur c2 = Capteur(c2_ptr->getSensorID(), p2, c2_ptr->getDescription());
+
+							capteurs_similaires->push_back(make_pair(c1, c2));
+							
 						}
 					}
 
@@ -277,25 +249,7 @@ list<pair<Capteur, Capteur>> * Service:: obtenirCapteursSimilaires(struct tm & D
 
 		}
 
-
 	}
-
-	// delete les capteurs de la map
-	for (unordered_map <string, Capteur*>::iterator it = map_capteurs.begin(); it != map_capteurs.end(); it++)
-	{
-		/* A décommenter quand problème avec const réglé */
-		//delete it->second;
-		// et clear() ???
-	}
-
-	// delete les attributs de la map
-	for (unordered_map <string, Attribut*>::iterator it = map_attributs.begin(); it != map_attributs.end(); it++)
-	{
-		/* A décommenter quand problème avec const réglé */
-		//delete it->second;
-		// et clear() ???
-	}
-
 	return capteurs_similaires;
 
 }//----- End of obtenirCapteursSimilaires
