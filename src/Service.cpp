@@ -729,7 +729,7 @@ bool Service::filtrageMesure(Mesure & mesure, struct tm & dateInf, struct tm & d
 	{
 		time_t timeInf = mktime(&dateInf);
 
-		if ((timeMes >= timeMes - 3600) && (timeMes <= timeMes + 3600))
+		if ((timeMes >= timeInf - 3600) && (timeMes <= timeInf + 3600))
 			mesureAPrendre = true;
 
 	}
@@ -739,14 +739,15 @@ bool Service::filtrageMesure(Mesure & mesure, struct tm & dateInf, struct tm & d
 		time_t timeInf = mktime(&dateInf);
 		time_t timeSup = mktime(&dateSup);
 		if (timeMes >= timeInf && timeMes <= timeSup)
+		{
 			mesureAPrendre = true;
-		 
+		}
+					 
 	}
 	// Tout l'historique
 	else if ((dateNull(dateSup) == true) && (dateNull(dateInf) == true))
 	{
 		mesureAPrendre = true;
-
 	}
 	return mesureAPrendre;
 }
@@ -760,4 +761,5 @@ bool Service::dateNull(struct tm & date)
 		return false;
 
 }
+
 

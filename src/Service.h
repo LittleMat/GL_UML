@@ -50,6 +50,7 @@ public:
 	static int calculIndiceATMO(string substance, float valeur);
 
 
+
 	//-------------------------------------------- Constructor - destructor
 	Service(FileReader * f);
 
