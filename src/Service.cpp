@@ -263,9 +263,174 @@ bool Service::plusOuMoins(float v1, float v2, float ecart)
 		return false;
 }
 
-tuple<int, list<float>, int> *  Service::calculerQualite(struct tm & tempsInf, struct tm & tempsSup, paramFiltrage & parametres)
+tuple<int, list<pair<string, float>>, float>  Service::calculerQualite(paramFiltrage & parametres)
 {
-	return nullptr;
+	unordered_map <string, Attribut *> attributs = fileReader->lireAttributs();
+	unordered_map <string, Capteur *> capteurs = fileReader->lireCapteurs(parametres, filtrageCapteur);
+
+	list <pair<float, float>> mesures_O3;
+	list <pair<float, float>> mesures_NO2;
+	list <pair<float, float>> mesures_SO2;
+	list <pair<float, float>> mesures_PM10;
+
+	bool finLecture = false;
+	while (finLecture == false)
+	{
+		// On récupère lit une mesure
+		const Mesure * m = fileReader->prochaineMesure(parametres, filtrageMesure);
+		
+		if (m == nullptr)
+		{
+			finLecture = true;
+			break;
+		}
+
+		// On calule l'indice de fiabilité 
+		float fiabilite = 1.0; //il est de 1 pour l'aire totale ou un capteur en particulier
+
+		//On ne considère pas un capteur en particulier
+		if (parametres.capteurId.compare("") == 0)
+		{
+			// Un point  
+			if (parametres.territoire.getRayon() == 0
+				&& !(parametres.territoire.getCentre()->getLatitude() == 0 && parametres.territoire.getCentre()->getLongitude() == 0))
+			{
+
+				fiabilite = 1 - parametres.territoire.getCentre()->distance(m->getCapteur()->getPosition())/10;
+			}
+			// Un territoire ciblé
+			else if (parametres.territoire.getRayon() > 0
+				&& !(parametres.territoire.getCentre()->getLatitude() == 0 && parametres.territoire.getCentre()->getLongitude() == 0)
+				)
+			{
+				fiabilite = 1 - (parametres.territoire.getCentre()->distance(m->getCapteur()->getPosition()) - parametres.territoire.getRayon()) / 50;
+			}
+
+		}
+		if (fiabilite < 0)
+			fiabilite = 0;
+
+		// On insère la mesure dans la liste appropriée
+		if (m->getAttribut()->getAttributID().compare("O3") == 0)
+		{
+			mesures_O3.push_back(make_pair(m->getValue(), fiabilite));
+		}
+		else if (m->getAttribut()->getAttributID().compare("SO2") == 0)
+		{
+			mesures_SO2.push_back(make_pair(m->getValue(), fiabilite));
+
+		}
+		else if (m->getAttribut()->getAttributID().compare("NO2") == 0)
+		{
+			mesures_NO2.push_back(make_pair(m->getValue(), fiabilite));
+
+		}
+		else if (m->getAttribut()->getAttributID().compare("PM10") == 0)
+		{
+			mesures_PM10.push_back(make_pair(m->getValue(), fiabilite));
+		}
+
+		delete m;
+	}
+
+	//Calcul des concentrations moyennes + fiabilite
+	
+	list<pair<string, float>> concentrations;
+	list<pair<string, float>> fiabilites;
+	float somme_concentrationMoyenne = 0.0;
+	float concentrationMoyenne = -1.0;
+	float somme_fiabiliteMoyenne = 0.0; //Ou prendre le max comme pour les incertitudes en chimie ?
+	float fiabiliteMoyenne = -1.0;
+
+	if (!mesures_O3.empty())
+	{
+		for (list<pair<float, float>> ::iterator it = mesures_O3.begin(); it != mesures_O3.end(); it++)
+		{
+			somme_concentrationMoyenne += it->first;
+			somme_fiabiliteMoyenne += it->second;
+		}
+		concentrationMoyenne = somme_concentrationMoyenne / mesures_O3.size();
+		fiabiliteMoyenne = somme_fiabiliteMoyenne / mesures_O3.size();
+
+	}
+	concentrations.push_back(make_pair("O3", concentrationMoyenne));  // Si == -1 => pas de mesures : autres solutions ??
+	fiabilites.push_back(make_pair("O3", fiabiliteMoyenne));
+
+	somme_concentrationMoyenne = 0.0;
+	concentrationMoyenne = -1.0;
+	if (!mesures_SO2.empty())
+	{
+		for (list<pair<float, float>> ::iterator it = mesures_SO2.begin(); it != mesures_SO2.end(); it++)
+		{
+			somme_concentrationMoyenne += it->first;
+			somme_fiabiliteMoyenne += it->second;
+
+		}
+		concentrationMoyenne = somme_concentrationMoyenne / mesures_SO2.size();
+		fiabiliteMoyenne = somme_fiabiliteMoyenne / mesures_SO2.size();
+	}
+	concentrations.push_back(make_pair("SO2", concentrationMoyenne));  // Si == -1 => pas de mesures : autres solutions ??
+	fiabilites.push_back(make_pair("SO2", fiabiliteMoyenne));
+
+	somme_concentrationMoyenne = 0.0;
+	concentrationMoyenne = -1.0;
+	if (!mesures_NO2.empty())
+	{
+		for (list<pair<float, float>> ::iterator it = mesures_NO2.begin(); it != mesures_NO2.end(); it++)
+		{
+			somme_concentrationMoyenne += it->first;
+			somme_fiabiliteMoyenne += it->second;
+
+		}
+		concentrationMoyenne = somme_concentrationMoyenne / mesures_NO2.size();
+		fiabiliteMoyenne = somme_fiabiliteMoyenne / mesures_NO2.size();
+	}
+	concentrations.push_back(make_pair("NO2", concentrationMoyenne));  // Si == -1 => pas de mesures : autres solutions ??
+	fiabilites.push_back(make_pair("NO2", fiabiliteMoyenne));
+
+	somme_concentrationMoyenne = 0.0;
+	concentrationMoyenne = -1.0;
+	if (!mesures_PM10.empty())
+	{
+		for (list<pair<float, float>> ::iterator it = mesures_PM10.begin(); it != mesures_PM10.end(); it++)
+		{
+			somme_concentrationMoyenne += it->first;
+			somme_fiabiliteMoyenne += it->second;
+
+		}
+		concentrationMoyenne = somme_concentrationMoyenne / mesures_PM10.size();
+		fiabiliteMoyenne = somme_fiabiliteMoyenne / mesures_PM10.size();
+	}
+	concentrations.push_back(make_pair("PM10", concentrationMoyenne));  // Si == -1 => pas de mesures : autres solutions ??
+	fiabilites.push_back(make_pair("PM10", fiabiliteMoyenne));
+
+
+	float concentrationMax = -1.0;
+	string composant;
+	for (list<pair<string, float>> ::iterator it = concentrations.begin(); it != concentrations.end(); it++)
+	{
+		if (concentrationMax <= it->second)
+		{
+			concentrationMax = it->second;
+			composant = it->first;
+		}
+	}
+
+	int indiceATMO = calculIndiceATMO(composant, concentrationMax);
+
+	float fiabiliteMax = -1.0;
+	for (list<pair<string, float>> ::iterator it = fiabilites.begin(); it != fiabilites.end(); it++)
+	{
+		if (fiabiliteMax <= it->second)
+		{
+			fiabiliteMax = it->second;
+		}
+	}
+
+	tuple<int, list<pair<string, float>>, float>  resultat_final = make_tuple(indiceATMO, concentrations, fiabiliteMax);
+
+	
+	return resultat_final; //NE PAS OUBLIER DE DELETE DANS LE CLI
 
 }//----- End of calculerQualite
 
@@ -286,12 +451,195 @@ Service::~Service()
 #ifdef MAP
 	cout << "Appel au destructeur de <Service>" << endl;
 #endif
+	delete fileReader;
 }//----- End of ~Service 
 
+int Service :: calculIndiceATMO(string substance, float valeur)
+{
+	int indiceATMO = -1;
+	if (substance.compare("O3") == 0)
+	{
+		if (valeur >= 0 && valeur <= 29)
+		{
+			indiceATMO = 1;
+		}
+		else if (valeur >= 30 && valeur <= 54)
+		{
+			indiceATMO = 2;
+		}
+		else if (valeur >= 55 && valeur <= 79)
+		{
+			indiceATMO = 3;
+		}
+		else if (valeur >= 80 && valeur <= 104)
+		{
+			indiceATMO = 4;
+		}
+		else if (valeur >= 105 && valeur <= 129)
+		{
+			indiceATMO = 5;
+		}
+		else if (valeur >= 130 && valeur <= 149)
+		{
+			indiceATMO = 6;
+		}
+		else if (valeur >= 150 && valeur <= 179)
+		{
+			indiceATMO = 7;
+		}
+		else if (valeur >= 180 && valeur <= 209)
+		{
+			indiceATMO = 8;
+		}
+		else if (valeur >= 210 && valeur <= 239)
+		{
+			indiceATMO = 9;
+		}
+		else if (valeur >= 240)
+		{
+			indiceATMO = 10;
+		}
+		
+	}
+	else if (substance.compare("NO2") == 0)
+	{
+		if (valeur >= 0 && valeur <= 29)
+		{
+			indiceATMO = 1;
+		}
+		else if (valeur >= 30 && valeur <= 54)
+		{
+			indiceATMO = 2;
+		}
+		else if (valeur >= 55 && valeur <= 84)
+		{
+			indiceATMO = 3;
+		}
+		else if (valeur >= 85 && valeur <= 109)
+		{
+			indiceATMO = 4;
+		}
+		else if (valeur >= 110 && valeur <= 134)
+		{
+			indiceATMO = 5;
+		}
+		else if (valeur >= 135 && valeur <= 164)
+		{
+			indiceATMO = 6;
+		}
+		else if (valeur >= 165 && valeur <= 199)
+		{
+			indiceATMO = 7;
+		}
+		else if (valeur >= 200 && valeur <= 274)
+		{
+			indiceATMO = 8;
+		}
+		else if (valeur >= 275 && valeur <= 399)
+		{
+			indiceATMO = 9;
+		}
+		else if (valeur >= 400)
+		{
+			indiceATMO = 10;
+		}
+
+	}
+	else if (substance.compare("SO2") == 0)
+	{
+		if (valeur >= 0 && valeur <= 39)
+		{
+			indiceATMO = 1;
+		}
+		else if (valeur >= 40 && valeur <= 79)
+		{
+			indiceATMO = 2;
+		}
+		else if (valeur >= 80 && valeur <= 119)
+		{
+			indiceATMO = 3;
+		}
+		else if (valeur >= 120 && valeur <= 159)
+		{
+			indiceATMO = 4;
+		}
+		else if (valeur >= 160 && valeur <= 199)
+		{
+			indiceATMO = 5;
+		}
+		else if (valeur >= 200 && valeur <= 249)
+		{
+			indiceATMO = 6;
+		}
+		else if (valeur >= 250 && valeur <= 299)
+		{
+			indiceATMO = 7;
+		}
+		else if (valeur >= 300 && valeur <= 399)
+		{
+			indiceATMO = 8;
+		}
+		else if (valeur >= 400 && valeur <= 499)
+		{
+			indiceATMO = 9;
+		}
+		else if (valeur >= 500)
+		{
+			indiceATMO = 10;
+		}
+
+	}
+	else if (substance.compare("PO10") == 0)
+	{
+		if (valeur >= 0 && valeur <= 6)
+		{
+			indiceATMO = 1;
+		}
+		else if (valeur >= 7 && valeur <= 13)
+		{
+			indiceATMO = 2;
+		}
+		else if (valeur >= 14 && valeur <= 20)
+		{
+			indiceATMO = 3;
+		}
+		else if (valeur >= 21 && valeur <= 27)
+		{
+			indiceATMO = 4;
+		}
+		else if (valeur >= 28 && valeur <= 34)
+		{
+			indiceATMO = 5;
+		}
+		else if (valeur >= 35 && valeur <= 41)
+		{
+			indiceATMO = 6;
+		}
+		else if (valeur >= 42 && valeur <= 49)
+		{
+			indiceATMO = 7;
+		}
+		else if (valeur >= 50 && valeur <= 64)
+		{
+			indiceATMO = 8;
+		}
+		else if (valeur >= 65 && valeur <= 79)
+		{
+			indiceATMO = 9;
+		}
+		else if (valeur >= 80)
+		{
+			indiceATMO = 10;
+		}
+	}
+	return indiceATMO;
+
+}
 
  //------------------------------------------------------------------ PRIVE
 
  //----------------------------------------------------- Protected methods
+
 
 bool Service::filtrageCapteur(Capteur & capteur, Territoire & territoire , string capteurId )
 // Algorithm :
@@ -362,27 +710,30 @@ bool Service::filtrageCapteur(Capteur & capteur, Territoire & territoire , strin
 
 bool Service::filtrageMesure(Mesure & mesure, struct tm & dateInf, struct tm & dateSup)
 // Algorithm :
-// Si dateSup == null && dateInf != null
-	// On regarde si mesure.getTimestamp() (à implémenter) >= dateInf
+// Si dateSup == null && dateInf != null (à un instant t)
+	// On regarde si mesure.getTimestamp() appartient à l'intervalle  [dateInf (en sec) - 60 (min) * 60 sec, dateInf (en sec) + 60 (min) * 60 sec] 
 		// Si oui : on retourne true
 		// Sinon : on retourne false
-// Si  dateSup != null && dateInf != null
+// Si  dateSup != null && dateInf != null (période)
 	// On regarde si mesure.getTimestamp() >= dateInf et mesure.getTimestamp() <= dateSup
 		// Si oui : on retourne true
 		// Sinon : on retourne false
-// Si dateSup == null && dateInf == null
+// Si dateSup == null && dateInf == null (tout l'historique 
 	// on retourne true
 {
 	bool mesureAPrendre = false;
 	time_t timeMes = mktime(mesure.getTimestamp()); 
+	
+	// A un instant t
 	if ((dateNull(dateSup) == true) && (dateNull(dateInf) == false))
 	{
 		time_t timeInf = mktime(&dateInf);
 
-		if (timeMes >= timeInf)
+		if ((timeMes >= timeMes - 3600) && (timeMes <= timeMes + 3600))
 			mesureAPrendre = true;
 
 	}
+	// Une période
 	else if ((dateNull(dateSup) == false) && (dateNull(dateInf) == false))
 	{
 		time_t timeInf = mktime(&dateInf);
@@ -391,6 +742,7 @@ bool Service::filtrageMesure(Mesure & mesure, struct tm & dateInf, struct tm & d
 			mesureAPrendre = true;
 		 
 	}
+	// Tout l'historique
 	else if ((dateNull(dateSup) == true) && (dateNull(dateInf) == true))
 	{
 		mesureAPrendre = true;

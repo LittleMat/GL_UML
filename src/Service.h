@@ -41,12 +41,13 @@ public:
 	bool surveillerComportementCapteur(string capteurID, paramFiltrage & parametres);
 	list<Capteur> * surveillerComportementCapteurs(list<string> & capteursID, paramFiltrage & parametres);
 	list<pair<Capteur, Capteur>> * obtenirCapteursSimilaires(struct tm & Date, int nbMesures);
-	tuple<int, list<float>, int> * calculerQualite(struct tm & tempsInf, struct tm  & tempsSup, paramFiltrage & parametres);
+	tuple<int, list<pair<string, float>>, float> calculerQualite(paramFiltrage & parametres);
 
 	static bool filtrageCapteur(Capteur & capteur, Territoire & territoire, string capteurId);
 	static bool filtrageMesure(Mesure & m, struct tm & dateInf, struct tm & dateSup);
 	static bool dateNull(struct tm & date);
 	static bool plusOuMoins(float v1, float v2, float ecart);
+	static int calculIndiceATMO(string substance, float valeur);
 
 
 	//-------------------------------------------- Constructor - destructor
