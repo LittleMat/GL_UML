@@ -22,40 +22,43 @@ using namespace std;
 //----------------------------------------------------- Public methodes
 
 
-std::unordered_map < std::string, Capteur * > FileReader ::lireCapteurs(paramFiltrage& parametres, bool(*filtrageCapteur) (Capteur &, Territoire &, string)) 
+unordered_map < string, Capteur * > FileReader :: lireCapteurs ( paramFiltrage & parametres, bool ( * filtrageCapteur ) ( Capteur &, Territoire &, string ) ) 
 {
-		std::ifstream infile(this->nomFichierCapteurs);
+		ifstream infile ( this -> nomFichierCapteurs );
 		
-		if(this->map_capteurs.size() != 0)
+		//Si la map n'est pas vide, on la vide et on détruit tous les éléments contenu dans celle ci
+		if ( this -> map_capteurs.size ( ) != 0 )
 		{
-			for (auto it : this->map_capteurs)
+			for ( auto it : this -> map_capteurs )
 			{
 				delete it.second;
 			} 
-			this->map_capteurs.clear(); 
+			this -> map_capteurs.clear ( ) ; 
 		}
 
 		string line;
 
+		//Lit les lignes du fichiers
 		while ( getline ( infile , line ) )
 		{
 			smatch matches;
-			regex_search(line, matches, reg_capt);
+			regex_search ( line, matches, reg_capt );
 
-			if(regex_match(line, reg_capt))
+			//Regex pour extraires les informations d'une ligne + ne pas lire la première ligne d'information
+			if ( regex_match ( line, reg_capt ) )
 			{
-				string sensorID = matches[1].str();
-				float latitude = stof(matches[2].str());
-				float longitude = stof(matches[3].str());
-				string description = matches[4].str();
+				string sensorID = matches [ 1 ].str ( );
+				float latitude = stof(matches [ 2 ].str ( ) );
+				float longitude = stof(matches [ 3 ].str ( ) );
+				string description = matches [ 4 ].str ( );
 
 				Point * position = new Point ( latitude, longitude );
 				Capteur * c = new Capteur ( sensorID, position, description );
 
-
-				if(filtrageCapteur(*c, parametres.territoire, parametres.capteurId))
+				//Filtre permetant de filtrer les capteurs selon le choix de l'utilisateur
+				if ( filtrageCapteur ( * c, parametres.territoire, parametres.capteurId ) )
 				{
-					this->map_capteurs[sensorID] = c ;
+					this -> map_capteurs [ sensorID ] = c ;
 				}
 				else
 				{
@@ -64,22 +67,22 @@ std::unordered_map < std::string, Capteur * > FileReader ::lireCapteurs(paramFil
 			}
 		}
 
-		return this->map_capteurs;
+		return this -> map_capteurs;
 	}
 
-	//TODO mettre paramêtre
 	unordered_map < string , Attribut * > FileReader :: lireAttributs ( )
 	{
-		ifstream infile(this->nomFichierAttributs);
+		ifstream infile ( this -> nomFichierAttributs );
 
-		if(this->map_capteurs.size() != 0)
+		//Idem que lireCapteurs
+		if ( this -> map_capteurs.size ( ) != 0 )
 		{
-			for (auto it : this->map_attributs)
+			for ( auto it : this -> map_attributs )
 			{
 				delete it.second;
 			} 
 
-		    this->map_attributs.clear(); 
+		    this -> map_attributs.clear ( ); 
 		}
 
 		string line;
@@ -90,68 +93,68 @@ std::unordered_map < std::string, Capteur * > FileReader ::lireCapteurs(paramFil
 			regex reg_attr( "(.*);(.*\/.*);(.*);" );
 
 			smatch matches;
-			regex_search(line, matches, reg_attr);
+			regex_search ( line, matches, reg_attr );
 
-			if(regex_match(line, reg_attr))
+			if( regex_match ( line, reg_attr ) )
 			{
-				string attributeID = matches[1].str();
-				string unit = matches[2].str();
-				string description = matches[3].str();
+				string attributeID = matches [ 1 ].str ( );
+				string unit = matches [ 2 ].str ( );
+				string description = matches [ 3 ].str ( );
 
 				Attribut * a = new Attribut ( attributeID, unit, description );
 
-				this->map_attributs [ attributeID ] = a;
+				this -> map_attributs [ attributeID ] = a;
+				//Pas besoin de filtrer ici
 			}
 		}
 
-		return this->map_attributs;
+		return this -> map_attributs;
 	}
 
 
-	bool FileReader :: fichierLisible() 
+	bool FileReader :: fichierLisible ( ) 
 	{
 		bool res = true;
 		
-		if(fichierMesureEnCours.eof())
+		if ( fichierMesureEnCours.eof ( ) )
 		{
 			//cout << "Reached end of file" << endl;
-			//regarde si encore fichier
-			if(nomFichiersMesures.size() > 0)
+			//Regarde s'il reste encore un fichier de mesure
+			if ( nomFichiersMesures.size ( ) > 0)
 			{
 				//cout << "Nb : " << nomFichiersMesures.size() << "  name : " << nomFichiersMesures.front() << endl;
-				fichierMesureEnCours.clear();
-				fichierMesureEnCours.close();
+				fichierMesureEnCours.clear ( );
+				fichierMesureEnCours.close ( );
 				
-				fichierMesureEnCours.open(nomFichiersMesures.front());
+				fichierMesureEnCours.open ( nomFichiersMesures.front ( ) );
 				
-				nomFichiersMesures.pop_front();
+				nomFichiersMesures.pop_front( );
 			}
-			else // Arrivée à la fin de tous les fichiers 
+			else // On est arrivé à la fin de tous les fichiers de mesure 
 			{
 				res = false;
-				cout << "fini" << endl;
 			}
 		}
 
 		return res;
 	}
 
-	void FileReader :: getLineModifie ( ifstream& fichierMesureEnCours, string& line )
+	void FileReader :: getLineModifie ( ifstream & fichierMesureEnCours, string & line )
 	{
 		string line_read;
 		line = "";
 		getline ( fichierMesureEnCours , line_read );
-		for (string::iterator it = line_read.begin(); it < line_read.end(); ++it)
+
+		for ( string :: iterator it = line_read.begin ( ) ; it < line_read.end ( ) ; ++it )
 		{
-			if((*it) != 0 && *(it) != 13) // Filtrage d'un caractère fantome et du caractère saut de ligne
+			if ( ( * it ) != 0 &&  (* it ) != 13) // Filtrage d'un caractère fantome et du caractère saut de ligne
 			{
-				line+=*it;
+				line += * it;
 			}
-			//printf("%x|-|%c\n", (*it) & 0xff, (*it));
 		}
 	}
 
-	Mesure * FileReader :: prochaineMesure(paramFiltrage& parametres, bool(*filtrageMesure) (Mesure &, struct tm &, struct tm &))
+	Mesure * FileReader :: prochaineMesure ( paramFiltrage& parametres, bool ( * filtrageMesure ) ( Mesure &, struct tm &, struct tm & ) )
 	{
 		Mesure * m = nullptr;
 
@@ -159,62 +162,72 @@ std::unordered_map < std::string, Capteur * > FileReader ::lireCapteurs(paramFil
 		smatch matches;
 		smatch time_match;
 
-		if(fichierMesureEnCours.is_open())
+		if ( fichierMesureEnCours.is_open ( ) )
 		{
-			if(fichierLisible())
+			if ( fichierLisible ( ) )
 			{
 
-				do{
+				do
+				{
 					getLineModifie ( fichierMesureEnCours , line );
-					if(!regex_match(line, reg_mesure))
+
+					//La ligne n'est pas conforme au regex
+					if ( ! regex_match ( line, reg_mesure ) )
 					{
 						cout << "Ligne ignorée : " << line << endl;
 					}
 
-				}while(!regex_match(line, reg_mesure) && fichierLisible());
+				//Lit jusqu'à avoir une ligne valide
+				} while ( ! regex_match ( line, reg_mesure ) && fichierLisible ( ) );
 				
-				if(regex_match(line, reg_mesure))
+				if ( regex_match ( line, reg_mesure ) )
 				{
-					regex_search(line, matches, reg_mesure);
-					string timestamp = matches[1].str();
-					string sensorID = matches[2].str();
-					string attributeID = matches[3].str();
-					float value = stof(matches[4].str());
+					//Extraction des informations de la ligne
+					regex_search ( line, matches, reg_mesure );
+					string timestamp = matches [ 1 ].str ( );
+					string sensorID = matches [ 2 ].str ( );
+					string attributeID = matches [ 3 ].str ( );
+					float value = stof(matches [ 4 ].str ( ) );
 
 					//cout << timestamp << " - " << sensorID << " - " << attributeID << " - " << value << endl;
 					
 					//Search for the date
-					regex_search(timestamp, time_match, reg_date);
+					regex_search ( timestamp, time_match, reg_date );
 
-					if(regex_match(timestamp, reg_date))
+					//Extraction du timestamp, création d'une struct gérant les timestamps
+					if ( regex_match ( timestamp, reg_date ) )
 					{
-						struct tm * time = new tm();
-						time->tm_year = stoi(time_match[1].str());
-						time->tm_mon = stoi(time_match[2].str());
-						time->tm_mday = stoi(time_match[3].str());
-						time->tm_hour = stoi(time_match[4].str());
-						time->tm_min = stoi(time_match[5].str());
-						time->tm_sec = floor(stof(time_match[6].str()));
+						struct tm * time = new tm ( );
+						time->tm_year = stoi ( time_match [ 1 ].str ( ) );
+						time->tm_mon = stoi ( time_match [ 2 ].str ( ) );
+						time->tm_mday = stoi ( time_match [ 3 ].str ( ) );
+						time->tm_hour = stoi ( time_match [ 4 ].str ( ) );
+						time->tm_min = stoi ( time_match [ 5 ].str ( ) );
+						time->tm_sec = floor ( stof ( time_match [ 6 ].str ( ) ) );
 
 						//cout << time->tm_year << " - " << time->tm_mon << " - " << time->tm_mday << " - " << time->tm_hour << " - " << time->tm_min << " - " << time->tm_sec << endl;
 						
-						if(this->map_attributs.count(attributeID) == 0)
+						//TODO : à enlever après tests
+						if ( this -> map_attributs.count ( attributeID ) == 0)
 						{
 							cout << "Pb avec attributeID" << endl;
 						}
 
-						if(this->map_capteurs.count(sensorID) == 0)
+						if(this -> map_capteurs.count ( sensorID ) == 0)
 						{
 							cout << "Pb avec attributeID" << endl;
 						}
 
-						if(this->map_attributs.count(attributeID) == 1 && this->map_capteurs.count(sensorID) == 1)
+						if(this -> map_attributs.count ( attributeID ) == 1 && this -> map_capteurs.count ( sensorID ) == 1)
 						{
-							m = new Mesure(time, this->map_attributs[attributeID], value, sensorID, this->map_capteurs[sensorID]);
+							//Le sensorID et l'attributID existent et sont dans les map
+							m = new Mesure ( time, this -> map_attributs [ attributeID ], value, sensorID, this -> map_capteurs [ sensorID ] );
 
-							if(!filtrageMesure(*m, parametres.dateSup, parametres.dateInf))
+							//Filtre la mesure avec les paramètres de l'utilisateur
+							if ( ! filtrageMesure ( * m, parametres.dateSup, parametres.dateInf ) )
 							{
 								delete m;
+								m = nullptr
 							}
 						}
 					}
@@ -225,27 +238,28 @@ std::unordered_map < std::string, Capteur * > FileReader ::lireCapteurs(paramFil
 		return m;
 	}
 
-	const list < std::string > FileReader :: getNomFichiersMesures() const 
+	const list < string > FileReader :: getNomFichiersMesures ( ) const 
 	{
-		return this->nomFichiersMesures;
+		return this -> nomFichiersMesures;
 	}
 
 //-------------------------------------------- Constructors - destructor
 
-FileReader :: FileReader ( const std :: string & nomFichierCapteurs, const string & nomFichierAttributs, const std :: list < std :: string > & nomFichiersMesures)
+FileReader :: FileReader ( const string & nomFichierCapteurs, const string & nomFichierAttributs, const list < string > & nomFichiersMesures )
 {
 	#ifdef MAP
 	    cerr << "Constructor of <FileReader>" << endl;
 	#endif
 
-	this->nomFichierCapteurs = nomFichierCapteurs;
-	this->nomFichierAttributs = nomFichierAttributs;
-	this->nomFichiersMesures = nomFichiersMesures; //Fait une copie
+	this -> nomFichierCapteurs = nomFichierCapteurs;
+	this -> nomFichierAttributs = nomFichierAttributs;
+	this -> nomFichiersMesures = nomFichiersMesures; //Fait une copie
 
-	if(this->nomFichiersMesures.size()>0)
+	//Ouvre le premier fichier de mesure
+	if ( this -> nomFichiersMesures.size ( ) > 0 )
 	{
-		this->fichierMesureEnCours.open(this->nomFichiersMesures.front());
-		this->nomFichiersMesures.pop_front();
+		this -> fichierMesureEnCours.open ( this -> nomFichiersMesures.front ( ) );
+		this -> nomFichiersMesures.pop_front ( );
 	}
 	else
 	{
@@ -265,8 +279,8 @@ FileReader :: FileReader ( )
 	    cerr << "Default constructor of <FileReader>" << endl;
 	#endif
 
-	this->nomFichierCapteurs = "";
-	this->nomFichierAttributs = "";
+	this -> nomFichierCapteurs = "";
+	this -> nomFichierAttributs = "";
 
 	reg_mesure = regex( "(.*);(.*);(.*);(.*[0-9]+);" );
 	reg_date = regex( "([0-9]*)-([0-9]{2})-([0-9]{2})T([0-9]{2}):([0-9]{2}):([0-9]{2}.[0-9]*)" );
@@ -277,24 +291,27 @@ FileReader :: FileReader ( )
 FileReader :: ~FileReader ( )
 {
 	
-	fichierMesureEnCours.clear();
-	fichierMesureEnCours.close();
+	//Ferme le dernier fichier de mesure
+	//TODO : vérifier qu'ouvert
+	fichierMesureEnCours.clear ( );
+	fichierMesureEnCours.close ( );
 
-	if(map_capteurs.size() != 0)
+	//Détruit les objets contenus dans les deux unorderedmap
+	if ( map_capteurs.size ( ) != 0)
 	{
-		for (auto it : map_capteurs)
+		for ( auto it : map_capteurs )
 		{
 			delete it.second;
 		} 
-		map_capteurs.clear();
+		map_capteurs.clear ( );
 	}
 
-	if(map_attributs.size() != 0)
+	if(map_attributs.size ( ) != 0)
 	{
-		for (auto it : map_attributs)
+		for ( auto it : map_attributs )
 		{
 			delete it.second;
 		} 
-		map_attributs.clear();
+		map_attributs.clear ( );
 	}
 } // End of destructor
