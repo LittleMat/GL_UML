@@ -15,7 +15,7 @@
 
 //------------------------------------------------------------------------
 // Goal of the <Capteur> class
-//
+// Représente un capteur, avec un id, une position et une description
 //------------------------------------------------------------------------
 
 
@@ -29,18 +29,21 @@ public :
 
 //-------------------------------------------- Constructor - destructor
 
-	const std :: string getSensorID() const;
+	//Retourne l'id du capteur
+	const std :: string getSensorID ( ) const;
 
-	const Point * getPosition() const;
+	//Retourne sa position
+	const Point * getPosition ( ) const;
 
-	const std :: string getDescription() const;
+	//Retourne sa description
+	const std :: string getDescription ( ) const;
 	
 	/*
 	 *	
 	 */
-	Capteur ( const std :: string sensorID, Point * const position, const std :: string description);
+	Capteur ( const std :: string sensorID, Point * const position, const std :: string description );
 	
-	Capteur();
+	Capteur ( );
 
 	/*s
 	 *	

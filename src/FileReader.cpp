@@ -21,13 +21,20 @@ using namespace std;
 
 //----------------------------------------------------- Public methodes
 
-	//TODO mettre paramêtre
-std::unordered_map < std::string, Capteur * > FileReader ::lireCapteurs(paramFiltrage& parametres, bool(*filtrageCapteur) (Capteur &, Territoire &, string)) //TODO mettre parametre
+
+std::unordered_map < std::string, Capteur * > FileReader ::lireCapteurs(paramFiltrage& parametres, bool(*filtrageCapteur) (Capteur &, Territoire &, string)) 
 {
 		std::ifstream infile(this->nomFichierCapteurs);
 		
-		this->map_capteurs.clear(); //Bien clear 
-		//Question (L) : il ne faut pas explicitement delete le second membre avant de clear() ? ou clear appelle automatiquement delete ??
+		if(this->map_capteurs.size() != 0)
+		{
+			for (auto it : this->map_capteurs)
+			{
+				delete it.second;
+			} 
+			this->map_capteurs.clear(); 
+		}
+
 		string line;
 
 		while ( getline ( infile , line ) )
@@ -65,7 +72,15 @@ std::unordered_map < std::string, Capteur * > FileReader ::lireCapteurs(paramFil
 	{
 		ifstream infile(this->nomFichierAttributs);
 
-	    this->map_attributs.clear(); //Bien clear
+		if(this->map_capteurs.size() != 0)
+		{
+			for (auto it : this->map_attributs)
+			{
+				delete it.second;
+			} 
+
+		    this->map_attributs.clear(); 
+		}
 
 		string line;
 
@@ -136,7 +151,6 @@ std::unordered_map < std::string, Capteur * > FileReader ::lireCapteurs(paramFil
 		}
 	}
 
-	//TODO mettre paramêtre
 	Mesure * FileReader :: prochaineMesure(paramFiltrage& parametres, bool(*filtrageMesure) (Mesure &, struct tm &, struct tm &))
 	{
 		Mesure * m = nullptr;
@@ -154,7 +168,7 @@ std::unordered_map < std::string, Capteur * > FileReader ::lireCapteurs(paramFil
 					getLineModifie ( fichierMesureEnCours , line );
 					if(!regex_match(line, reg_mesure))
 					{
-						cout << "AAAAAH : " << line << endl;
+						cout << "Ligne ignorée : " << line << endl;
 					}
 
 				}while(!regex_match(line, reg_mesure) && fichierLisible());
@@ -262,6 +276,25 @@ FileReader :: FileReader ( )
 
 FileReader :: ~FileReader ( )
 {
-	///!!!\\\ Ne pas oublier de delete les pointeurs dans les map si la map n'est pas vide ///!!!\\\
+	
+	fichierMesureEnCours.clear();
+	fichierMesureEnCours.close();
 
+	if(map_capteurs.size() != 0)
+	{
+		for (auto it : map_capteurs)
+		{
+			delete it.second;
+		} 
+		map_capteurs.clear();
+	}
+
+	if(map_attributs.size() != 0)
+	{
+		for (auto it : map_attributs)
+		{
+			delete it.second;
+		} 
+		map_attributs.clear();
+	}
 } // End of destructor

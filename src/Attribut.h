@@ -13,13 +13,15 @@
 
 //--------------------------------------------------- Interfaces used
 #include <iostream>
-#include<string>
-using namespace std;
+#include <string>
 #include "Attribut.h"
+
+using namespace std;
 
 
 //------------------------------------------------------------------------
-// Goal of the <Mesure> class
+// Goal of the <Attribut> class
+// Représente un attribut, avec un id, une unité, et une descrition
 //------------------------------------------------------------------------
 
 
@@ -31,43 +33,28 @@ public :
 
 //----------------------------------------------------- Public methods
 
+	//Retourne l'attribut
+	std::string getAttributID ( ) const;
 
-	// Mode d'emploi :
-	//
-    // Contrat :
-    //
+	//Retourne l'unité
+	std::string getUnit ( ) const;
 
-	std::string getAttributID() const;
-
-	std::string getUnit() const;
-
-	std::string getDescription() const;
+	//Retourne la description
+	std::string getDescription ( ) const;
 
 //-------------------------------------------- Constructor - destructor
-	Attribut();
-	// Mode d'emploi :
-	//
-	// Contrat :
-	//
+	Attribut ( );
 
-	Attribut(std::string attributID, std::string unit, std::string description);
-	// Mode d'emploi :
-	//
-	// Contrat :
-	//
+	Attribut ( std :: string attributID, std :: string unit, std :: string description );
 
-	~Attribut();
-	// Mode d'emploi :
-	//
-	// Contrat :
-	//
+	~Attribut ( );
 
 //----------------------------------------------------- Protected attributes
 protected :
 
-    std::string attributID;
-    std::string unit;
-    std::string description;
+    std :: string attributID;
+    std :: string unit;
+    std :: string description;
 
 };
 

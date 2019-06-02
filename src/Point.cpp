@@ -13,6 +13,7 @@ e-mail               : guilhem.cerba@insa-lyon.fr, zihang.ye@insa-lyon.fr, linda
 //--------------------------------------------------------- System include
 #include <iostream>
 #include <math.h>
+
 using namespace std;
 
 //------------------------------------------------------ Personnal include
@@ -23,67 +24,69 @@ using namespace std;
 //----------------------------------------------------------------- PUBLIC
 
 //----------------------------------------------------- Public methods
-float Point::getLongitude() const
+float Point :: getLongitude ( ) const
 {
 	return longitude;
 }//----- End of getLongitude 
 
-float Point::getLatitude() const
+float Point :: getLatitude ( ) const
 {
 	return latitude;
 }//----- End of getLatitude
 
-float Point::distance(const Point * p) const
+float Point :: distance( const Point * p ) const
 {
 	// Coordonnées des points dans le domaine cartésien
 	float rayon_Terre = 6371;
-	float x = rayon_Terre*cos(latitude)*cos(longitude);
-	float y = rayon_Terre*cos(latitude)*sin(longitude);
-	float z = rayon_Terre*sin(latitude);
+	float x = rayon_Terre * cos ( latitude ) * cos ( longitude );
+	float y = rayon_Terre * cos ( latitude ) * sin ( longitude );
+	float z = rayon_Terre * sin ( latitude );
 
-	float x2 = rayon_Terre*cos(p->getLatitude())*cos(p->getLongitude());
-	float y2 = rayon_Terre*cos(p->getLatitude())*sin(p->getLongitude());
-	float z2 = rayon_Terre*sin(p->getLatitude());
+	float x2 = rayon_Terre * cos ( p -> getLatitude ( ) ) * cos ( p -> getLongitude ( ) );
+	float y2 = rayon_Terre * cos ( p -> getLatitude ( ) ) * sin ( p -> getLongitude ( ) );
+	float z2 = rayon_Terre * sin ( p -> getLatitude ( ) );
 
 	// Calcul distance
-	float x_carre = (x2 - x)*(x2 - x);
-	float y_carre = (y2 - y)*(y2 - y);
-	float z_carre = (z2 - z)*(z2 - z);
+	float x_carre = ( x2 - x ) * ( x2 - x );
+	float y_carre = ( y2 - y ) * ( y2 - y );
+	float z_carre = ( z2 - z ) * ( z2 - z );
 	
-	return sqrt(x_carre + y_carre + z_carre);
+	return sqrt( x_carre + y_carre + z_carre );
 		
 
 }//----- End of distance 
 
 //-------------------------------------------- Constructor - destructor
-Point::Point()
+Point :: Point ( )
 // Algorithm : 
 {
-#ifdef MAP
-	cout << "Appel au constructeur par défaut de <Point>" << endl;
-#endif
+	#ifdef MAP
+		cout << "Appel au constructeur par défaut de <Point>" << endl;
+	#endif
+
 	longitude = 0.0;
 	latitude = 0.0;
 }//----- End of Point 
 
-Point::Point(float longt, float lat)
+Point :: Point ( float longt, float lat )
 // Algorithm : 
 {
-#ifdef MAP
-		cout << "Appel au constructeur de <Point>" << endl;
-#endif
+	#ifdef MAP
+			cout << "Appel au constructeur de <Point>" << endl;
+	#endif
+
 	longitude = longt;
 	latitude = lat;
 }//----- End of Point 
 
 
 
-Point::~Point()
+Point :: ~Point ( )
 // Algorithm : 
 {
-#ifdef MAP
-	cout << "Appel au destructeur de <Point>" << endl;
-#endif
+	#ifdef MAP
+		cout << "Appel au destructeur de <Point>" << endl;
+	#endif
 }//----- End of ~Point 
 
 

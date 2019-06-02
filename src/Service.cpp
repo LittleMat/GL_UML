@@ -12,6 +12,7 @@ e-mail               : guilhem.cerba@insa-lyon.fr, zihang.ye@insa-lyon.fr, linda
 
 //--------------------------------------------------------- System include
 #include <iostream>
+
 using namespace std;
 
 //------------------------------------------------------ Personnal include

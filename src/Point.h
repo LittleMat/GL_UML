@@ -12,10 +12,12 @@ e-mail               : guilhem.cerba@insa-lyon.fr, zihang.ye@insa-lyon.fr, linda
 
 //--------------------------------------------------- Interfaces used
 #include <iostream>
+
 using namespace std;
 
 //------------------------------------------------------------------------
 // Goal of the <Point> class
+// Représente un point aux coordonnées latitude longitude
 //------------------------------------------------------------------------
 
 
@@ -26,42 +28,22 @@ class Point
 public:
 
 	//----------------------------------------------------- Public methods
-	float getLongitude() const;
-	// Mode d'emploi :
-	// 
-	// Contrat :
-	//
 
-	float getLatitude() const;
-	// Mode d'emploi :
-	// 
-	// Contrat :
-	//
+	//Retourne la longitude
+	float getLongitude ( ) const;
+
+	//Retourne la latitude
+	float getLatitude ( ) const;
 	
-	float distance(const Point * p) const;
-	// Mode d'emploi :
-	// 
-	// Contrat :
-	//
+	//Retourne la distance
+	float distance ( const Point * p ) const;
 
 	//-------------------------------------------- Constructor - destructor
-	Point(float longt, float lat);
-	// Mode d'emploi :
-	// 
-	// Contrat :
-	//
+	Point ( float longt, float lat );
 
-	Point();
-	// Mode d'emploi :
-	// 
-	// Contrat :
-	//
+	Point ( );
 
-	~Point();
-	// Mode d'emploi :
-	// 
-	// Contrat :
-	//
+	~Point ( );
 	
 
 protected:

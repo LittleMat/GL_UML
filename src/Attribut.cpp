@@ -14,7 +14,7 @@
 
 //------------------------------------------------------ Personnal include
 #include "Attribut.h"
-#include<string>
+#include <string>
 using namespace std;
 
 //------------------------------------------------------------- Constantes
@@ -22,49 +22,47 @@ using namespace std;
 //----------------------------------------------------------------- PUBLIC
 
 //----------------------------------------------------- Public methodes
-std::string Attribut :: getAttributID() const
+string Attribut :: getAttributID ( ) const
 {
-	return this->attributID;
+	return this -> attributID;
 }
 
-std::string Attribut :: getUnit() const
+string Attribut :: getUnit ( ) const
 {
-	return this->unit;
+	return this -> unit;
 }
 
-std::string Attribut :: getDescription() const
+string Attribut :: getDescription ( ) const
 {
-	return this->description;
+	return this -> description;
 }
 
 //-------------------------------------------- Constructors - destructor
-Attribut::Attribut()
+Attribut :: Attribut ( )
 {
-#ifdef MAP
-	cerr << "Constructor of <Attribut>" << endl;
-#endif
+	#ifdef MAP
+		cerr << "Constructor of <Attribut>" << endl;
+	#endif
 
-	this->attributID = "";
-	this->unit = "";
-	this->description = "";
+	this -> attributID = "";
+	this -> unit = "";
+	this -> description = "";
 
 
 }//End of constructor
 
-Attribut::Attribut (std ::string attributID, std ::string unit, std ::string description)
+Attribut :: Attribut ( string attributID, string unit, string description )
 {
 	#ifdef MAP
 	    cerr << "Constructor of <Attribut>" << endl;
 	#endif
 	    
-	this->attributID = attributID;
-	this->unit = unit;
-	this->description = description;
-	    
-	
+	this -> attributID = attributID;
+	this -> unit = unit;
+	this -> description = description;
 }//End of constructor
 
-Attribut :: ~Attribut ()
+Attribut :: ~Attribut ( )
 {
 
 }// End of destructor 

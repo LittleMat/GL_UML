@@ -12,17 +12,17 @@ e-mail               : guilhem.cerba@insa-lyon.fr, zihang.ye@insa-lyon.fr, linda
 
 //--------------------------------------------------- Interfaces used
 #include <iostream>
-
-
-#include "FileReader.h"
 #include <list>
-#include "Capteur.h"
-#include "Territoire.h"
 #include <tuple>
 #include <utility> 
 #include <string>
 #include <ctime>
 #include <cmath>
+
+#include "FileReader.h"
+#include "Capteur.h"
+#include "Territoire.h"
+
 using namespace std;
 
 
