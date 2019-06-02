@@ -21,6 +21,7 @@
 #include "Mesure.h"
 #include "Attribut.h"
 #include "Territoire.h"
+
 typedef struct
 {
 	// Pour filtrageMesure
@@ -34,6 +35,8 @@ typedef struct
 
 //------------------------------------------------------------------------
 // Goal of the <FileReader> class
+// FileReader permet de lire les différents type de fichiers et de retourner une map de capteurs
+// d'attributs et de mesures, en fonction des paramètres choisis par l'utilisateur dans le menu (cli)
 //------------------------------------------------------------------------
 
 
@@ -46,42 +49,41 @@ public :
 //----------------------------------------------------- Public methods
 
 	/*
-	 * Lit les capteurs du fichiers contenant les capteurs et retourne une map de capteurs
+	 * Lit les capteurs valides du fichiers contenant les capteurs et retourne une map de capteurs, met à jour l'attribut map_capteurs
 	 */
-	std :: unordered_map < std :: string , Capteur * > lireCapteurs (paramFiltrage& parametres, bool(*filtrageCapteur) (Capteur & , Territoire &, string)); 
+	std :: unordered_map < std :: string , Capteur * > lireCapteurs ( paramFiltrage & parametres, bool ( * filtrageCapteur ) ( Capteur & , Territoire &, string ) ); 
 	
 
 	/*
-	 * Lit les différents attributs du fichier contenant les attributs et retourne une map d'attributs
+	 * Lit les différents attributs du fichier contenant les attributs et retourne une map d'attributs, met à jour map_attributs
 	 */
 	std :: unordered_map < std :: string , Attribut * > lireAttributs ( ); 
 
 	/*
-	 * Lit la prochaine mesure des fichiers contenant les mesures
+	 * Lit la prochaine mesure valide des fichiers contenant les mesures,
 	 */
-	Mesure* prochaineMesure (paramFiltrage& parametres, bool (*filtrageMesure) (Mesure &, struct tm &, struct tm &)); //TODO mettre paramêtre
+	Mesure * prochaineMesure ( paramFiltrage& parametres, bool ( * filtrageMesure ) ( Mesure &, struct tm &, struct tm & ) ); 
 
-	const list < std::string > getNomFichiersMesures() const;
+	const list < std::string > getNomFichiersMesures ( ) const;
 
 //-------------------------------------------- Constructor - destructor
-	/*
-	 *	
-	 */
-	FileReader ( const std :: string & nomFichierCapteurs, const string & nomFichierAttributs, const std :: list < std :: string > & nomFichiersMesures);
+	
+	//nomFichierCapteurs : nom du fichier contenant les capteurs
+	//nomFichierAttributs : nom du fichiers contenant les attributs
+	//nomFichiersMesures : list des noms de fichiers de mesure
 
-	/*
-	 *	
-	 */
+	FileReader ( const std :: string & nomFichierCapteurs, const string & nomFichierAttributs, const std :: list < std :: string > & nomFichiersMesures );
+
 	FileReader ( );
 
-	/*
-	 *	
-	 */
 	~FileReader ( );
 
 protected :
-	bool fichierLisible();
-	void getLineModifie ( ifstream& fichierMesureEnCours, string& line );
+	//Renvoie vrai s'il reste des fichiers de mesure à lire
+	bool fichierLisible ( );
+
+	//getLine modifié pour lire de l'utf-16 (spécifique à nos fichiers en entrée, filtre les char dont le code héxadécimal est 0 ou d)
+	void getLineModifie ( ifstream & fichierMesureEnCours, string & line );
 
 //----------------------------------------------------- Protected attributes
 	std :: string nomFichierCapteurs;
