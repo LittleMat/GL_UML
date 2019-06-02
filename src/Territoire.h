@@ -31,7 +31,7 @@ public:
 
 	//----------------------------------------------------- Public methods
 	//Retourne le centre
-	const Point * getCentre ( ) const;
+	Point * getCentre ( ) const;
 
 	//Retourne le rayon
 	int getRayon ( ) const;

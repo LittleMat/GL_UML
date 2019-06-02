@@ -31,6 +31,8 @@ typedef struct
 	Territoire territoire;
 	string capteurId;
 } paramFiltrage;
+//!\\ ne surtout pas faire parametre.territoire = Territoire () car conversions bizarres
+// mais plutôt Territoire t = Territoire(); parametre.territoire = t;
 
 
 //------------------------------------------------------------------------

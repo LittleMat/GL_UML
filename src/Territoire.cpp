@@ -23,7 +23,7 @@ using namespace std;
 //----------------------------------------------------------------- PUBLIC
 
 //----------------------------------------------------- Public methods
-const Point * Territoire :: getCentre ( ) const
+Point * Territoire :: getCentre ( ) const
 // Algorithm : 
 {
 	return centre;
@@ -38,8 +38,10 @@ int Territoire :: getRayon ( ) const
 bool Territoire :: contient ( const Point * p ) const
 // Algorithm : 
 {
-	if ( p-> distance ( centre ) <= rayon )
+	if ( p-> distance ( centre ) <= this->rayon )
 	{
+		cout << "distance dans territoire = " << p->distance(centre) <<endl;
+		cout << "rayon = " << this->rayon << endl;
 		return true;
 	}
 	else
@@ -69,7 +71,7 @@ Territoire :: Territoire ( )
 	#endif
 
 	rayon = 0;
-	centre = new Point ( );
+	centre = new Point ();
 }
 
 

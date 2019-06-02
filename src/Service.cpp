@@ -664,38 +664,37 @@ bool Service::filtrageCapteur(Capteur & capteur, Territoire & territoire , strin
 		// Si oui : on retourne true
 		// Sinon : on retourne false
 {
-	cout << "ici" << endl;
 	bool capteurAPrendre = false;
+
 	if (capteurId.empty())
 	{
 		const Point * posCapteur = capteur.getPosition();
 		
 		// cas 1 : point considéré 
-		if (territoire.getRayon() == 0)
+		if (territoire.getRayon() == 0.0
+			&& territoire.getCentre()->getLatitude() != 0.0 && territoire.getCentre()->getLongitude() != 0.0)
 		{
-			Point * centre_zoneAcceptee = new Point(posCapteur->getLongitude(), posCapteur->getLatitude());
+			Point * centre_zoneAcceptee = new Point(territoire.getCentre()->getLongitude(), territoire.getCentre()->getLatitude());
 			Territoire zoneAcceptee = Territoire(centre_zoneAcceptee, territoire.getRayon() + 10);
 			if (zoneAcceptee.contient(posCapteur))
 			{
 				capteurAPrendre = true;				
 			}
-			delete centre_zoneAcceptee;			
 		}
 		// cas 2 : territoire considéré
 		else if (territoire.getRayon() != 0
-			&& territoire.getCentre()->getLatitude() != 0 && territoire.getCentre()->getLongitude() != 0)
+			&& territoire.getCentre()->getLatitude() != 0.0 && territoire.getCentre()->getLongitude() != 0.0)
 		{
-			Point * centre_zoneAcceptee = new Point(posCapteur->getLongitude(), posCapteur->getLatitude());
+			Point * centre_zoneAcceptee = new Point(territoire.getCentre()->getLongitude(), territoire.getCentre()->getLatitude());
 			Territoire zoneAcceptee = Territoire(centre_zoneAcceptee, territoire.getRayon() + 50);
 			if (zoneAcceptee.contient(posCapteur))
 			{
 				capteurAPrendre = true;
 			}
-			delete centre_zoneAcceptee;
 		}
 		// cas 3 : aire totale considérée
-		else if (territoire.getRayon() == 0
-			&& territoire.getCentre()->getLatitude() == 0 && territoire.getCentre()->getLongitude() == 0)
+		else if (territoire.getRayon() == 0.0
+			&& territoire.getCentre()->getLatitude() == 0.0 && territoire.getCentre()->getLongitude() == 0.0)
 		{
 			capteurAPrendre = true;
 		}
@@ -703,7 +702,6 @@ bool Service::filtrageCapteur(Capteur & capteur, Territoire & territoire , strin
 	}
 	else
 	{ 
-		cout << "trouve = " << capteurId << endl;
 		capteurAPrendre = true;
 	}
 

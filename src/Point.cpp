@@ -79,8 +79,6 @@ Point :: Point ( float longt, float lat )
 	latitude = lat;
 }//----- End of Point 
 
-
-
 Point :: ~Point ( )
 // Algorithm : 
 {
