@@ -12,7 +12,7 @@ e-mail               : guilhem.cerba@insa-lyon.fr, zihang.ye@insa-lyon.fr, linda
 
 //--------------------------------------------------- Interfaces used
 #include <iostream>
-
+#include <math.h>
 using namespace std;
 
 //------------------------------------------------------------------------

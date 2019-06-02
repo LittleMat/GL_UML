@@ -36,6 +36,8 @@ float Point :: getLatitude ( ) const
 
 float Point :: distance( const Point * p ) const
 {
+	// Version 1
+	/*
 	// Coordonnées des points dans le domaine cartésien
 	float rayon_Terre = 6371;
 	float x = rayon_Terre * cos ( latitude ) * cos ( longitude );
@@ -51,8 +53,27 @@ float Point :: distance( const Point * p ) const
 	float y_carre = ( y2 - y ) * ( y2 - y );
 	float z_carre = ( z2 - z ) * ( z2 - z );
 	
-	return sqrt( x_carre + y_carre + z_carre );
-		
+	return sqrt( x_carre + y_carre + z_carre);
+	*/
+	//Version 2
+	/*
+	double pi = 3.14;
+	float R = 6371;
+	float latitude1 = this->latitude * pi / 180;
+	float latitude2 = p->getLatitude() * pi / 180;
+	float longitude1 = this->longitude * pi / 180;
+	float longitude2 = p->getLongitude() * pi / 180;
+
+	float distance = R * acos(cos(latitude1)) * cos(latitude2) * cos(longitude2 - longitude1) + sin(latitude1) * sin(latitude2);
+	
+	return distance;
+	*/
+
+	// Version 3 => donne des val similaires que v1 mais toujours pas bonnes 
+	float rayon_Terre = 6371;
+	float distance = rayon_Terre * acos(sin(this->latitude) * sin(p->getLatitude()) + cos(this->latitude) * cos(p->getLatitude()) * cos(this->longitude - p->getLongitude()));
+
+	return distance;
 
 }//----- End of distance 
 
