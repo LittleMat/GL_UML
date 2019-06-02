@@ -1,7 +1,7 @@
 ﻿EXENAME=exec
 
 # default compiler flags
-CPPFLAGS=-Wall -Wextra -pedantic -std=c++11
+CPPFLAGS=-Wall -Wextra -pedantic -std=c++17 -lm
 # variable that can be used to add more flags from the command line
 FLAGS=
 

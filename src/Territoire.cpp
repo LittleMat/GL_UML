@@ -12,6 +12,7 @@ e-mail               : guilhem.cerba@insa-lyon.fr, zihang.ye@insa-lyon.fr, linda
 
 //--------------------------------------------------------- System include
 #include <iostream>
+
 using namespace std;
 
 //------------------------------------------------------ Personnal include
@@ -22,56 +23,63 @@ using namespace std;
 //----------------------------------------------------------------- PUBLIC
 
 //----------------------------------------------------- Public methods
-const Point * Territoire::getCentre() const
+const Point * Territoire :: getCentre ( ) const
 // Algorithm : 
 {
 	return centre;
 }//----- End of getCentre 
 
-int Territoire::getRayon()const
+int Territoire :: getRayon ( ) const
 // Algorithm : 
 {
 	return rayon;
 }//----- End of getRayon 
 
-bool Territoire::contient(const Point * p) const
+bool Territoire :: contient ( const Point * p ) const
 // Algorithm : 
 {
-	if (p->distance(centre) <= rayon)
+	if ( p-> distance ( centre ) <= rayon )
+	{
 		return true;
+	}
 	else
+	{
 		return false;
+	}
 
 }//----- End of contient 
 
  //-------------------------------------------- Constructor - destructor
-Territoire::Territoire(Point * c, int r)
+Territoire :: Territoire ( Point * c, int r )
 // Algorithm : 
 {
-#ifdef MAP
-	cout << "Appel au constructeur de <Territoire>" << endl;
-#endif
+	#ifdef MAP
+		cout << "Appel au constructeur de <Territoire>" << endl;
+	#endif
+
 	centre = c;
 	rayon = r;
 }//----- End of Territoire 
 
-Territoire::Territoire()
+Territoire :: Territoire ( )
 // Algorithm : 
 {
-#ifdef MAP
-	cout << "Appel au constructeur par défaut de <Territoire>" << endl;
-#endif
+	#ifdef MAP
+		cout << "Appel au constructeur par défaut de <Territoire>" << endl;
+	#endif
+
 	rayon = 0;
-	centre = new Point();
+	centre = new Point ( );
 }
 
 
-Territoire::~Territoire()
+Territoire :: ~Territoire ( )
 // Algorithm : 
 {
 	#ifdef MAP
 		cout << "Appel au destructeur de <Territoire>" << endl;
 	#endif
+
 	delete centre;
 }//----- End of ~Territoire 
 

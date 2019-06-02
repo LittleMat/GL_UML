@@ -12,12 +12,14 @@ e-mail               : guilhem.cerba@insa-lyon.fr, zihang.ye@insa-lyon.fr, linda
 
 //--------------------------------------------------- Interfaces used
 #include <iostream>
-using namespace std;
 
 #include "Point.h"
 
+using namespace std;
+
 //------------------------------------------------------------------------
 // Goal of the <Territoire> class
+// Territoire représente un territoire de centre centre et de rayon rayon.
 //------------------------------------------------------------------------
 
 
@@ -28,43 +30,21 @@ class Territoire
 public:
 
 	//----------------------------------------------------- Public methods
-	const Point * getCentre() const;
-	// Mode d'emploi :
-	// 
-	// Contrat :
-	//
+	//Retourne le centre
+	const Point * getCentre ( ) const;
 
-	int getRayon() const;
-	// Mode d'emploi :
-	// 
-	// Contrat :
-	//
+	//Retourne le rayon
+	int getRayon ( ) const;
 
-	bool contient(const Point * p) const;
-	// Mode d'emploi :
-	// 
-	// Contrat :
-	//
+	//Retourne vrai si le territoire contient p
+	bool contient ( const Point * p ) const;
 
 	//-------------------------------------------- Constructor - destructor
-	Territoire(Point * c, int r);
-	// Mode d'emploi :
-	// 
-	// Contrat :
-	//
+	Territoire ( Point * c, int r );
 
-	Territoire();
-	// Mode d'emploi :
-	// 
-	// Contrat :
-	//
+	Territoire ( );
 
-	~Territoire();
-	// Mode d'emploi :
-	// 
-	// Contrat :
-	//
-
+	~Territoire ( );
 
 protected:
 	//----------------------------------------------------- Protected attributes

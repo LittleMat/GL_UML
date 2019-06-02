@@ -13,14 +13,15 @@
 
 //--------------------------------------------------- Interfaces used
 #include <iostream>
-using namespace std;
 #include <string>
 #include "Attribut.h"
 #include "Capteur.h"
 
+using namespace std;
 
 //------------------------------------------------------------------------
 // Goal of the <Mesure> class
+// Représente une mesure, avec un attribut, une valeur, un capteur et un timestamp
 //------------------------------------------------------------------------
 
 
@@ -32,40 +33,29 @@ public :
 
 //----------------------------------------------------- Public methods
 
-	// Mode d'emploi :
-	//
-    // Contrat :
-    //
+	//Retourne l'attribut
+	const Attribut * getAttribut ( ) const;
 
-	//Faire le get du timestamp
+	//Retourne la valeur
+	float getValue ( ) const;
 
-	const Attribut * getAttribut() const;
+	//Retourne l'id du capteur de la mesure
+	const std :: string getSensorID ( ) const;
 
-	float getValue() const;
+	//Retourne le capteur
+	const Capteur * getCapteur ( ) const;
 
-	const std::string getSensorID() const;
-
-	const Capteur * getCapteur() const;
-
-	struct tm * getTimestamp() const;
+	//Retourne le timestamp
+	struct tm * getTimestamp ( ) const;
 
 
 //-------------------------------------------- Constructor - destructor
 		
-	Mesure (struct tm * timestamp, Attribut * const attribut, float value, const std ::string sensorID, Capteur * capteur);
-	// Mode d'emploi :
-	//
-	// Contrat :
-	//
+	Mesure ( struct tm * timestamp, Attribut * const attribut, float value, const std :: string sensorID, Capteur * capteur );
 
-	Mesure();
+	Mesure ( );
 
-	~Mesure ();
-	// Mode d'emploi :
-	//
-	// Contrat :
-	//
-
+	~Mesure ( );
 
 
 //----------------------------------------------------- Protected attributes
@@ -74,7 +64,7 @@ protected :
 	struct tm * timestamp;
 	Attribut * attribut;
 	float value;
-	std ::string sensorID;
+	std :: string sensorID;
 	Capteur * capteur;
 
 };

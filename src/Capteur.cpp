@@ -22,42 +22,42 @@ using namespace std;
 //----------------------------------------------------------------- PUBLIC
 
 //----------------------------------------------------- Public methodes
-	const std :: string Capteur :: getSensorID() const
+	const string Capteur :: getSensorID ( ) const
 	{
 		return sensorID;
 	}
 
-	const Point * Capteur :: getPosition() const
+	const Point * Capteur :: getPosition ( ) const
 	{
 		return position;
 	}
 
-	const std :: string Capteur :: getDescription() const
+	const string Capteur :: getDescription ( ) const
 	{
 		return description;
 	}
 
 //-------------------------------------------- Constructors - destructor
 
-Capteur :: Capteur ( const std :: string sensorID, Point * const position, const std :: string description)
+Capteur :: Capteur ( const string sensorID, Point * const position, const string description )
 {
 	#ifdef MAP
 	    cerr << "Constructor of <Capteur>" << endl;
 	#endif
 	
 
-	this->sensorID = sensorID;
-	this->position = position;
-	this->description = description;
+	this -> sensorID = sensorID;
+	this -> position = position;
+	this -> description = description;
 	//Liste de point??
 	
 }//End of constructor
 
-Capteur::Capteur()
+Capteur::Capteur ( )
 {
-	this->sensorID = string ();
-	this->position = nullptr;
-	this->description = string();
+	this -> sensorID = string ( );
+	this -> position = nullptr;
+	this -> description = string ( );
 }
 
 Capteur :: ~Capteur ( )

@@ -13,7 +13,8 @@
 //--------------------------------------------------------- System include
 
 #include <iostream>
-#include<string>
+#include <string>
+
 using namespace std;
 
 //------------------------------------------------------ Personnal include
@@ -26,29 +27,29 @@ using namespace std;
 
 //----------------------------------------------------- Public methodes
 
-const Attribut * Mesure :: getAttribut() const
+const Attribut * Mesure :: getAttribut ( ) const
 {
-	return this->attribut;
+	return this -> attribut;
 }
 
-float Mesure :: getValue() const
+float Mesure :: getValue ( ) const
 {
-	return this->value;
+	return this -> value;
 }
 
-const std::string Mesure :: getSensorID() const
+const std :: string Mesure :: getSensorID ( ) const
 {
-	return this->sensorID;
+	return this -> sensorID;
 }
 
-const Capteur * Mesure :: getCapteur() const
+const Capteur * Mesure :: getCapteur ( ) const
 {
-	return this->capteur;
+	return this -> capteur;
 }
 
-struct tm * Mesure:: getTimestamp() const
+struct tm * Mesure :: getTimestamp ( ) const
 {
-	return this->timestamp;
+	return this -> timestamp;
 }
 
 //-------------------------------------------- Constructors - destructor
@@ -58,29 +59,29 @@ Mesure :: Mesure (struct tm * timestamp, Attribut * const attribut, float value,
 //
 {
 
-#ifdef MAP
-		cout << "Appel au constructeur de <Mesure>" << endl;
-#endif
+	#ifdef MAP
+			cout << "Appel au constructeur de <Mesure>" << endl;
+	#endif
 
-	this->timestamp = timestamp;
-	this->attribut = attribut;
-	this->value = value;
-	this->sensorID = sensorID;
-	this->capteur = capteur;
+	this -> timestamp = timestamp;
+	this -> attribut = attribut;
+	this -> value = value;
+	this -> sensorID = sensorID;
+	this -> capteur = capteur;
 	
 }//-----End of Mesure
 
-Mesure::Mesure()
+Mesure::Mesure ( )
 {
-	this->timestamp = NULL;
-	this->attribut = NULL;
-	this->value = NULL;
-	this->sensorID = string ();
-	this->capteur = NULL;
+	this -> timestamp = NULL;
+	this -> attribut = NULL;
+	this -> value = NULL;
+	this -> sensorID = string ( );
+	this -> capteur = NULL;
 	
 }
 
-Mesure:: ~Mesure ()
+Mesure:: ~Mesure ( )
 // Algorithm :
 //
 {
