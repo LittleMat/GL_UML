@@ -22,7 +22,7 @@ e-mail               : guilhem.cerba@insa-lyon.fr, zihang.ye@insa-lyon.fr, linda
 #include <utility> 
 #include <string>
 #include <ctime>
-#include "Math.h"
+#include <cmath>
 using namespace std;
 
 
