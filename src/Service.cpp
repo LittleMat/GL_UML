@@ -430,7 +430,7 @@ tuple<int, list<pair<string, float>>, float>  Service::calculerQualite(paramFilt
 	tuple<int, list<pair<string, float>>, float>  resultat_final = make_tuple(indiceATMO, concentrations, fiabiliteMax);
 
 	
-	return resultat_final; //NE PAS OUBLIER DE DELETE DANS LE CLI
+	return resultat_final;
 
 }//----- End of calculerQualite
 
@@ -664,6 +664,7 @@ bool Service::filtrageCapteur(Capteur & capteur, Territoire & territoire , strin
 		// Si oui : on retourne true
 		// Sinon : on retourne false
 {
+	cout << "ici" << endl;
 	bool capteurAPrendre = false;
 	if (capteurId.empty())
 	{
@@ -701,7 +702,8 @@ bool Service::filtrageCapteur(Capteur & capteur, Territoire & territoire , strin
 		
 	}
 	else
-	{
+	{ 
+		cout << "trouve = " << capteurId << endl;
 		capteurAPrendre = true;
 	}
 

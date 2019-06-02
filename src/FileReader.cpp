@@ -227,7 +227,7 @@ unordered_map < string, Capteur * > FileReader :: lireCapteurs ( paramFiltrage &
 							if ( ! filtrageMesure ( * m, parametres.dateSup, parametres.dateInf ) )
 							{
 								delete m;
-								m = nullptr
+								m = nullptr;
 							}
 						}
 					}
