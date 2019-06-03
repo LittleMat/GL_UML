@@ -25,23 +25,28 @@ using namespace std;
 
 bool Service :: surveillerComportementCapteur ( string capteurID, paramFiltrage & parametres )
 {
+	cout << "Appel surveillerComportementCapteur" << endl;
 	bool bonEtat = true;
 	bool finLecture = false;
+	fileReader->DebutMesure();
 	while (finLecture == false)
 	{
 		// On sélectionne les mesures qui satisfont les critères de sélection temporelles
 		const Mesure * m = fileReader->prochaineMesure( parametres, filtrageMesure );
-
+		cout << "lecture de mesure " << endl;
 		//Si m == nullptr, alors il n'y a plus rien à lire 
 		if ( m == nullptr )
 		{
 			finLecture = true; 
+			cout << "fin de la lecture " << endl;
 			break;
 		}
+		cout << " mesure lue :" << m->getValue() << endl;
 		
 		// On regarde si la mesure sélectionnée est concerne le capteur à surveiller
 		if ( capteurID.compare(m->getCapteur () -> getSensorID () ) == 0 )
 		{
+			cout << " mesure du capteur lue :" << m->getValue() <<  endl;
 
 			if ( m -> getValue () == NULL || m -> getValue () < 0)
 			{
@@ -730,6 +735,8 @@ bool Service::filtrageMesure(Mesure & mesure, struct tm & dateInf, struct tm & d
 // Si dateSup == null && dateInf == null (tout l'historique 
 	// on retourne true
 {
+
+	cout << "Filtrage mesure appelee" << endl;
 	bool mesureAPrendre = false;
 	time_t timeMes = mktime(mesure.getTimestamp()); 
 	

@@ -161,6 +161,7 @@ unordered_map < string, Capteur * > FileReader :: lireCapteurs ( paramFiltrage &
 
 	Mesure * FileReader :: prochaineMesure ( paramFiltrage& parametres, bool ( * filtrageMesure ) ( Mesure &, struct tm &, struct tm & ) )
 	{
+		cout << "Appel prochaineMesure" << endl;
 		Mesure * m = nullptr;
 
 		string line;
@@ -171,8 +172,10 @@ unordered_map < string, Capteur * > FileReader :: lireCapteurs ( paramFiltrage &
 		//Premier test si le fichier est lisible
 		if ( fichierMesureEnCours.is_open ( ) )
 		{
+			cout << "if 1" << endl;
 			if ( fichierLisible ( ) )
 			{
+				cout << "if 2" << endl;
 				do
 				{
 					continuer = true;
@@ -181,6 +184,7 @@ unordered_map < string, Capteur * > FileReader :: lireCapteurs ( paramFiltrage &
 
 					if( regex_match ( line, reg_mesure ) )
 					{
+						cout << "if 3" << endl;
 						//Extraction des informations de la ligne
 						regex_search ( line, matches, reg_mesure );
 						string timestamp = matches [ 1 ].str ( );
@@ -194,6 +198,7 @@ unordered_map < string, Capteur * > FileReader :: lireCapteurs ( paramFiltrage &
 						//Test et extraction de la date
 						if ( regex_match ( timestamp, reg_date ) )
 						{
+							cout << "if 4" << endl;
 							struct tm * time = new tm ( );
 							time->tm_year = stoi ( time_match [ 1 ].str ( ) );
 							time->tm_mon = stoi ( time_match [ 2 ].str ( ) );
@@ -220,6 +225,7 @@ unordered_map < string, Capteur * > FileReader :: lireCapteurs ( paramFiltrage &
 
 							if( this -> map_attributs.count ( attributeID ) == 1 && this -> map_capteurs.count ( sensorID ) == 1 )
 							{
+								cout << "if 5 " << endl;
 								//Le sensorID et l'attributID existent et sont dans les map
 								m = new Mesure ( time, this -> map_attributs [ attributeID ], value, sensorID, this -> map_capteurs [ sensorID ] );
 
@@ -228,12 +234,12 @@ unordered_map < string, Capteur * > FileReader :: lireCapteurs ( paramFiltrage &
 								//Filtre la mesure avec les paramètres de l'utilisateur
 								if ( ! filtrageMesure ( * m, parametres.dateSup, parametres.dateInf ) )
 								{
-									//cout << "Filtrage ne passe pas " << endl;
+									cout << "Filtrage ne passe pas " << endl;
 									delete m;
 								}
 								else
 								{
-									//cout << "Mesure good : " << m->getValue() << endl;
+									cout << "Mesure good : " << m->getValue() << endl;
 									continuer = false;
 								}
 							}
@@ -244,6 +250,7 @@ unordered_map < string, Capteur * > FileReader :: lireCapteurs ( paramFiltrage &
 					//Plus de mesure à lire
 					if( ! fichierLisible ( ) )
 					{
+						cout << "fichier illisible" << endl;
 						continuer = false;
 					}
 				} while ( continuer );
@@ -332,7 +339,11 @@ FileReader :: FileReader ( const string & nomFichierCapteurs, const string & nom
 	//Ouvre le premier fichier de mesure
 	if ( this -> nomFichiersMesures.size ( ) > 0 )
 	{
+		cout << "ouverture de " << this->nomFichiersMesures[idFichierMesures] << endl;
 		this -> fichierMesureEnCours.open ( this -> nomFichiersMesures [ idFichierMesures ] );
+		//cout << fichierMesureEnCours.fail() << endl;
+		
+		cout << "ouverture fichier : " << fichierMesureEnCours.is_open() << endl;
 	}
 	else
 	{
