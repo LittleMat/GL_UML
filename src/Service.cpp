@@ -655,7 +655,7 @@ bool Service::filtrageCapteur(Capteur & capteur, Territoire & territoire , strin
 		// Si oui : on retourne true
 		// Sinon : on retourne false
 {
-	cout << " dans filtrageCpateur" << endl;
+	
 	bool capteurAPrendre = false;
 
 	if (capteurId.empty())
@@ -717,7 +717,6 @@ bool Service::filtrageMesure(Mesure & mesure, struct tm & dateInf, struct tm & d
 // Si dateSup == null && dateInf == null (tout l'historique 
 	// on retourne true
 {
-	cout << " dans filtrageMesure" << endl;
 	bool mesureAPrendre = false;
 	time_t timeMes = mktime(mesure.getTimestamp()); 
 	
