@@ -290,6 +290,7 @@ FileReader :: FileReader ( const string & nomFichierCapteurs, const string & nom
 
 	string line;
 
+	/*
 	//Capteurs
 	ifstream testCapteurs;
 	testCapteurs.open( this -> nomFichierCapteurs );
@@ -322,7 +323,8 @@ FileReader :: FileReader ( const string & nomFichierCapteurs, const string & nom
 		}
 
 		testMesures.close();
-	}	
+	}
+	*/
 
 	idFichierMesures = 0;
 

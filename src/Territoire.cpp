@@ -61,8 +61,8 @@ Territoire :: Territoire ( Point * c, int r )
 
 	if (c == nullptr || r < 0)
 		throw "Illegal Argument Exception";
-	//centre = c;
-	c = new Point(c->getLongitude(), c->getLatitude());
+	centre = c;
+	//c = new Point(c->getLongitude(), c->getLatitude());
 	rayon = r;
 }//----- End of Territoire 
 

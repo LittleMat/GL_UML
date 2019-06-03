@@ -16,7 +16,7 @@ e-mail               : guilhem.cerba@insa-lyon.fr, zihang.ye@insa-lyon.fr, linda
 using namespace std;
 
 //------------------------------------------------------ Personnal include
-#include "Service.h"
+#include "service.h"
 //------------------------------------------------------------- Constantes
 
 //----------------------------------------------------------------- PUBLIC
@@ -67,14 +67,14 @@ list <Capteur> * Service :: surveillerComportementCapteurs (list <string> & capt
 	list <string> liste_id_capteursDefectueux;
 	for (list <string> :: iterator i = capteursID.begin(); i != capteursID.end(); i++)
 	{
-		paramFiltrage param;
-		Territoire t = Territoire();
+		paramFiltrage param { tm() ,tm() , Territoire(new Point(0.0, 0.0), 0)  , *i };
+		/*Territoire t = Territoire(new Point(0.0, 0.0), 0);
 		param.capteurId = "";
 		param.dateInf = tm();
 		param.dateSup = tm();
 		param.territoire = t;
 
-		param.capteurId = *i;
+		param.capteurId = *i;*/
 		if (surveillerComportementCapteur(*i, param) == false)
 		{
 			liste_id_capteursDefectueux.push_back(*i);
@@ -116,12 +116,12 @@ list <pair < Capteur, Capteur > > * Service :: obtenirCapteursSimilaires( struct
 // Algorithm :
 {
 	//On récupère tous les capteurs
-	paramFiltrage param_capteurs;
-	param_capteurs.capteurId = "";
+	paramFiltrage param_capteurs{ tm() ,tm() , Territoire(new Point(0.0, 0.0), 0), "" };
+	/*param_capteurs.capteurId = "";
 	param_capteurs.dateInf = tm();
 	param_capteurs.dateSup = tm();
-	Territoire t = Territoire();
-	param_capteurs.territoire = t;
+	Territoire t = Territoire(Territoire(new Point(0.0, 0.0), 0));
+	param_capteurs.territoire = t;*/
 	unordered_map < std::string, Capteur * > map_capteurs = fileReader->lireCapteurs(param_capteurs, filtrageCapteur);
 
 	//On récupère tous les attributs
@@ -130,12 +130,12 @@ list <pair < Capteur, Capteur > > * Service :: obtenirCapteursSimilaires( struct
 	unordered_map< string, unordered_map< string, vector<float> > > capteurs_mesures;
 	//unordered_map<sensorID, unordered_map<AttributId, vector<value> > > capteurs_mesures;
 
-	paramFiltrage parametres;
-	parametres.capteurId = "";
+	paramFiltrage parametres { Date ,tm() , Territoire(new Point(0.0, 0.0), 0)  , "" };
+	/*parametres.capteurId = "";
 	parametres.dateInf = Date;
 	parametres.dateSup = tm();
-	Territoire t2 = Territoire();
-	parametres.territoire = t2;
+	Territoire t2 = Territoire(Territoire(new Point(0.0, 0.0), 0));
+	parametres.territoire = t2;*/
 
 	// On classe les données pour faciliter le traitement
 	for (int i = 0; i < nbMesures; i++)

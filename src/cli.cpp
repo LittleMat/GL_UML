@@ -144,7 +144,10 @@ int menu ( int argc , char ** argv)
 	{
 		args.push_back ( string ( argv[ i ] ) );
 	}
+	cout << "fichier capteur " << string(argv[1]) << endl;
 	Service *service = new Service ( string ( argv[ 1 ] ) , string ( argv[ 2 ] ) , args );
+
+
 	string lecture = "-1";
 	string longitude, latitude;;
 	string date1, date2,heure;
@@ -410,13 +413,13 @@ int menu ( int argc , char ** argv)
 				//cout << "liste des id : " << list_captorID << endl;
 				
 				
-				paramFiltrage p;
-				p.capteurId = "";
+				paramFiltrage p { tm() ,tm() , Territoire(new Point(0.0, 0.0), 0)  ,"" };
+				/*p.capteurId = "";
 				p.dateInf = tm ();
 				p.dateSup = tm();
 				Point * point = new Point(0.0, 0.0);
 				//Territoire t (point, 0);
-				p.territoire = Territoire (point, 0);;
+				p.territoire = Territoire (point, 0);*/
 				cout << "latitude " << p.territoire.getCentre()->getLatitude() << endl;
 				cout << "longitude " << p.territoire.getCentre()->getLongitude() << endl;
 
