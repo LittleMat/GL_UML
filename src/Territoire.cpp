@@ -38,10 +38,10 @@ int Territoire :: getRayon ( ) const
 bool Territoire :: contient ( const Point * p ) const
 // Algorithm : 
 {
+	if (p == nullptr)
+		throw "Illegal Argument Exception";
 	if ( p-> distance ( centre ) <= this->rayon )
 	{
-		cout << "distance dans territoire = " << p->distance(centre) <<endl;
-		cout << "rayon = " << this->rayon << endl;
 		return true;
 	}
 	else
@@ -59,6 +59,8 @@ Territoire :: Territoire ( Point * c, int r )
 		cout << "Appel au constructeur de <Territoire>" << endl;
 	#endif
 
+	if (c == nullptr || r < 0)
+		throw "Illegal Argument Exception";
 	centre = c;
 	rayon = r;
 }//----- End of Territoire 
@@ -67,7 +69,7 @@ Territoire :: Territoire ( )
 // Algorithm : 
 {
 	#ifdef MAP
-		cout << "Appel au constructeur par défaut de <Territoire>" << endl;
+		cout << "Appel au constructeur par dï¿½faut de <Territoire>" << endl;
 	#endif
 
 	rayon = 0;

@@ -80,8 +80,7 @@ namespace {
 
     TEST(TerritoireUnitTest, ConstructorIllegalArgument) {
         EXPECT_ANY_THROW(Territoire t0(new Point(0, 0), -10));
-        EXPECT_ANY_THROW(Territoire t1(new Point(0, 0), 0));
-        EXPECT_ANY_THROW(Territoire t2(nullptr, 10));
+        EXPECT_ANY_THROW(Territoire t1(nullptr, 10));
     }
     TEST(TerritoireUnitTest, Constructor) {
         Territoire t0(new Point(0.14, 0.59), 125);
