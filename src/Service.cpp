@@ -65,12 +65,36 @@ bool Service :: surveillerComportementCapteur ( string capteurID, paramFiltrage 
 list <string> * Service :: surveillerComportementCapteurs (list <string> & capteursID, paramFiltrage & parametres)
 {
 	fileReader->lireAttributs();
-	fileReader->lireCapteurs(parametres, filtrageCapteur);
+	unordered_map < string, Capteur * > map_tous_les_capteurs = fileReader->lireCapteurs(parametres, filtrageCapteur);
+	if (capteursID.front().compare("*") == 0)
+	{
+		capteursID.clear();
+		for (auto it : map_tous_les_capteurs)
+		{
+			capteursID.push_back(it.first);
+		}
+	}
+
 	//list <Capteur> * liste_capteursDefectueux = new list <Capteur>;
 
 
 	//liste d'id de capteurs défectueux
 	list <string> * liste_id_capteursDefectueux = new list<string>;
+	cout << endl;
+	cout << "contenu liste_id_capteursDefectueux après init" << endl;
+	cout << endl;
+	if (liste_id_capteursDefectueux->empty())
+	{
+
+		for (list<string> ::iterator ii = liste_id_capteursDefectueux->begin(); ii != liste_id_capteursDefectueux->end(); ii++)
+		{
+			cout << *ii << endl;
+		}
+	}
+	else
+	{
+		cout << "liste vide " << endl;
+	}
 	for (list <string> :: iterator i = capteursID.begin(); i != capteursID.end(); i++)
 	{
 		paramFiltrage param { tm() ,tm() , Territoire(new Point(0.0, 0.0), 0)  , *i };
