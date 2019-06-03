@@ -28,18 +28,20 @@ using namespace std;
 
 
 
-bool is_number(string s) {
+bool is_number ( string s )
+{
 
-	regex e("[-\\+]?([0-9]*\\\.[0-9]+|[0-9]+)");
+	regex e ( "[-\\+]?([0-9]*\\\.[0-9]+|[0-9]+)" );
 
-	return regex_match(s, e);
+	return regex_match ( s , e );
 	
 }
 
-bool is_date(string s) {
+bool is_date ( string s )
+{
 
 	int jour, mois, annee;
-	regex e("([0-3][0-9])/([0-1][0-9])/([0-9][0-9][0-9][0-9])");
+	regex e ( "([0-3][0-9])/([0-1][0-9])/([0-9][0-9][0-9][0-9])" );
 	std::smatch matches;
 	/*
 	cout << "rapport REGEX " << endl;
@@ -55,11 +57,11 @@ bool is_date(string s) {
 	}*/
 
 
-	regex_search(s, matches, e);
-	if (regex_match(s, e)) {
-		jour = stoi(matches[1].str());
-		mois = stoi(matches[2].str());
-		annee = stoi(matches[3].str());
+	regex_search ( s , matches , e );
+	if ( regex_match ( s , e ) ) {
+		jour = stoi ( matches[1].str ( ) );
+		mois = stoi( matches[2].str ( ) );
+		annee = stoi ( matches[3].str ( ) );
 
 		return jour <= 31 && mois <= 12 && jour > 0 && mois > 0 && annee > 0;
 
@@ -69,10 +71,11 @@ bool is_date(string s) {
 	}
 }
 
-bool is_heure(string s) {
+bool is_heure ( string s )
+{
 
 	int heures, minutes;
-	regex e("([0-2][0-9]):([0-9][0-9])");
+	regex e ( "([0-2][0-9]):([0-9][0-9])" );
 	std::smatch matches;
 	/*
 	cout << "rapport REGEX " << endl;
@@ -88,10 +91,10 @@ bool is_heure(string s) {
 	}*/
 
 
-	regex_search(s, matches, e);
-	if (regex_match(s, e)) {
-		heures = stoi(matches[1].str());
-		minutes = stoi(matches[2].str());
+	regex_search ( s , matches , e );
+	if ( regex_match ( s , e ) ) {
+		heures = stoi ( matches[ 1 ].str ( ) );
+		minutes = stoi ( matches[ 2 ].str ( ) );
 
 
 		return heures <= 23 && minutes < 60;
@@ -102,34 +105,36 @@ bool is_heure(string s) {
 	}
 }
 
-bool check_dates(string sA, string sB) {
+bool check_dates ( string sA , string sB ) {
 
 //Post condition : sA est plus ancienne que sB
 	int jourA, moisA, anneeA;
 	int jourB, moisB, anneeB;
-	regex e("([0-3][0-9])/([0-1][0-9])/([0-9][0-9][0-9][0-9])");
+	regex e ( "([0-3][0-9])/([0-1][0-9])/([0-9][0-9][0-9][0-9])" );
 	std::smatch matchesA;
 	std::smatch matchesB;
-	regex_search(sA, matchesA, e);
-	regex_search(sB, matchesB, e);
-	if (regex_match(sA, e) && regex_match(sB, e)) {
-		jourA = stoi(matchesA[1].str());
-		moisA = stoi(matchesA[2].str());
-		anneeA = stoi(matchesA[3].str());
+	regex_search ( sA , matchesA , e );
+	regex_search ( sB , matchesB , e );
+	if ( regex_match ( sA , e ) && regex_match ( sB , e ) ) {
+		jourA = stoi ( matchesA[ 1 ].str ( ) );
+		moisA = stoi ( matchesA[ 2 ].str ( ) );
+		anneeA = stoi ( matchesA[ 3 ].str ( ) );
 
-		jourB = stoi(matchesB[1].str());
-		moisB = stoi(matchesB[2].str());
-		anneeB = stoi(matchesB[3].str());
+		jourB = stoi ( matchesB[ 1 ].str ( ) );
+		moisB = stoi ( matchesB[ 2 ].str ( ) );
+		anneeB = stoi ( matchesB[ 3 ].str ( ) );
 
+		if ( anneeB >= anneeA ) return true;
+		if  (moisB >= moisA ) return true;
+		if ( jourB <= jourA ) return false;
+		return true;
 
-		return ( (anneeB >= anneeA     ) && ( moisB >= moisA  )  && ( jourB > jourA )  );
+		//return ( ( anneeB >= anneeA ) && ( moisB >= moisA ) && ( jourB > jourA ) );
 
 	}
 	else {
 		return false;
 	}
-
-
 	return false;
 }
 
@@ -144,7 +149,7 @@ int menu ( )
 	int index;
 	bool flag = true;
 
-	while (std::stoi(lecture) != 4) {
+	while ( std::stoi ( lecture ) != 4 ) {
 
 		cout << "Menu Principal" << endl;
 		cout << "[1] Obtenir la qualite moyenne de l air" << endl;
@@ -153,13 +158,13 @@ int menu ( )
 		cout << "[4] Quitter application" << endl;
 		do {
 			cin >> lecture;
-			if(is_number(lecture))index = std::stoi(lecture);
+			if ( is_number ( lecture ) ) { index = std::stoi ( lecture ); }
 
-		} while (!is_number(lecture) || index != 1 && index != 2 && index != 3 && index != 4);
+		} while ( ! is_number ( lecture ) || index != 1 && index != 2 && index != 3 && index != 4 );
 		//cout << "Option[" << lecture << "] selectionnee " << endl;
 		cout <<  endl;
 
-		switch (index)
+		switch ( index )
 		{
 
 			case 1 :
@@ -175,26 +180,29 @@ int menu ( )
 				do {
 					
 					cin >> type_zone;
-					if(is_number(lecture))valeur = std::stoi(type_zone);
+					if( is_number ( lecture ) ) valeur = std::stoi ( type_zone );
 
-				} while (!is_number(type_zone) || valeur != 1 && valeur != 2 && valeur != 3 && valeur != 4 && valeur != 5);
+				} while ( ! is_number ( type_zone ) || valeur != 1 && valeur != 2 && valeur != 3 && valeur != 4 && valeur != 5 );
 				cout << "Option[" << type_zone << "] selectionnee " << endl;
 				cout << endl;
-				if (valeur == 5)break;
-				switch (valeur) {
+				if ( valeur == 5 ) { break; }
+				switch ( valeur )
+				{
 
 					case 1:
 						
 						cout << "Rentrez une latitude et une longitude" << endl;
 						flag = false;
 						
-						do {
-							if(flag)cout << "Donnees invalides" << endl;
+						do 
+						{
+							if ( flag ) { cout << "Donnees invalides" << endl; }
 							cin >> longitude >> latitude;
 							
-							flag = (!is_number(longitude) || !is_number(latitude) || abs(stoi(longitude)) > 90 || abs(stoi(latitude)) > 90);
-						} while (flag);
-						cout << "Point selectionne : "<<longitude << "," << latitude  << endl;
+							flag = ( ! is_number(longitude) || ! is_number(latitude) || abs ( stoi( longitude ) ) > 90 || abs ( stoi ( latitude ) ) > 90 );
+						}
+						while ( flag );
+						cout << "Point selectionne : "<< longitude << "," << latitude  << endl;
 						break;
 
 					case 2:
@@ -202,23 +210,27 @@ int menu ( )
 						cout << "Rentrez une latitude et une longitude" << endl;
 						flag = false;
 
-						do {
+						do 
+						{
 
-							if (flag)cout << "Donnees invalides" << endl;
+							if ( flag ) { cout << "Donnees invalides" << endl; }
 							cin >> longitude >> latitude;
-							flag = (!is_number(longitude) || !is_number(latitude) || abs(stoi(longitude)) > 90 || abs(stoi(latitude)) > 90);
+							flag = ( ! is_number ( longitude ) || ! is_number ( latitude ) || abs ( stoi ( longitude ) ) > 90 || abs ( stoi ( latitude ) ) > 90 );
 
-						} while (flag);
+						}
+						while ( flag );
 
 						cout << "Point selectionne : " << longitude << "," << latitude << endl;
 						cout << "Rentrez un rayon" << endl;
 						flag = false;
-						do {
+						do 
+						{
 
-							if (flag)cout << "Donnees invalides" << endl;
+							if ( flag ) { cout << "Donnees invalides" << endl; }
 							cin >> rayon;
-							flag = (!is_number(rayon) || stoi(rayon) < 0); 
-						} while (flag);
+							flag = ( ! is_number ( rayon ) || stoi ( rayon ) < 0 ); 
+						}
+						while ( flag );
 						break;
 
 					case 3:
@@ -231,12 +243,14 @@ int menu ( )
 						flag = false;
 
 
-						do {
+						do 
+						{
 
-							if (flag)cout << "Rentrez un id non vide" << endl;
+							if ( flag ) cout << "Rentrez un id non vide" << endl;
 							cin >> captorId;
-							flag = (captorId.empty());
-						} while (flag);
+							flag = ( captorId.empty ( ) );
+						} 
+						while ( flag );
 
 						break;
 
@@ -248,17 +262,19 @@ int menu ( )
 				cout << "[*]Sur l integralite des mesures  * " << endl;
 				
 				flag = false;
-				do {
-					if(flag)cout << "entree invalide" << endl;
+				do 
+				{
+					if ( flag ) { cout << "entree invalide" << endl; }
 					cin >> type_date;
-					flag = ( (!is_number(type_date) && type_date != "*") || (is_number(type_date) && std::stoi(type_date) != 1 && std::stoi(type_date) != 2) );
+					flag = ( ( ! is_number ( type_date ) && type_date != "*" ) || ( is_number ( type_date ) && std::stoi ( type_date ) != 1 && std::stoi ( type_date ) != 2 )  );
 
-				} while (flag  );
-				cout <<"type date vaut " <<type_date << endl;
-				if (type_date == "*")valeur = 0;
-				else valeur = std::stoi(type_date);
+				}
+				while ( flag );
+				cout << "[debug] " << "type date vaut " << type_date << endl;
+				if ( type_date == "*" ) { valeur = 0; }
+				else { valeur = std::stoi ( type_date ); }
 
-				switch (valeur) 
+				switch ( valeur ) 
 				{
 
 				case 0:
@@ -272,14 +288,14 @@ int menu ( )
 
 					do {
 
-						if (flag)cout << "date invalide" << endl;
+						if ( flag ) { cout << "date invalide" << endl; }
 						cin >> date1 ;
 
-						flag = (!is_date(date1) );
-					} while (flag);
+						flag = ( ! is_date ( date1 ) );
+					} 
+					while ( flag );
 					cout << "date selectionnee : " << date1 << endl;
 					cout << endl;
-
 					break;
 
 				case 2:
@@ -287,15 +303,16 @@ int menu ( )
 					cout << "Rentrez deux dates au format : JJ/MM/AAAA" << endl;
 					flag = false;
 
+					do 
+					{
 
-					do {
-
-						if (flag)cout << "date invalide" << endl;
+						if ( flag ) cout << "date invalide" << endl;
 						cin >> date1 >> date2;
 
-						flag = (!is_date(date1) || !is_date(date2));
-					} while (flag);
-					cout << "date selectionnee : " << date1 << " " << date2 << endl;
+						flag = ( ! is_date ( date1 ) || ! is_date ( date2 ) || ! check_dates ( date1 , date2 ) );
+					}
+					while ( flag );
+					cout << "dates selectionnees : " << date1 << " " << date2 << endl;
 					cout << endl;
 
 					break;
@@ -311,35 +328,40 @@ int menu ( )
 
 				do {
 
-					if (flag)cout << "Rentrez un id non vide" << endl;
+					if ( flag ) { cout << "Rentrez un id non vide" << endl; }
 					cin >> captorId;
-					flag = (captorId.empty());
-				} while (flag);
+					flag = (captorId.empty ( ) );
+				}
+				while ( flag );
 
 				cout << "Rentrez une date de depart au format : JJ/MM/AAAA HH:MM" << endl;
 				cout << "exemple : 02/06/1996 16:30" << endl;
 				flag = false;
 
 
-				do {
+				do
+				{
 
-					if (flag)cout << "date invalide" << endl;
+					if ( flag ) cout << "date invalide" << endl;
 					cin >> date1 >> heure;
 
-					flag = (!is_date(date1) || !is_heure(heure));
-				} while (flag);
+					flag = ( ! is_date ( date1 ) || ! is_heure ( heure ) );
+				} 
+				while ( flag );
 				cout << "date selectionnee : " << date1 << " " << heure << endl;
 
 
 				cout << "Rentrez le nombre de mesures pour la comparaison" << endl;
 				flag = false;
-				do {
+				do 
+				{
 
-					if (flag)cout << "entree invalide" << endl;
+					if ( flag ) cout << "entree invalide" << endl;
 					cin >> nb_mesures;
 
-					flag = (!is_number(nb_mesures) ||stoi( nb_mesures) <= 0 || (std::floor(stof(nb_mesures)) != stof( nb_mesures)) );
-				} while (flag);
+					flag = ( ! is_number ( nb_mesures ) || stoi ( nb_mesures ) <= 0 || ( std::floor ( stof ( nb_mesures ) ) != stof ( nb_mesures ) ) );
+				} 
+				while ( flag );
 				cout << "nombre de mesures demandees : " << nb_mesures << endl;
 				cout << endl;
 				break;
@@ -352,25 +374,28 @@ int menu ( )
 				list_captorID = "";
 				captorId = "";
 				flag = false;
-				do {
-					do {
+				do 
+				{
+					do 
+					{
 
-						if (flag)cout << "Rentrez un id non vide" << endl;
+						if ( flag ) { cout << "Rentrez un id non vide" << endl; }
 						cin >> captorId;
-						flag = (captorId.empty());
-					} while (flag);
-					if (captorId != "-1") {
-						if (!list_captorID.empty())list_captorID.append(" ");
-						list_captorID.append(captorId);
+						flag = (captorId.empty ( ) );
+					}
+					while ( flag );
+					if ( captorId != "-1") 
+					{
+						if ( ! list_captorID.empty ( ) ) { list_captorID.append ( " " ); }
+						list_captorID.append ( captorId );
 					}
 					
-
-				} while (captorId != "*" && captorId != "-1");
-				if (captorId == "*")list_captorID = "*";
+					
+				} 
+				while ( captorId != "*" && captorId != "-1" );
+				if ( captorId == "*" ) { list_captorID = "*"; }
 				cout << "liste des id : " << list_captorID << endl;
 				cout << endl;
-				
-
 				break;
 		}
 	}
