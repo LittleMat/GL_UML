@@ -1,3 +1,4 @@
+#include <limits>
 using namespace std;
 #include "gtest/gtest.h"
 #include "Point.h"
@@ -287,8 +288,6 @@ namespace {
 
         EXPECT_FALSE(Service::filtrageCapteur(capteurOrigin, point, "sensorId"));
         EXPECT_FALSE(Service::filtrageCapteur(capteurOrigin, circle, "sensorId"));
-        EXPECT_FALSE(Service::filtrageCapteur(capteurOrigin, point, "sensorId"));
-        EXPECT_FALSE(Service::filtrageCapteur(capteurOrigin, circle, "sensorId"));
         EXPECT_FALSE(Service::filtrageCapteur(capteurParis, point, "meaningless"));
         EXPECT_FALSE(Service::filtrageCapteur(capteurParis, circle, "meaningless"));
     }
@@ -298,5 +297,77 @@ namespace {
         struct tm *today = localtime(&now);
         EXPECT_TRUE(Service::dateNull(empty));
         EXPECT_FALSE(Service::dateNull(*today));
+    }
+    TEST(ServiceUnitTest, PlusOuMoins) {
+        EXPECT_TRUE(Service::plusOuMoins(1, 1, 0));
+        EXPECT_TRUE(Service::plusOuMoins(-10, 10, 20));
+        EXPECT_TRUE(Service::plusOuMoins(10, -10, 20));
+        EXPECT_TRUE(Service::plusOuMoins(1.000001, 1.000002, 0.00001));
+        EXPECT_FALSE(Service::plusOuMoins(1, 10, 0));
+        EXPECT_FALSE(Service::plusOuMoins(-10, 10, 5));
+        EXPECT_FALSE(Service::plusOuMoins(10, -10, 5));
+        EXPECT_FALSE(Service::plusOuMoins(-FLT_MAX, FLT_MAX, 100));
+        EXPECT_FALSE(Service::plusOuMoins(FLT_MAX, -FLT_MAX, 100));
+    }
+    TEST(ServiceUnitTest, SurveillerComportementCapteur) {
+        list<string> listS;
+        listS.push_back("resources/ServiceTestData.csv");
+        FileReader reader("resources/Sensor10.csv", "resources/AttributeType.csv", listS);
+        Service service(&reader);
+        paramFiltrage passAll;
+        EXPECT_TRUE(service.surveillerComportementCapteur("Sensor0", passAll));
+        EXPECT_TRUE(service.surveillerComportementCapteur("Sensor1", passAll));
+        EXPECT_FALSE(service.surveillerComportementCapteur("Sensor2", passAll));
+        EXPECT_FALSE(service.surveillerComportementCapteur("Sensor3", passAll));
+    }
+    TEST(ServiceUnitTest, SurveillerComportementCapteurs) {
+        list<string> listS;
+        listS.push_back("resources/ServiceTestData.csv");
+        FileReader reader("resources/Sensor10.csv", "resources/AttributeType.csv", listS);
+        Service service(&reader);
+        paramFiltrage passAll;
+        list<string> capteurs;
+        capteurs.push_back("Sensor0");
+        capteurs.push_back("Sensor1");
+        capteurs.push_back("Sensor2");
+        capteurs.push_back("Sensor3");
+        capteurs.push_back("Sensor4");
+        EXPECT_NO_THROW(service.surveillerComportementCapteurs(capteurs, passAll));
+        list<Capteur>* listCapteur = service.surveillerComportementCapteurs(capteurs, passAll);
+        EXPECT_TRUE(find_if(listCapteur->begin(), listCapteur->end(), [](Capteur capteur)-> bool {return capteur.getSensorID() == "Sensor0";}) == listCapteur->end());
+        EXPECT_TRUE(find_if(listCapteur->begin(), listCapteur->end(), [](Capteur capteur)-> bool {return capteur.getSensorID() == "Sensor1";}) == listCapteur->end());
+        EXPECT_TRUE(find_if(listCapteur->begin(), listCapteur->end(), [](Capteur capteur)-> bool {return capteur.getSensorID() == "Sensor2";}) != listCapteur->end());
+        EXPECT_TRUE(find_if(listCapteur->begin(), listCapteur->end(), [](Capteur capteur)-> bool {return capteur.getSensorID() == "Sensor3";}) != listCapteur->end());
+    }
+    TEST(ServiceUnitTest, ObtenirCapteursSimilaires) {
+        list<string> listS;
+        listS.push_back("resources/ServiceTestData.csv");
+        FileReader reader("resources/Sensor10.csv", "resources/AttributeType.csv", listS);
+        Service service(&reader);
+        struct tm time;
+        time.tm_year = 117;
+        time.tm_yday = 1;
+        time.tm_mon = 0;
+        list<pair<Capteur, Capteur>> * similar = service.obtenirCapteursSimilaires(time, 2);
+        ASSERT_TRUE(similar->size() == 2);
+        if (similar->front().first.getSensorID() == "Sensor0") {
+            EXPECT_EQ("Sensor1", similar->front().second.getSensorID());
+        }
+        if (similar->front().first.getSensorID() == "Sensor1") {
+            EXPECT_EQ("Sensor0", similar->front().second.getSensorID());
+        }
+        similar->pop_front();
+        if (similar->front().first.getSensorID() == "Sensor0") {
+            EXPECT_EQ("Sensor1", similar->front().second.getSensorID());
+        }
+        if (similar->front().first.getSensorID() == "Sensor1") {
+            EXPECT_EQ("Sensor0", similar->front().second.getSensorID());
+        }
+    }
+    TEST(ServiceUnitTest, CalculerQualite) {
+        list<string> listS;
+        listS.push_back("resources/ServiceTestData.csv");
+        FileReader reader("resources/Sensor10.csv", "resources/AttributeType.csv", listS);
+        Service service(&reader);
     }
 } // namespace
