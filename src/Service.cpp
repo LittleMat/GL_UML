@@ -23,24 +23,24 @@ using namespace std;
 
 //----------------------------------------------------- Public methods
 
-bool Service :: surveillerComportementCapteur (string capteurID, paramFiltrage & parametres)
+bool Service :: surveillerComportementCapteur ( string capteurID, paramFiltrage & parametres )
 {
 	bool bonEtat = true;
 	bool finLecture = false;
 	while (finLecture == false)
 	{
 		// On sélectionne les mesures qui satisfont les critères de sélection temporelles
-		const Mesure * m = fileReader->prochaineMesure(parametres, filtrageMesure);
+		const Mesure * m = fileReader->prochaineMesure( parametres, filtrageMesure );
 
 		//Si m == nullptr, alors il n'y a plus rien à lire 
-		if (m == nullptr)
+		if ( m == nullptr )
 		{
 			finLecture = true; 
 			break;
 		}
 		
 		// On regarde si la mesure sélectionnée est concerne le capteur à surveiller
-		if (capteurID.compare(m->getCapteur()->getSensorID()) == 0)
+		if ( capteurID.compare(m->getCapteur () -> getSensorID () ) == 0 )
 		{
 
 			if ( m -> getValue () == NULL || m -> getValue () < 0)
@@ -57,17 +57,23 @@ bool Service :: surveillerComportementCapteur (string capteurID, paramFiltrage &
 }//----- End of surveillerComportementCapteur 
 
 
-list<Capteur> * Service::surveillerComportementCapteurs (list<string> & capteursID, paramFiltrage & parametres)
+list <Capteur> * Service :: surveillerComportementCapteurs (list <string> & capteursID, paramFiltrage & parametres)
 {
 
-	list<Capteur> * liste_capteursDefectueux = new list<Capteur>;
+	list <Capteur> * liste_capteursDefectueux = new list <Capteur>;
 
 
 	//liste d'id de capteurs défectueux
-	list<string> liste_id_capteursDefectueux;
-	for (list<string>::iterator i = capteursID.begin(); i != capteursID.end(); i++)
+	list <string> liste_id_capteursDefectueux;
+	for (list <string> :: iterator i = capteursID.begin(); i != capteursID.end(); i++)
 	{
-		paramFiltrage param = { NULL, NULL, NULL, NULL};
+		paramFiltrage param;
+		Territoire t = Territoire();
+		param.capteurId = "";
+		param.dateInf = tm();
+		param.dateSup = tm();
+		param.territoire = t;
+
 		param.capteurId = *i;
 		if (surveillerComportementCapteur(*i, param) == false)
 		{
@@ -78,12 +84,12 @@ list<Capteur> * Service::surveillerComportementCapteurs (list<string> & capteurs
 	// id -> Capteur
 	unordered_map < std::string, Capteur * > capteurs = fileReader->lireCapteurs(parametres, filtrageCapteur); 
 
-	for (unordered_map <string, Capteur*>::iterator it_map = capteurs.begin(); it_map != capteurs.end(); it_map++)
+	for ( unordered_map <string, Capteur*> :: iterator it_map = capteurs.begin(); it_map != capteurs.end(); it_map++)
 	{
-		for (list<string> ::iterator it_id = liste_id_capteursDefectueux.begin(); it_id != liste_id_capteursDefectueux.end(); it_id++)
+		for ( list<string> :: iterator it_id = liste_id_capteursDefectueux.begin(); it_id != liste_id_capteursDefectueux.end(); it_id++)
 		{
-			if (it_map->first.compare(*it_id) == 0
-				&& find(liste_id_capteursDefectueux.begin(), liste_id_capteursDefectueux.end(), it_map->first) != liste_id_capteursDefectueux.end())
+			if ( it_map->first.compare(*it_id) == 0
+				&& find(liste_id_capteursDefectueux.begin(), liste_id_capteursDefectueux.end(), it_map->first) != liste_id_capteursDefectueux.end() )
 			{
 				Point * pos = new Point(it_map->second->getPosition()->getLongitude(), it_map->second->getPosition()->getLatitude());
 				Capteur c = Capteur(it_map->second->getSensorID(), pos, it_map->second->getDescription());
@@ -99,7 +105,7 @@ list<Capteur> * Service::surveillerComportementCapteurs (list<string> & capteurs
 
 
 
-list<pair<Capteur, Capteur>> * Service :: obtenirCapteursSimilaires(struct tm & Date, int nbMesures)
+list <pair < Capteur, Capteur > > * Service :: obtenirCapteursSimilaires( struct tm & Date, int nbMesures )
 // HYPOTHESES APPLIQUEES DANS L'ALGORITHME
 // hypothèse 0 : les concentrations des particules mesurées à un instant t sont regroupées les unes à la suite des autres
 // hypothèse 1 : on considère que deux capteurs ont pris leurs mesures au même moment si la différence entre leurs mesures est de +- 1 minute
@@ -110,7 +116,12 @@ list<pair<Capteur, Capteur>> * Service :: obtenirCapteursSimilaires(struct tm & 
 // Algorithm :
 {
 	//On récupère tous les capteurs
-	paramFiltrage param_capteurs = { NULL, NULL, NULL, NULL };
+	paramFiltrage param_capteurs;
+	param_capteurs.capteurId = "";
+	param_capteurs.dateInf = tm();
+	param_capteurs.dateSup = tm();
+	Territoire t = Territoire();
+	param_capteurs.territoire = t;
 	unordered_map < std::string, Capteur * > map_capteurs = fileReader->lireCapteurs(param_capteurs, filtrageCapteur);
 
 	//On récupère tous les attributs
@@ -119,7 +130,12 @@ list<pair<Capteur, Capteur>> * Service :: obtenirCapteursSimilaires(struct tm & 
 	unordered_map< string, unordered_map< string, vector<float> > > capteurs_mesures;
 	//unordered_map<sensorID, unordered_map<AttributId, vector<value> > > capteurs_mesures;
 
-	paramFiltrage parametres = { Date, NULL, NULL, NULL };
+	paramFiltrage parametres;
+	parametres.capteurId = "";
+	parametres.dateInf = Date;
+	parametres.dateSup = tm();
+	Territoire t2 = Territoire();
+	parametres.territoire = t2;
 
 	// On classe les données pour faciliter le traitement
 	for (int i = 0; i < nbMesures; i++)
@@ -247,6 +263,14 @@ tuple<int, list<pair<string, float>>, float>  Service::calculerQualite(paramFilt
 {
 	unordered_map <string, Attribut *> attributs = fileReader->lireAttributs();
 	unordered_map <string, Capteur *> capteurs = fileReader->lireCapteurs(parametres, filtrageCapteur);
+
+	// Surveiller les capteurs 
+	/*
+	list<string> liste_capteur =
+	list <Capteur> * listeCapteursDefectueux = surveillerComportementCapteurs(list <string> & capteursID, paramFiltrage & parametres)
+	surveillerComportementCapteurs(un)
+
+	*/
 
 	list <pair<float, float>> mesures_O3;
 	list <pair<float, float>> mesures_NO2;
@@ -636,7 +660,7 @@ bool Service::filtrageCapteur(Capteur & capteur, Territoire & territoire , strin
 			// Si oui : on retourne true
 			// Sinon : on retourne false
 
-	// Si terrtoire.getRayon() == 0 et territoire.getCentre() == (0,0) (aire totale considérée)
+	// Si terrtoire.getRayon() == 0 et territoire.getCentre() == (0,0) (aire totale considérée ou tous les capteurs) 
 		// on retourne true;
 
 // Si capteurId != null

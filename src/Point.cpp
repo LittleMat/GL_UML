@@ -39,46 +39,7 @@ float Point :: distance( const Point * p ) const
 {
 	if (p == nullptr)
 		throw "Illegal Argument Exception";
-	// Version 1
-	/*
-	// Coordonn�es des points dans le domaine cart�sien
-	float rayon_Terre = 6371;
-	float x = rayon_Terre * cos ( latitude ) * cos ( longitude );
-	float y = rayon_Terre * cos ( latitude ) * sin ( longitude );
-	float z = rayon_Terre * sin ( latitude );
 
-	float x2 = rayon_Terre * cos ( p -> getLatitude ( ) ) * cos ( p -> getLongitude ( ) );
-	float y2 = rayon_Terre * cos ( p -> getLatitude ( ) ) * sin ( p -> getLongitude ( ) );
-	float z2 = rayon_Terre * sin ( p -> getLatitude ( ) );
-
-	// Calcul distance
-	float x_carre = ( x2 - x ) * ( x2 - x );
-	float y_carre = ( y2 - y ) * ( y2 - y );
-	float z_carre = ( z2 - z ) * ( z2 - z );
-	
-	return sqrt( x_carre + y_carre + z_carre);
-	*/
-	//Version 2
-	/*
-	double pi = 3.14;
-	float R = 6371;
-	float latitude1 = this->latitude * pi / 180;
-	float latitude2 = p->getLatitude() * pi / 180;
-	float longitude1 = this->longitude * pi / 180;
-	float longitude2 = p->getLongitude() * pi / 180;
-
-	float distance = R * acos(cos(latitude1)) * cos(latitude2) * cos(longitude2 - longitude1) + sin(latitude1) * sin(latitude2);
-	
-	return distance;
-	*/
-
-	// Version 3 => donne des val similaires que v1 mais toujours pas bonnes 
-	/*
-	float rayon_Terre = 6371;
-	float distance = rayon_Terre * acos(sin(this->latitude) * sin(p->getLatitude()) + cos(this->latitude) * cos(p->getLatitude()) * cos(this->longitude - p->getLongitude()));
-	*/
-	
-	// Version 4
 	double R = 6371;
 	double latitude1 = this->latitude * M_PI / 180;
 	double latitude2 = p->getLatitude() * M_PI / 180;

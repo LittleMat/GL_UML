@@ -239,6 +239,14 @@ int main(int argc, char ** argv)
 	cout << Service::filtrageMesure(m3, parametre.dateInf, parametre.dateSup) << endl;
 	*/
 
+	// Test distance
+	/*
+	Point * p1 = new Point(4.874190, 45.781654); // 21 avenue Jean Caoelle
+
+	Point * p2 = new Point(4.875440, 45.782021); // 29 avenue Jean Caoelle
+
+	cout << p1->distance(p2) << endl;
+	*/
 	
 
 
