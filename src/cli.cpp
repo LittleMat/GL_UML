@@ -430,12 +430,13 @@ int menu ( int argc , char ** argv)
 				dateTest.tm_hour;
 				//annee - 1900
 				//list<Capteur> * surveillerComportementCapteurs(list<string> & capteursID, paramFiltrage & parametres);
-				list<Capteur>* defaillants = service->surveillerComportementCapteurs(list_captorID,p);
+				list<string>* defaillants = service->surveillerComportementCapteurs(list_captorID,p);
 				cout << "Liste capteurs defaillants : " << endl;
 				for ( auto const& i : *defaillants ) {
-					std::cout << i.getSensorID() << endl;
+					std::cout << i << endl;
 				}
-				//delete defaillants;
+				
+				//defaillants->clear();
 				
 
 				cout << endl;

@@ -39,7 +39,7 @@ public:
 
 	//----------------------------------------------------- Public methods
 	bool surveillerComportementCapteur(string capteurID, paramFiltrage & parametres);
-	list<Capteur> * surveillerComportementCapteurs(list<string> & capteursID, paramFiltrage & parametres);
+	list<string> * surveillerComportementCapteurs(list<string> & capteursID, paramFiltrage & parametres);
 	list<pair<Capteur, Capteur>> * obtenirCapteursSimilaires(struct tm & Date, int nbMesures);
 	tuple<int, list<pair<string, float>>, float> calculerQualite(paramFiltrage & parametres);
 

@@ -62,15 +62,15 @@ bool Service :: surveillerComportementCapteur ( string capteurID, paramFiltrage 
 }//----- End of surveillerComportementCapteur 
 
 
-list <Capteur> * Service :: surveillerComportementCapteurs (list <string> & capteursID, paramFiltrage & parametres)
+list <string> * Service :: surveillerComportementCapteurs (list <string> & capteursID, paramFiltrage & parametres)
 {
 	fileReader->lireAttributs();
 	fileReader->lireCapteurs(parametres, filtrageCapteur);
-	list <Capteur> * liste_capteursDefectueux = new list <Capteur>;
+	//list <Capteur> * liste_capteursDefectueux = new list <Capteur>;
 
 
 	//liste d'id de capteurs défectueux
-	list <string> liste_id_capteursDefectueux;
+	list <string> * liste_id_capteursDefectueux = new list<string>;
 	for (list <string> :: iterator i = capteursID.begin(); i != capteursID.end(); i++)
 	{
 		paramFiltrage param { tm() ,tm() , Territoire(new Point(0.0, 0.0), 0)  , *i };
@@ -83,15 +83,18 @@ list <Capteur> * Service :: surveillerComportementCapteurs (list <string> & capt
 		param.capteurId = *i;*/
 		if (surveillerComportementCapteur(*i, param) == false)
 		{
-			liste_id_capteursDefectueux.push_back(*i);
+			liste_id_capteursDefectueux->push_back(*i);
 		}
 	}
+	liste_id_capteursDefectueux->unique();
+	/*
 
 	// id -> Capteur
 	unordered_map < std::string, Capteur * > capteurs = fileReader->lireCapteurs(parametres, filtrageCapteur); 
 
 	for ( unordered_map <string, Capteur*> :: iterator it_map = capteurs.begin(); it_map != capteurs.end(); it_map++)
 	{
+		cout << "contenu map = " << "first " << it_map->first << " second" << it_map->second->getSensorID() << endl;
 		for ( list<string> :: iterator it_id = liste_id_capteursDefectueux.begin(); it_id != liste_id_capteursDefectueux.end(); it_id++)
 		{
 			if ( it_map->first.compare(*it_id) == 0
@@ -105,7 +108,15 @@ list <Capteur> * Service :: surveillerComportementCapteurs (list <string> & capt
 	}
 	
 	//!\\ Attention : dans le CLI, ne pas oublier le delete
+	cout << "contenu de liste_capteursDefectueux dans Service  " << endl;
+	for (list<Capteur> ::iterator it = liste_capteursDefectueux->begin(); it != liste_capteursDefectueux->end(); it++)
+	{
+		cout << "SensorID " << it->getSensorID() << endl;
+
+	}
 	return liste_capteursDefectueux;
+	*/
+	return liste_id_capteursDefectueux;
 
 }//----- End of surveillerComportementCapteurs
 
