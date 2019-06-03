@@ -52,7 +52,9 @@ public:
 
 
 	//-------------------------------------------- Constructor - destructor
-	Service(FileReader * f);
+
+	Service (const std::string & nomFichierCapteurs, const string & nomFichierAttributs, const std::list < std::string > & nomFichiersMesures);
+
 
 	~Service();
 
