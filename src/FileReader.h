@@ -33,7 +33,6 @@ typedef struct
 } paramFiltrage;
 //!\\ ne surtout pas faire parametre.territoire = Territoire () car conversions bizarres
 // mais plutôt Territoire t = Territoire(); parametre.territoire = t;
-//!!\\ Attention pour les années : il ne faut pas oublier de faire année - 1900
 
 
 //------------------------------------------------------------------------
@@ -101,6 +100,10 @@ protected :
 	regex reg_date;
 	regex reg_capt;
 	regex reg_attr;
+
+	string enteteFicherCapteurs;
+	string enteteFichierAttributs;
+	string enteteFichierMesures;
 
 };
 

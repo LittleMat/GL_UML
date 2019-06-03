@@ -52,7 +52,7 @@ unordered_map < string, Capteur * > FileReader :: lireCapteurs ( paramFiltrage &
 				float longitude = stof(matches [ 3 ].str ( ) );
 				string description = matches [ 4 ].str ( );
 
-				Point * position = new Point ( latitude, longitude );
+				Point * position = new Point ( longitude, latitude );
 				Capteur * c = new Capteur ( sensorID, position, description );
 
 				//Filtre permetant de filtrer les capteurs selon le choix de l'utilisateur
@@ -161,77 +161,87 @@ unordered_map < string, Capteur * > FileReader :: lireCapteurs ( paramFiltrage &
 		string line;
 		smatch matches;
 		smatch time_match;
+		bool continuer; //2 conditions pour s'arreter : on a trouver une mesure ou il n'y a plus de mesure à lire
 
+		//Premier test si le fichier est lisible
 		if ( fichierMesureEnCours.is_open ( ) )
 		{
 			if ( fichierLisible ( ) )
 			{
-
 				do
 				{
+					continuer = true;
+					//Obtient la ligne
 					getLineModifie ( fichierMesureEnCours , line );
 
-					//La ligne n'est pas conforme au regex
-					if ( ! regex_match ( line, reg_mesure ) )
+					if( regex_match ( line, reg_mesure ) )
 					{
-						cout << "Ligne ignorée : " << line << endl;
-					}
+						//Extraction des informations de la ligne
+						regex_search ( line, matches, reg_mesure );
+						string timestamp = matches [ 1 ].str ( );
+						string sensorID = matches [ 2 ].str ( );
+						string attributeID = matches [ 3 ].str ( );
+						float value = stof(matches [ 4 ].str ( ) );
+					    cout << timestamp << " - " << sensorID << " - " << attributeID << " - " << value << endl;
 
-				//Lit jusqu'à avoir une ligne valide
-				} while ( ! regex_match ( line, reg_mesure ) && fichierLisible ( ) );
-				
-				if ( regex_match ( line, reg_mesure ) )
-				{
-					//Extraction des informations de la ligne
-					regex_search ( line, matches, reg_mesure );
-					string timestamp = matches [ 1 ].str ( );
-					string sensorID = matches [ 2 ].str ( );
-					string attributeID = matches [ 3 ].str ( );
-					float value = stof(matches [ 4 ].str ( ) );
-
-					//cout << timestamp << " - " << sensorID << " - " << attributeID << " - " << value << endl;
-					
-					//Search for the date
-					regex_search ( timestamp, time_match, reg_date );
-
-					//Extraction du timestamp, création d'une struct gérant les timestamps
-					if ( regex_match ( timestamp, reg_date ) )
-					{
-						struct tm * time = new tm ( );
-						time->tm_year = stoi ( time_match [ 1 ].str ( ) );
-						time->tm_mon = stoi ( time_match [ 2 ].str ( ) );
-						time->tm_mday = stoi ( time_match [ 3 ].str ( ) );
-						time->tm_hour = stoi ( time_match [ 4 ].str ( ) );
-						time->tm_min = stoi ( time_match [ 5 ].str ( ) );
-						time->tm_sec = floor ( stof ( time_match [ 6 ].str ( ) ) );
-
-						//cout << time->tm_year << " - " << time->tm_mon << " - " << time->tm_mday << " - " << time->tm_hour << " - " << time->tm_min << " - " << time->tm_sec << endl;
-						
-						//TODO : à enlever après tests
-						if ( this -> map_attributs.count ( attributeID ) == 0)
+					    //Search for the date
+					    regex_search ( timestamp, time_match, reg_date );
+						//Test et extraction de la date
+						if ( regex_match ( timestamp, reg_date ) )
 						{
-							cout << "Pb avec attributeID" << endl;
-						}
+							struct tm * time = new tm ( );
+							time->tm_year = stoi ( time_match [ 1 ].str ( ) );
+							time->tm_mon = stoi ( time_match [ 2 ].str ( ) );
+							time->tm_mday = stoi ( time_match [ 3 ].str ( ) );
+							time->tm_hour = stoi ( time_match [ 4 ].str ( ) );
+							time->tm_min = stoi ( time_match [ 5 ].str ( ) );
+							time->tm_sec = floor ( stof ( time_match [ 6 ].str ( ) ) );
 
-						if(this -> map_capteurs.count ( sensorID ) == 0)
-						{
-							cout << "Pb avec attributeID" << endl;
-						}
+							//cout << time->tm_year << " - " << time->tm_mon << " - " << time->tm_mday << " - " << time->tm_hour << " - " << time->tm_min << " - " << time->tm_sec << endl;
 
-						if(this -> map_attributs.count ( attributeID ) == 1 && this -> map_capteurs.count ( sensorID ) == 1)
-						{
-							//Le sensorID et l'attributID existent et sont dans les map
-							m = new Mesure ( time, this -> map_attributs [ attributeID ], value, sensorID, this -> map_capteurs [ sensorID ] );
-
-							//Filtre la mesure avec les paramètres de l'utilisateur
-							if ( ! filtrageMesure ( * m, parametres.dateSup, parametres.dateInf ) )
+							
+							//TODO : à enlever après tests
+							/*
+							if ( this -> map_attributs.count ( attributeID ) == 0 )
 							{
-								delete m;
-								m = nullptr;
+								cout << "Pb avec attributeID" << endl;
 							}
+
+							if ( this -> map_capteurs.count ( sensorID ) == 0 )
+							{
+								cout << "Pb avec capteurID" << endl;
+							}
+							*/
+
+							if( this -> map_attributs.count ( attributeID ) == 1 && this -> map_capteurs.count ( sensorID ) == 1 )
+							{
+								//Le sensorID et l'attributID existent et sont dans les map
+								m = new Mesure ( time, this -> map_attributs [ attributeID ], value, sensorID, this -> map_capteurs [ sensorID ] );
+
+								cout << "Mesure : " << m->getValue() << endl;
+
+								//Filtre la mesure avec les paramètres de l'utilisateur
+								if ( ! filtrageMesure ( * m, parametres.dateSup, parametres.dateInf ) )
+								{
+									//cout << "Filtrage ne passe pas " << endl;
+									delete m;
+								}
+								else
+								{
+									//cout << "Mesure good : " << m->getValue() << endl;
+									continuer = false;
+								}
+							}
+							
 						}
 					}
-				}
+
+					//Plus de mesure à lire
+					if( ! fichierLisible ( ) )
+					{
+						continuer = false;
+					}
+				} while ( continuer );
 			}
 		}
 
@@ -251,9 +261,59 @@ FileReader :: FileReader ( const string & nomFichierCapteurs, const string & nom
 	    cerr << "Constructor of <FileReader>" << endl;
 	#endif
 
+	//Regex pour les différents fichiers
+	reg_mesure = regex( "(.*);(.*);(.*);(.*[0-9]+.*);" );
+	reg_date = regex( "([0-9]*)-([0-9]{2})-([0-9]{2})T([0-9]{2}):([0-9]{2}):([0-9]{2}.[0-9]*)" );
+	reg_capt = regex( "(.*);(.*[0-9]+);(.*[0-9]+);(.*);" );
+	reg_attr = regex( "(.*);(.*\/.*);(.*);" );
+	
+	//Entete des différents fichiers.
+	enteteFicherCapteurs = "SensorID;Latitude;Longitude;Description;";
+	enteteFichierAttributs = "AttributeID;Unit;Description;";
+	enteteFichierMesures = "Timestamp;SensorID;AttributeID;Value;";
+
 	this -> nomFichierCapteurs = nomFichierCapteurs;
 	this -> nomFichierAttributs = nomFichierAttributs;
 	this -> nomFichiersMesures = nomFichiersMesures; //Fait une copie
+
+	//Tester les fichiers : première ligne définit si le fichier est conforme.
+
+	string line;
+
+	//Capteurs
+	ifstream testCapteurs;
+	testCapteurs.open( this -> nomFichierCapteurs );
+	getline ( testCapteurs , line );
+	if ( line != enteteFicherCapteurs )
+	{
+		throw "Illegal Argument Exception : the file containing the sensors was corrupted";
+	}
+	testCapteurs.close();
+
+	//Attributs
+	ifstream testAttributs;
+	testAttributs.open( this -> nomFichierAttributs );
+	getline ( testAttributs , line );
+	if ( line != enteteFichierAttributs )
+	{
+		throw "Illegal Argument Exception : the file containing the attributes was corrupted";
+	}
+	testAttributs.close();
+
+	//Fichiers de mesures
+	for ( auto it : nomFichiersMesures )
+	{
+		ifstream testMesures;
+		testMesures.open( it );
+		getline ( testMesures , line );
+		if ( line != enteteFichierMesures )
+		{
+			throw "Illegal Argument Exception : the file containing the measures was corrupted";
+		}
+
+		testMesures.close();
+	}	
+
 
 	//Ouvre le premier fichier de mesure
 	if ( this -> nomFichiersMesures.size ( ) > 0 )
@@ -265,14 +325,9 @@ FileReader :: FileReader ( const string & nomFichierCapteurs, const string & nom
 	{
 		cerr << "List nomFichiersMesures vide" << endl;
 	}
-
-	reg_mesure = regex( "(.*);(.*);(.*);(.*[0-9]+.*);" );
-	reg_date = regex( "([0-9]*)-([0-9]{2})-([0-9]{2})T([0-9]{2}):([0-9]{2}):([0-9]{2}.[0-9]*)" );
-	reg_capt = regex( "(.*);(.*[0-9]+);(.*[0-9]+);(.*);" );
-	reg_attr = regex( "(.*);(.*\/.*);(.*);" );
-
 } // End of constructor
 
+/*
 FileReader :: FileReader ( )
 {	
 	#ifdef MAP
@@ -286,7 +341,7 @@ FileReader :: FileReader ( )
 	reg_date = regex( "([0-9]*)-([0-9]{2})-([0-9]{2})T([0-9]{2}):([0-9]{2}):([0-9]{2}.[0-9]*)" );
 	reg_capt = regex( "(.*);(.*[0-9]+);(.*[0-9]+);(.*);" );
 	reg_attr = regex( "(.*);(.*\/.*);(.*);" );
-}
+}*/
 
 FileReader :: ~FileReader ( )
 {
@@ -306,7 +361,7 @@ FileReader :: ~FileReader ( )
 		map_capteurs.clear ( );
 	}
 
-	if(map_attributs.size ( ) != 0)
+	if ( map_attributs.size ( ) != 0)
 	{
 		for ( auto it : map_attributs )
 		{
