@@ -115,6 +115,9 @@ unordered_map < string, Capteur * > FileReader :: lireCapteurs ( paramFiltrage &
 	void FileReader :: DebutMesure ( )
 	{
 		idFichierMesures = 0;
+		fichierMesureEnCours.clear ( );
+		fichierMesureEnCours.close ( );
+		fichierMesureEnCours.open ( nomFichiersMesures [ idFichierMesures ] );
 	}
 
 

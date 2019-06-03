@@ -16,7 +16,7 @@ e-mail               : guilhem.cerba@insa-lyon.fr, zihang.ye@insa-lyon.fr, linda
 using namespace std;
 
 //------------------------------------------------------ Personnal include
-#include "service.h"
+#include "Service.h"
 //------------------------------------------------------------- Constantes
 
 //----------------------------------------------------------------- PUBLIC

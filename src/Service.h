@@ -19,7 +19,7 @@ e-mail               : guilhem.cerba@insa-lyon.fr, zihang.ye@insa-lyon.fr, linda
 #include <ctime>
 #include <cmath>
 
-#include "fileReader.h"
+#include "FileReader.h"
 #include "Capteur.h"
 #include "Territoire.h"
 
