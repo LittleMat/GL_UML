@@ -45,6 +45,8 @@ Capteur :: Capteur ( const string sensorID, Point * position, const string descr
 	    cerr << "Constructor of <Capteur>" << endl;
 	#endif
 	
+	if (sensorID.empty() || position == nullptr)
+		throw "Illegal Argument Exception";
 
 	this -> sensorID = sensorID;
 	this -> position = position;
