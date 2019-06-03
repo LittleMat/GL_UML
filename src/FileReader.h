@@ -62,12 +62,19 @@ public :
 	std :: unordered_map < std :: string , Attribut * > lireAttributs ( ); 
 
 	/*
+	 * Revient au début des mesures
+	 */
+	void DebutMesure ( );
+
+	/*
 	 * Lit la prochaine mesure valide des fichiers contenant les mesures,
 	 */
 	Mesure * prochaineMesure ( paramFiltrage& parametres, bool ( * filtrageMesure ) ( Mesure &, struct tm &, struct tm & ) ); 
 
-	const list < std::string > getNomFichiersMesures ( ) const;
 
+	/*
+	const list < std::string > getNomFichiersMesures ( ) const;
+	*/
 //-------------------------------------------- Constructor - destructor
 	
 	//nomFichierCapteurs : nom du fichier contenant les capteurs
@@ -84,14 +91,17 @@ protected :
 	//Renvoie vrai s'il reste des fichiers de mesure à lire
 	bool fichierLisible ( );
 
+	
 	//getLine modifié pour lire de l'utf-16 (spécifique à nos fichiers en entrée, filtre les char dont le code héxadécimal est 0 ou d)
 	void getLineModifie ( ifstream & fichierMesureEnCours, string & line );
-
+	
 //----------------------------------------------------- Protected attributes
 	std :: string nomFichierCapteurs;
 	std :: string nomFichierAttributs;
-	std :: list < std :: string > nomFichiersMesures;
+	std :: vector < std :: string > nomFichiersMesures;
 	ifstream fichierMesureEnCours;
+
+	int idFichierMesures;
 
 	unordered_map < string, Attribut * > map_attributs;
 	unordered_map < string, Capteur * > map_capteurs;

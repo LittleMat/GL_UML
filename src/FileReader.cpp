@@ -111,6 +111,12 @@ unordered_map < string, Capteur * > FileReader :: lireCapteurs ( paramFiltrage &
 		return this -> map_attributs;
 	}
 
+	//Revient au début des mesures
+	void FileReader :: DebutMesure ( )
+	{
+		idFichierMesures = 0;
+	}
+
 
 	bool FileReader :: fichierLisible ( ) 
 	{
@@ -120,15 +126,14 @@ unordered_map < string, Capteur * > FileReader :: lireCapteurs ( paramFiltrage &
 		{
 			//cout << "Reached end of file" << endl;
 			//Regarde s'il reste encore un fichier de mesure
-			if ( nomFichiersMesures.size ( ) > 0)
+			idFichierMesures ++;
+			if ( idFichierMesures < nomFichiersMesures.size ( ) )
 			{
 				//cout << "Nb : " << nomFichiersMesures.size() << "  name : " << nomFichiersMesures.front() << endl;
 				fichierMesureEnCours.clear ( );
 				fichierMesureEnCours.close ( );
 				
-				fichierMesureEnCours.open ( nomFichiersMesures.front ( ) );
-				
-				nomFichiersMesures.pop_front( );
+				fichierMesureEnCours.open ( nomFichiersMesures [ idFichierMesures ] );
 			}
 			else // On est arrivé à la fin de tous les fichiers de mesure 
 			{
@@ -248,10 +253,11 @@ unordered_map < string, Capteur * > FileReader :: lireCapteurs ( paramFiltrage &
 		return m;
 	}
 
+	/*
 	const list < string > FileReader :: getNomFichiersMesures ( ) const 
 	{
 		return this -> nomFichiersMesures;
-	}
+	}*/
 
 //-------------------------------------------- Constructors - destructor
 
@@ -274,7 +280,11 @@ FileReader :: FileReader ( const string & nomFichierCapteurs, const string & nom
 
 	this -> nomFichierCapteurs = nomFichierCapteurs;
 	this -> nomFichierAttributs = nomFichierAttributs;
-	this -> nomFichiersMesures = nomFichiersMesures; //Fait une copie
+
+	for(auto it : nomFichiersMesures)
+	{
+		this -> nomFichiersMesures.push_back(it);
+	}
 
 	//Tester les fichiers : première ligne définit si le fichier est conforme.
 
@@ -314,12 +324,13 @@ FileReader :: FileReader ( const string & nomFichierCapteurs, const string & nom
 		testMesures.close();
 	}	
 
+	idFichierMesures = 0;
+
 
 	//Ouvre le premier fichier de mesure
 	if ( this -> nomFichiersMesures.size ( ) > 0 )
 	{
-		this -> fichierMesureEnCours.open ( this -> nomFichiersMesures.front ( ) );
-		this -> nomFichiersMesures.pop_front ( );
+		this -> fichierMesureEnCours.open ( this -> nomFichiersMesures [ idFichierMesures ] );
 	}
 	else
 	{
