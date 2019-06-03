@@ -379,6 +379,12 @@ int menu ( int argc , char ** argv)
 				while ( flag );
 				cout << "nombre de mesures demandees : " << nb_mesures << endl;
 				cout << endl;
+
+				/*struct tm dateTest;
+				dateTest.tm_hour;
+				paramFiltrage paramttest = { tm() ,tm() , Territoire(new Point(0.0, 0.0), 0)  , captorId };*/
+
+
 				break;
 
 			//Verifier comportement capteurs
@@ -409,25 +415,21 @@ int menu ( int argc , char ** argv)
 					
 				} 
 				while ( captorId != "*" && captorId != "-1" );
-				if ( captorId == "*" ) { list_captorID.push_back( "*" ); }
-				//cout << "liste des id : " << list_captorID << endl;
+				if ( captorId == "*" ) 
+				{ 
+					list_captorID.clear();
+					list_captorID.push_back( "*" ); 
+				}
 				
 				
-				paramFiltrage p { tm() ,tm() , Territoire(new Point(0.0, 0.0), 0)  ,"" };
-				/*p.capteurId = "";
-				p.dateInf = tm ();
-				p.dateSup = tm();
-				Point * point = new Point(0.0, 0.0);
-				//Territoire t (point, 0);
-				p.territoire = Territoire (point, 0);*/
-				cout << "latitude " << p.territoire.getCentre()->getLatitude() << endl;
-				cout << "longitude " << p.territoire.getCentre()->getLongitude() << endl;
+				paramFiltrage p = { tm() ,tm() , Territoire(new Point(0.0, 0.0), 0)  ,"" };
+
+				
 
 				//cout << "latitude " << t.getCentre()->getLatitude() << endl;
 			//	cout << "longitude " << t.getCentre()->getLongitude() << endl;
 
-				struct tm dateTest;
-				dateTest.tm_hour;
+				
 				//annee - 1900
 				//list<Capteur> * surveillerComportementCapteurs(list<string> & capteursID, paramFiltrage & parametres);
 				list<string>* defaillants = service->surveillerComportementCapteurs(list_captorID,p);
@@ -445,19 +447,3 @@ int menu ( int argc , char ** argv)
 	}
 	return 0;
 } // End of menu
-
-/*
-
-typedef struct
-{
-// Pour filtrageMesure
-struct tm dateInf;
-struct tm dateSup;
-//Pour filtrageCapteur
-Territoire territoire;
-string capteurId;
-} paramFiltrage;
-
-
-
-*/
