@@ -66,7 +66,7 @@ Territoire :: Territoire ( Point * c, int r )
 	rayon = r;
 }//----- End of Territoire 
 
-/*Territoire :: Territoire ( )
+Territoire :: Territoire ( )
 // Algorithm : 
 {
 	#ifdef MAP
@@ -74,8 +74,8 @@ Territoire :: Territoire ( Point * c, int r )
 	#endif
 
 	rayon = 0;
-	centre = new Point ();
-}*/
+	centre = new Point (0, 0);
+}
 
 
 Territoire :: ~Territoire ( )
