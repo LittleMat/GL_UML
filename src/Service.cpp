@@ -43,7 +43,7 @@ bool Service :: surveillerComportementCapteur ( string capteurID, paramFiltrage 
 		}
 		cout << " mesure lue :" << m->getValue() << endl;
 		
-		// On regarde si la mesure sélectionnée est concerne le capteur à surveiller
+		// On regarde si la mesure sélectionnée concerne le capteur à surveiller
 		if ( capteurID.compare(m->getCapteur () -> getSensorID () ) == 0 )
 		{
 			cout << " mesure du capteur lue :" << m->getValue() <<  endl;
@@ -64,7 +64,8 @@ bool Service :: surveillerComportementCapteur ( string capteurID, paramFiltrage 
 
 list <Capteur> * Service :: surveillerComportementCapteurs (list <string> & capteursID, paramFiltrage & parametres)
 {
-
+	fileReader->lireAttributs();
+	fileReader->lireCapteurs(parametres, filtrageCapteur);
 	list <Capteur> * liste_capteursDefectueux = new list <Capteur>;
 
 
