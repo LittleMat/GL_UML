@@ -10,7 +10,7 @@ int main(int argc, char ** argv)
 
 	//test.push_back("data/data_test_2.csv");
 	//test.push_back("data/data_test_3.csv");
-
+	/*
 	FileReader * fl = new FileReader("../data/Sensors.csv", "../data/AttributeType.csv", test);
 
 	string input;
@@ -19,9 +19,10 @@ int main(int argc, char ** argv)
 
 	paramFiltrage p = { NULL, NULL, NULL, NULL };
 
-	bool capteurOk = service.surveillerComportementCapteur("Sensor0", p);
+	bool capteurOk = service.surveillerComportementCapteur("Sensor999", p);
 
 	cout << capteurOk << endl;
+	*/
 
 	// Test filtrageCapteur
 	// trouver 1 capteur = OK

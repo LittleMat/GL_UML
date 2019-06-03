@@ -42,25 +42,14 @@ bool Service :: surveillerComportementCapteur (string capteurID, paramFiltrage &
 		// On regarde si la mesure sélectionnée est concerne le capteur à surveiller
 		if (capteurID.compare(m->getCapteur()->getSensorID()) == 0)
 		{
-			// Dossier de spé
-			//Observe les données générées par le capteur pour détecter 
-			// - une absence de données(capteur HS) => OK
-			// - ou la présence de données aberrantes(capteur défectueux) :
-			// - valeurs négatives => OK 
-			// valeurs trop élevées => impossible car dépend de l'unité 
-			// (rien ne dit que les unités seront toujours les mêmes)  
-			// oscillations trop rapides => c'est-à-dire ??
 
-			if (m->getValue() == NULL || m->getValue() < 0)
+			if ( m -> getValue () == NULL || m -> getValue () < 0)
 			{
 				bonEtat = false;
 				break;
 			}
-
 		}
-
-		delete m;
-		
+		delete m;		
 	}
 
 	return bonEtat;
@@ -426,13 +415,13 @@ tuple<int, list<pair<string, float>>, float>  Service::calculerQualite(paramFilt
 }//----- End of calculerQualite
 
  //-------------------------------------------- Constructor - destructor
-Service::Service(FileReader * f)
+Service :: Service (const std::string & nomFichierCapteurs, const string & nomFichierAttributs, const std::list < std::string > & nomFichiersMesures)
 // Algorithm : 
 {
 #ifdef MAP
 	cout << "Appel au constructeur de <Service>" << endl;
 #endif
-	fileReader = f;
+	fileReader = new FileReader(nomFichierCapteurs, nomFichierAttributs, nomFichiersMesures);
 
 }//----- End of Service 
 

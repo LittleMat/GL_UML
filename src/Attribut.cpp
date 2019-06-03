@@ -56,7 +56,8 @@ Attribut :: Attribut ( string attributID, string unit, string description )
 	#ifdef MAP
 	    cerr << "Constructor of <Attribut>" << endl;
 	#endif
-	    
+	if (attributID.empty() || unit.empty())
+		throw "Illegal Argument Exception";
 	this -> attributID = attributID;
 	this -> unit = unit;
 	this -> description = description;
