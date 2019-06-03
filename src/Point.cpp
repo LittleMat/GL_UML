@@ -36,9 +36,11 @@ float Point :: getLatitude ( ) const
 
 float Point :: distance( const Point * p ) const
 {
+	if (p == nullptr)
+		throw "Illegal Argument Exception";
 	// Version 1
 	/*
-	// Coordonnées des points dans le domaine cartésien
+	// Coordonnï¿½es des points dans le domaine cartï¿½sien
 	float rayon_Terre = 6371;
 	float x = rayon_Terre * cos ( latitude ) * cos ( longitude );
 	float y = rayon_Terre * cos ( latitude ) * sin ( longitude );
@@ -70,10 +72,21 @@ float Point :: distance( const Point * p ) const
 	*/
 
 	// Version 3 => donne des val similaires que v1 mais toujours pas bonnes 
+	/*
 	float rayon_Terre = 6371;
 	float distance = rayon_Terre * acos(sin(this->latitude) * sin(p->getLatitude()) + cos(this->latitude) * cos(p->getLatitude()) * cos(this->longitude - p->getLongitude()));
+	*/
+	
+	// Version 4
+	double R = 6371;
+	double latitude1 = this->latitude * M_PI / 180;
+	double latitude2 = p->getLatitude() * M_PI / 180;
+	double longitude1 = this->longitude * M_PI / 180;
+	double longitude2 = p->getLongitude() * M_PI / 180;
 
-	return distance;
+	double distance = R * acos(sin(latitude1) * sin(latitude2) + cos(latitude1) * cos(latitude2) * cos(longitude1 - longitude2));
+
+	return (float)distance;
 
 }//----- End of distance 
 
@@ -82,7 +95,7 @@ Point :: Point ( )
 // Algorithm : 
 {
 	#ifdef MAP
-		cout << "Appel au constructeur par défaut de <Point>" << endl;
+		cout << "Appel au constructeur par dï¿½faut de <Point>" << endl;
 	#endif
 
 	longitude = 0.0;
@@ -95,7 +108,8 @@ Point :: Point ( float longt, float lat )
 	#ifdef MAP
 			cout << "Appel au constructeur de <Point>" << endl;
 	#endif
-
+	if (longt < -180 || longt > 180 || lat < -90 || lat > 90)
+		throw "Illegal Argument Exception";
 	longitude = longt;
 	latitude = lat;
 }//----- End of Point 
