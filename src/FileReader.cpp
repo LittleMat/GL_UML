@@ -199,7 +199,7 @@ unordered_map < string, Capteur * > FileReader :: lireCapteurs ( paramFiltrage &
 						if ( regex_match ( timestamp, reg_date ) )
 						{
 							struct tm * time = new tm ( );
-							time->tm_year = stoi ( time_match [ 1 ].str ( ) );
+							time->tm_year = stoi ( time_match [ 1 ].str ( ) ) - 1900; //tm_year == nombres d'années entre 1900 et l'année réelle de la date
 							time->tm_mon = stoi ( time_match [ 2 ].str ( ) );
 							time->tm_mday = stoi ( time_match [ 3 ].str ( ) );
 							time->tm_hour = stoi ( time_match [ 4 ].str ( ) );

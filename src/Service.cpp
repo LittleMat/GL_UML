@@ -75,8 +75,6 @@ list <string> * Service :: surveillerComportementCapteurs (list <string> & capte
 		}
 	}
 
-	//list <Capteur> * liste_capteursDefectueux = new list <Capteur>;
-
 
 	//liste d'id de capteurs défectueux
 	list <string> * liste_id_capteursDefectueux = new list<string>;
@@ -123,6 +121,9 @@ list <pair < Capteur, Capteur > > * Service :: obtenirCapteursSimilaires( struct
 
 // Algorithm :
 {
+
+	fileReader->DebutMesure();
+
 	//On récupère tous les capteurs
 	paramFiltrage param_capteurs{ tm() ,tm() , Territoire(new Point(0.0, 0.0), 0), "" };
 	/*param_capteurs.capteurId = "";
@@ -269,10 +270,12 @@ bool Service::plusOuMoins(float v1, float v2, float ecart)
 
 tuple<int, list<pair<string, float>>, float>  Service::calculerQualite(paramFiltrage & parametres)
 {
+
+	fileReader->DebutMesure();
 	unordered_map <string, Attribut *> attributs = fileReader->lireAttributs();
 	unordered_map <string, Capteur *> capteurs = fileReader->lireCapteurs(parametres, filtrageCapteur);
 
-	// Surveiller les capteurs 
+	// Surveiller les capteurs et enlever de la liste les capteurs défaillants
 	/*
 	list<string> liste_capteur =
 	list <Capteur> * listeCapteursDefectueux = surveillerComportementCapteurs(list <string> & capteursID, paramFiltrage & parametres)
