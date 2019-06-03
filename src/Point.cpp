@@ -11,8 +11,9 @@ e-mail               : guilhem.cerba@insa-lyon.fr, zihang.ye@insa-lyon.fr, linda
 //---------------------------------------------------------------- INCLUDE
 
 //--------------------------------------------------------- System include
+#define _USE_MATH_DEFINES
+#include <cmath>
 #include <iostream>
-#include <math.h>
 
 using namespace std;
 
