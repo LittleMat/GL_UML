@@ -24,7 +24,6 @@ using namespace std;
 //----------------------------------------------------------------- PUBLIC
 
 //----------------------------------------------------- Public methodes
-using namespace std;
 
 
 
@@ -42,7 +41,7 @@ bool is_date ( string s )
 
 	int jour, mois, annee;
 	regex e ( "([0-3][0-9])/([0-1][0-9])/([0-9][0-9][0-9][0-9])" );
-	std::smatch matches;
+	smatch matches;
 	/*
 	cout << "rapport REGEX " << endl;
 	if (regex_search(s, matches, e)) {
@@ -76,7 +75,7 @@ bool is_heure ( string s )
 
 	int heures, minutes;
 	regex e ( "([0-2][0-9]):([0-9][0-9])" );
-	std::smatch matches;
+	smatch matches;
 	/*
 	cout << "rapport REGEX " << endl;
 	if (regex_search(s, matches, e)) {
@@ -93,8 +92,8 @@ bool is_heure ( string s )
 
 	regex_search ( s , matches , e );
 	if ( regex_match ( s , e ) ) {
-		heures = stoi ( matches[ 1 ].str ( ) );
-		minutes = stoi ( matches[ 2 ].str ( ) );
+		heures = stoi ( matches [ 1 ].str ( ) );
+		minutes = stoi ( matches [ 2 ].str ( ) );
 
 
 		return heures <= 23 && minutes < 60;
@@ -111,62 +110,74 @@ bool check_dates ( string sA , string sB ) {
 	int jourA, moisA, anneeA;
 	int jourB, moisB, anneeB;
 	regex e ( "([0-3][0-9])/([0-1][0-9])/([0-9][0-9][0-9][0-9])" );
-	std::smatch matchesA;
-	std::smatch matchesB;
+	smatch matchesA;
+	smatch matchesB;
 	regex_search ( sA , matchesA , e );
 	regex_search ( sB , matchesB , e );
-	if ( regex_match ( sA , e ) && regex_match ( sB , e ) ) {
-		jourA = stoi ( matchesA[ 1 ].str ( ) );
-		moisA = stoi ( matchesA[ 2 ].str ( ) );
-		anneeA = stoi ( matchesA[ 3 ].str ( ) );
+	if ( regex_match ( sA , e ) && regex_match ( sB , e ) ) 
+	{
+		jourA = stoi ( matchesA [ 1 ].str ( ) );
+		moisA = stoi ( matchesA [ 2 ].str ( ) );
+		anneeA = stoi ( matchesA [ 3 ].str ( ) );
 
-		jourB = stoi ( matchesB[ 1 ].str ( ) );
-		moisB = stoi ( matchesB[ 2 ].str ( ) );
-		anneeB = stoi ( matchesB[ 3 ].str ( ) );
+		jourB = stoi ( matchesB [ 1 ].str ( ) );
+		moisB = stoi ( matchesB [ 2 ].str ( ) );
+		anneeB = stoi ( matchesB [ 3 ].str ( ) );
 
 		if ( anneeB >= anneeA ) return true;
 		if  (moisB >= moisA ) return true;
 		if ( jourB <= jourA ) return false;
 		return true;
 
-		//return ( ( anneeB >= anneeA ) && ( moisB >= moisA ) && ( jourB > jourA ) );
-
 	}
-	else {
+	else 
+	{
 		return false;
 	}
 	return false;
 }
 
-int menu ( ) 
+int menu ( int argc , char ** argv)
 {
-	std::string lecture = "-1";
-	std::string longitude, latitude;;
-	std::string date1, date2,heure;
-	std::string rayon,nb_mesures;
-	std::string captorId,list_captorID;
-	std::string type_date, type_zone;
+
+
+	// const std :: string & nomFichierCapteurs, const string & nomFichierAttributs, const std :: list < std :: string > & nomFichiersMesures
+	//cout << "argv : " << endl;
+	//cout << "1 : " << argv[1] << endl; 
+
+	//Service service ;
+	string lecture = "-1";
+	string longitude, latitude;;
+	string date1, date2,heure;
+	string rayon,nb_mesures;
+	string captorId,list_captorID;
+	string type_date, type_zone;
 	int index;
 	bool flag = true;
 
-	while ( std::stoi ( lecture ) != 4 ) {
+	while ( stoi ( lecture ) != 4 ) 
+	{
 
 		cout << "Menu Principal" << endl;
 		cout << "[1] Obtenir la qualite moyenne de l air" << endl;
 		cout << "[2] Obtenir capteurs similaires" << endl;
 		cout << "[3] Verifier comportement capteurs" << endl;
 		cout << "[4] Quitter application" << endl;
-		do {
+		do 
+		{
 			cin >> lecture;
-			if ( is_number ( lecture ) ) { index = std::stoi ( lecture ); }
+			if ( is_number ( lecture ) ) { index = stoi ( lecture ); }
 
-		} while ( ! is_number ( lecture ) || index != 1 && index != 2 && index != 3 && index != 4 );
+		} 
+		while ( ! is_number ( lecture ) || index != 1 && index != 2 && index != 3 && index != 4 );
 		//cout << "Option[" << lecture << "] selectionnee " << endl;
 		cout <<  endl;
 
+		//MENU PRINCIPAL
 		switch ( index )
 		{
 
+			//Obtenir la qualite moyenne de l air
 			case 1 :
 				
 				int valeur;
@@ -180,7 +191,7 @@ int menu ( )
 				do {
 					
 					cin >> type_zone;
-					if( is_number ( lecture ) ) valeur = std::stoi ( type_zone );
+					if( is_number ( lecture ) ) valeur = stoi ( type_zone );
 
 				} while ( ! is_number ( type_zone ) || valeur != 1 && valeur != 2 && valeur != 3 && valeur != 4 && valeur != 5 );
 				cout << "Option[" << type_zone << "] selectionnee " << endl;
@@ -266,14 +277,15 @@ int menu ( )
 				{
 					if ( flag ) { cout << "entree invalide" << endl; }
 					cin >> type_date;
-					flag = ( ( ! is_number ( type_date ) && type_date != "*" ) || ( is_number ( type_date ) && std::stoi ( type_date ) != 1 && std::stoi ( type_date ) != 2 )  );
+					flag = ( ( ! is_number ( type_date ) && type_date != "*" ) || ( is_number ( type_date ) && stoi ( type_date ) != 1 && stoi ( type_date ) != 2 )  );
 
 				}
 				while ( flag );
 				cout << "[debug] " << "type date vaut " << type_date << endl;
 				if ( type_date == "*" ) { valeur = 0; }
-				else { valeur = std::stoi ( type_date ); }
+				else { valeur = stoi ( type_date ); }
 
+				//MENU PRINCIPAL
 				switch ( valeur ) 
 				{
 
@@ -320,8 +332,8 @@ int menu ( )
 				}
 				break;
 
+			//Obtenir capteurs similaires
 			case 2 :
-				//cout << "Obtenir capteurs similaires" << endl;
 				cout << "Rentrez l'id du capteur de reference" << endl;
 				flag = false;
 
@@ -359,13 +371,14 @@ int menu ( )
 					if ( flag ) cout << "entree invalide" << endl;
 					cin >> nb_mesures;
 
-					flag = ( ! is_number ( nb_mesures ) || stoi ( nb_mesures ) <= 0 || ( std::floor ( stof ( nb_mesures ) ) != stof ( nb_mesures ) ) );
+					flag = ( ! is_number ( nb_mesures ) || stoi ( nb_mesures ) <= 0 || ( floor ( stof ( nb_mesures ) ) != stof ( nb_mesures ) ) );
 				} 
 				while ( flag );
 				cout << "nombre de mesures demandees : " << nb_mesures << endl;
 				cout << endl;
 				break;
 
+			//Verifier comportement capteurs
 			case 3:
 				cout << "Listez les id des capteurs que vous voulez surveiller" << endl;
 				cout << "Le caractere * designe l integralite des capteurs" << endl;
@@ -395,12 +408,13 @@ int menu ( )
 				while ( captorId != "*" && captorId != "-1" );
 				if ( captorId == "*" ) { list_captorID = "*"; }
 				cout << "liste des id : " << list_captorID << endl;
+				
+				//list<Capteur> * surveillerComportementCapteurs(list<string> & capteursID, paramFiltrage & parametres);
+
 				cout << endl;
 				break;
 		}
 	}
-	
-
 	return 0;
 } // End of menu
 

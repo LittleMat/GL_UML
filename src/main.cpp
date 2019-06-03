@@ -23,6 +23,6 @@ using namespace std;
 
 int main ( int argc, char ** argv )
 {
-	menu();
+	menu( argc , argv );
 	return 0;
 } // End of main
