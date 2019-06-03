@@ -23,7 +23,7 @@ using namespace std;
 
 //----------------------------------------------------- Public methods
 
-bool Service::surveillerComportementCapteur(string capteurID, paramFiltrage & parametres)
+bool Service :: surveillerComportementCapteur (string capteurID, paramFiltrage & parametres)
 {
 	bool bonEtat = true;
 	bool finLecture = false;
@@ -31,10 +31,6 @@ bool Service::surveillerComportementCapteur(string capteurID, paramFiltrage & pa
 	{
 		// On sélectionne les mesures qui satisfont les critères de sélection temporelles
 		const Mesure * m = fileReader->prochaineMesure(parametres, filtrageMesure);
-		
-		
-		// !!!!! \\ Est-ce que c'est vraiment une bonne idée de passer par une ptr ?? 
-		// Il y aura beaucoup beaucoup beaucoup de new/delete donc très très bof en perf 
 
 		//Si m == nullptr, alors il n'y a plus rien à lire 
 		if (m == nullptr)
@@ -72,14 +68,13 @@ bool Service::surveillerComportementCapteur(string capteurID, paramFiltrage & pa
 }//----- End of surveillerComportementCapteur 
 
 
-list<Capteur> * Service::surveillerComportementCapteurs(list<string> & capteursID, paramFiltrage & parametres)
+list<Capteur> * Service::surveillerComportementCapteurs (list<string> & capteursID, paramFiltrage & parametres)
 {
 
-	// Pour le mettre dans le tas sinon la liste se fait détruire à la fin de l'appel de la méthode
 	list<Capteur> * liste_capteursDefectueux = new list<Capteur>;
 
 
-	// id des capteurs défectueux
+	//liste d'id de capteurs défectueux
 	list<string> liste_id_capteursDefectueux;
 	for (list<string>::iterator i = capteursID.begin(); i != capteursID.end(); i++)
 	{
@@ -104,8 +99,6 @@ list<Capteur> * Service::surveillerComportementCapteurs(list<string> & capteursI
 				Point * pos = new Point(it_map->second->getPosition()->getLongitude(), it_map->second->getPosition()->getLatitude());
 				Capteur c = Capteur(it_map->second->getSensorID(), pos, it_map->second->getDescription());
 				liste_capteursDefectueux->push_back(c);
-				
-
 			}
 		}
 	}
@@ -117,7 +110,7 @@ list<Capteur> * Service::surveillerComportementCapteurs(list<string> & capteursI
 
 
 
-list<pair<Capteur, Capteur>> * Service:: obtenirCapteursSimilaires(struct tm & Date, int nbMesures)
+list<pair<Capteur, Capteur>> * Service :: obtenirCapteursSimilaires(struct tm & Date, int nbMesures)
 // HYPOTHESES APPLIQUEES DANS L'ALGORITHME
 // hypothèse 0 : les concentrations des particules mesurées à un instant t sont regroupées les unes à la suite des autres
 // hypothèse 1 : on considère que deux capteurs ont pris leurs mesures au même moment si la différence entre leurs mesures est de +- 1 minute
@@ -134,9 +127,8 @@ list<pair<Capteur, Capteur>> * Service:: obtenirCapteursSimilaires(struct tm & D
 	//On récupère tous les attributs
 	unordered_map < std::string, Attribut * > map_attributs = fileReader->lireAttributs(); 
 
-	unordered_map<string, unordered_map<string, vector<float> > > capteurs_mesures;
+	unordered_map< string, unordered_map< string, vector<float> > > capteurs_mesures;
 	//unordered_map<sensorID, unordered_map<AttributId, vector<value> > > capteurs_mesures;
-	// AttributID = O3 etc.
 
 	paramFiltrage parametres = { Date, NULL, NULL, NULL };
 
@@ -161,7 +153,7 @@ list<pair<Capteur, Capteur>> * Service:: obtenirCapteursSimilaires(struct tm & D
 			}
 			else
 			{
-				//A inserer
+				//A inserer dans la map
 				vector <float> v;
 				v[i] = m->getValue();
 				iterateur_sensorID->second.insert(make_pair(m->getAttribut()->getAttributID(), v));
@@ -169,7 +161,7 @@ list<pair<Capteur, Capteur>> * Service:: obtenirCapteursSimilaires(struct tm & D
 		}
 		else
 		{
-			//inserer
+			//A inserer dans la map
 			vector <float> v;
 			v[i] = m->getValue();
 			unordered_map<string, vector<float> > map_a_inserer;
@@ -203,7 +195,6 @@ list<pair<Capteur, Capteur>> * Service:: obtenirCapteursSimilaires(struct tm & D
 				for (int i = 0; i < nbMesures; i++)
 				{
 
-					// Que faire si les unités varient........ ?
 					if (
 						! (plusOuMoins(it_c1_O3->second[i], it_c2_O3->second[i], 15) &&
 						plusOuMoins(it_c1_NO2->second[i], it_c2_NO2->second[i], 20) &&
@@ -664,6 +655,7 @@ bool Service::filtrageCapteur(Capteur & capteur, Territoire & territoire , strin
 		// Si oui : on retourne true
 		// Sinon : on retourne false
 {
+	
 	bool capteurAPrendre = false;
 
 	if (capteurId.empty())
@@ -702,7 +694,11 @@ bool Service::filtrageCapteur(Capteur & capteur, Territoire & territoire , strin
 	}
 	else
 	{ 
-		capteurAPrendre = true;
+		if(capteur.getSensorID().compare(capteurId) == 0)
+		{
+			capteurAPrendre = true;
+		}
+		
 	}
 
 	return capteurAPrendre;
