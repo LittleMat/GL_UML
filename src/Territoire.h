@@ -42,7 +42,7 @@ public:
 	//-------------------------------------------- Constructor - destructor
 	Territoire ( Point * c, int r );
 
-	Territoire ( );
+	//Territoire ( );
 
 	~Territoire ( );
 

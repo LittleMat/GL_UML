@@ -139,18 +139,18 @@ bool check_dates ( string sA , string sB ) {
 
 int menu ( int argc , char ** argv)
 {
-
-
-	// const std :: string & nomFichierCapteurs, const string & nomFichierAttributs, const std :: list < std :: string > & nomFichiersMesures
-	//cout << "argv : " << endl;
-	//cout << "1 : " << argv[1] << endl; 
-
-	//Service service ;
+	list <string> args;
+	for ( int i = 3 ; i < argc ; i++ )
+	{
+		args.push_back ( string ( argv[ i ] ) );
+	}
+	Service *service = new Service ( string ( argv[ 1 ] ) , string ( argv[ 2 ] ) , args );
 	string lecture = "-1";
 	string longitude, latitude;;
 	string date1, date2,heure;
 	string rayon,nb_mesures;
-	string captorId,list_captorID;
+	string captorId;
+	list <string> list_captorID;
 	string type_date, type_zone;
 	int index;
 	bool flag = true;
@@ -384,7 +384,7 @@ int menu ( int argc , char ** argv)
 				cout << "Le caractere * designe l integralite des capteurs" << endl;
 
 
-				list_captorID = "";
+				//list_captorID = "";
 				captorId = "";
 				flag = false;
 				do 
@@ -399,17 +399,40 @@ int menu ( int argc , char ** argv)
 					while ( flag );
 					if ( captorId != "-1") 
 					{
-						if ( ! list_captorID.empty ( ) ) { list_captorID.append ( " " ); }
-						list_captorID.append ( captorId );
+						//if ( ! list_captorID.empty ( ) ) { list_captorID.append ( " " ); }
+						list_captorID.push_back ( captorId );
 					}
 					
 					
 				} 
 				while ( captorId != "*" && captorId != "-1" );
-				if ( captorId == "*" ) { list_captorID = "*"; }
-				cout << "liste des id : " << list_captorID << endl;
+				if ( captorId == "*" ) { list_captorID.push_back( "*" ); }
+				//cout << "liste des id : " << list_captorID << endl;
 				
+				
+				paramFiltrage p;
+				p.capteurId = "";
+				p.dateInf = tm ();
+				p.dateSup = tm();
+				Point * point = new Point(0.0, 0.0);
+				//Territoire t (point, 0);
+				p.territoire = Territoire (point, 0);;
+				cout << "latitude " << p.territoire.getCentre()->getLatitude() << endl;
+				cout << "longitude " << p.territoire.getCentre()->getLongitude() << endl;
+
+				//cout << "latitude " << t.getCentre()->getLatitude() << endl;
+			//	cout << "longitude " << t.getCentre()->getLongitude() << endl;
+
+				struct tm dateTest;
+				dateTest.tm_hour;
+				//annee - 1900
 				//list<Capteur> * surveillerComportementCapteurs(list<string> & capteursID, paramFiltrage & parametres);
+				list<Capteur>* defaillants = service->surveillerComportementCapteurs(list_captorID,p);
+				for ( auto const& i : *defaillants ) {
+					std::cout << i.getSensorID() << endl;
+				}
+				//delete defaillants;
+				
 
 				cout << endl;
 				break;
@@ -418,3 +441,18 @@ int menu ( int argc , char ** argv)
 	return 0;
 } // End of menu
 
+/*
+
+typedef struct
+{
+// Pour filtrageMesure
+struct tm dateInf;
+struct tm dateSup;
+//Pour filtrageCapteur
+Territoire territoire;
+string capteurId;
+} paramFiltrage;
+
+
+
+*/

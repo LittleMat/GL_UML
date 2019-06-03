@@ -61,11 +61,12 @@ Territoire :: Territoire ( Point * c, int r )
 
 	if (c == nullptr || r < 0)
 		throw "Illegal Argument Exception";
-	centre = c;
+	//centre = c;
+	c = new Point(c->getLongitude(), c->getLatitude());
 	rayon = r;
 }//----- End of Territoire 
 
-Territoire :: Territoire ( )
+/*Territoire :: Territoire ( )
 // Algorithm : 
 {
 	#ifdef MAP
@@ -74,15 +75,15 @@ Territoire :: Territoire ( )
 
 	rayon = 0;
 	centre = new Point ();
-}
+}*/
 
 
 Territoire :: ~Territoire ( )
 // Algorithm : 
 {
-	#ifdef MAP
+	//#ifdef MAP
 		cout << "Appel au destructeur de <Territoire>" << endl;
-	#endif
+	//#endif
 
 	delete centre;
 }//----- End of ~Territoire 

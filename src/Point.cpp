@@ -92,7 +92,7 @@ float Point :: distance( const Point * p ) const
 }//----- End of distance 
 
 //-------------------------------------------- Constructor - destructor
-Point :: Point ( )
+/*Point :: Point ( )
 // Algorithm : 
 {
 	#ifdef MAP
@@ -101,7 +101,7 @@ Point :: Point ( )
 
 	longitude = 0.0;
 	latitude = 0.0;
-}//----- End of Point 
+}//----- End of Point */
 
 Point :: Point ( float longt, float lat )
 // Algorithm : 
@@ -118,9 +118,9 @@ Point :: Point ( float longt, float lat )
 Point :: ~Point ( )
 // Algorithm : 
 {
-	#ifdef MAP
+	//#ifdef MAP
 		cout << "Appel au destructeur de <Point>" << endl;
-	#endif
+	//#endif
 }//----- End of ~Point 
 
 
