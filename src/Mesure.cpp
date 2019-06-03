@@ -89,5 +89,5 @@ Mesure:: ~Mesure ( )
 	cout << "Appel au destructeur de <Mesure>" << endl;
 	#endif
 
-	delete attribut;
+	delete timestamp;
 }//----- End of ~Mesure 
