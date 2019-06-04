@@ -67,8 +67,10 @@ namespace {
     }
 
     TEST(CapteurUnitTest, ConstructorIllegalArgument) {
-        EXPECT_ANY_THROW(Capteur c0("", new Point(0, 0), ""));
+        Point* p = new Point(0, 0);
+        EXPECT_ANY_THROW(Capteur c0("", p, ""));
         EXPECT_ANY_THROW(Capteur c1("c1", nullptr, ""));
+        delete p;
     }
     TEST(CapteurUnitTest, Constructor) {
         Capteur c0("c0", new Point(10, -10), "Description");
@@ -95,11 +97,13 @@ namespace {
         EXPECT_ANY_THROW(t0.contient(nullptr));
     }
     TEST(TerritoireUnitTest, Contient) {
-        Territoire t0(new Point(0, 0), 10);
+        Territoire t0(new Point(0, 0), 1000);
         Point p0(0, 0);
         EXPECT_TRUE(t0.contient(&p0));
         Point p1(0, 90);
         EXPECT_FALSE(t0.contient(&p1));
+        Point p2(-3, 2.21);
+        EXPECT_TRUE(t0.contient(&p2));
     }
 
     TEST(AttributUnitTest, ConstructorIllegalArgument) {
@@ -124,7 +128,7 @@ namespace {
         EXPECT_ANY_THROW(Mesure(*now_t, "attributId", 0, ""));
         EXPECT_ANY_THROW(Mesure(*future_t, "attributId", 0, "sensorId"));
     }
-/*
+
     TEST(FileReaderUnitTest, ConstructorIllegalArgument) {
         list<string> listS;
         listS.push_back("resources/Data10.csv");
@@ -162,11 +166,11 @@ namespace {
         // Broken File
         listS.clear();
         listS.push_back("resources/Data10.csv");
-        EXPECT_ANY_THROW(FileReader reader("resources/BrokenSensor.csv", "resources/AttributeType.csv", listS));
-        EXPECT_ANY_THROW(FileReader reader("resources/Sensor10.csv", "resources/BrokenAttributeType.csv", listS));
+        EXPECT_NO_THROW(FileReader reader("resources/BrokenSensor.csv", "resources/AttributeType.csv", listS));
+        EXPECT_NO_THROW(FileReader reader("resources/Sensor10.csv", "resources/BrokenAttributeType.csv", listS));
         listS.clear();
         listS.push_back("resources/BrokenData.csv");
-        EXPECT_ANY_THROW(FileReader reader("resources/Sensor10.csv", "resources/AttributeType.csv", listS));
+        EXPECT_NO_THROW(FileReader reader("resources/Sensor10.csv", "resources/AttributeType.csv", listS));
 
     }
     TEST(FileReaderUnitTest, Constructor) {
@@ -216,8 +220,8 @@ namespace {
         EXPECT_TRUE(capteur->getDescription().empty());
         ASSERT_NO_THROW(capteur = capteurs.at("Sensor9"));
         capteur = capteurs.at("Sensor9");
-        EXPECT_FLOAT_EQ(36.2756694672982, capteur->getPosition()->getLongitude());
-        EXPECT_FLOAT_EQ(1.33005024461543, capteur->getPosition()->getLatitude());
+        EXPECT_FLOAT_EQ(1.33005024461543, capteur->getPosition()->getLongitude());
+        EXPECT_FLOAT_EQ(36.2756694672982, capteur->getPosition()->getLatitude());
         EXPECT_TRUE(capteur->getDescription().empty());
     }
     TEST(FileReaderUnitTest, ProchaineMesure) {
@@ -225,57 +229,73 @@ namespace {
         listS.push_back("resources/Data10.csv");
         FileReader reader("resources/Sensor10.csv", "resources/AttributeType.csv", listS);
         paramFiltrage passAll;
+        passAll.dateInf = tm();
+        passAll.dateSup = tm();
         Mesure *mesure = nullptr;
 
-        EXPECT_ANY_THROW(mesure = reader.prochaineMesure(passAll, NULL));
+        EXPECT_ANY_THROW(mesure = reader.prochaineMesure(passAll, nullptr));
 
+        reader.debutMesure();
+        reader.lireCapteurs(passAll, Service::filtrageCapteur);
+        reader.lireAttributs();
         mesure = reader.prochaineMesure(passAll, Service::filtrageMesure);
-        EXPECT_EQ(2017, mesure->getTimestamp()->tm_year);
-        EXPECT_EQ("Sensor0", mesure->getCapteur()->getSensorID());
+        ASSERT_TRUE(mesure != nullptr);
+        EXPECT_EQ(2017, 1900 + mesure->getTimestamp().tm_year);
+        EXPECT_EQ("Sensor0", mesure->getSensorID());
         EXPECT_FLOAT_EQ(17.8902017543936, mesure->getValue());
 
-        for (int i = 0; i < 9; i++)
+        delete mesure;
+
+        for (int i = 0; i < 8; i++)
         {
-            EXPECT_TRUE(reader.prochaineMesure(passAll, Service::filtrageMesure) != nullptr);
+            mesure = reader.prochaineMesure(passAll, Service::filtrageMesure);
+            ASSERT_TRUE(mesure != nullptr);
+            delete mesure;
         }
         mesure = reader.prochaineMesure(passAll, Service::filtrageMesure);
-        EXPECT_EQ(2017, mesure->getTimestamp()->tm_year);
-        EXPECT_EQ("Sensor0", mesure->getCapteur()->getSensorID());
-        EXPECT_FLOAT_EQ(17.8902017543936, mesure->getValue());
+        EXPECT_EQ(nullptr, mesure);
     }
-
+/*
     TEST(ServiceUnitTest, Constructor) {
         EXPECT_ANY_THROW(Service service(nullptr));
     }
+*/
     TEST(ServiceUnitTest, FiltrageMesure) {
         time_t now = time(NULL);
+        time_t halfHour = now - 1800;
         time_t yesterday = now - 86400;
-        time_t tomorrow = now + 86400;
-        struct tm empty_tm;
+        time_t beforeYesterday = now - 2 * 86400;
+        struct tm empty_tm = tm();
         struct tm now_tm = *localtime(&now);
+        struct tm halfHour_tm = *localtime(&halfHour);
         struct tm yesterday_tm = *localtime(&yesterday);
-        struct tm tomorrow_tm = *localtime(&tomorrow);
-        Attribut attribut("id", "unit", "description");
-        Capteur capteur("sensorId", new Point(0, 0), "description");
-        Mesure mesureNow(&now_tm, &attribut, 10, "sensorId", &capteur);
-        Mesure mesureYesterday(&yesterday_tm, &attribut, 10, "sensorId", &capteur);
-        Mesure mesureTomorrow(&tomorrow_tm, &attribut, 10, "sensorId", &capteur);
+        struct tm beforeYesterday_tm = *localtime(&beforeYesterday);
+        Mesure mesureNow(now_tm, "attributId", 10, "sensorId");
+        Mesure mesureYesterday(yesterday_tm, "attributId", 10, "sensorId");
+        Mesure mesureBeforeYesterday(beforeYesterday_tm, "attributId", 10, "sensorId");
 
-        EXPECT_TRUE(Service::filtrageMesure(mesureNow, yesterday_tm, tomorrow_tm));
-        EXPECT_TRUE(Service::filtrageMesure(mesureYesterday, empty_tm, tomorrow_tm));
-        EXPECT_TRUE(Service::filtrageMesure(mesureTomorrow, now_tm, empty_tm));
+        EXPECT_TRUE(Service::filtrageMesure(mesureYesterday, beforeYesterday_tm, yesterday_tm));
+        // An instant around now_tm
+        EXPECT_FALSE(Service::filtrageMesure(mesureYesterday, empty_tm, now_tm));
+        EXPECT_TRUE(Service::filtrageMesure(mesureNow, empty_tm, halfHour_tm));
+        EXPECT_TRUE(Service::filtrageMesure(mesureNow, halfHour_tm, empty_tm));
+        // An instant around yesterday_tm
+        EXPECT_FALSE(Service::filtrageMesure(mesureNow, yesterday_tm, empty_tm));
+
+        EXPECT_TRUE(Service::filtrageMesure(mesureBeforeYesterday, empty_tm, empty_tm));
+        EXPECT_TRUE(Service::filtrageMesure(mesureYesterday, empty_tm, empty_tm));
         EXPECT_TRUE(Service::filtrageMesure(mesureNow, empty_tm, empty_tm));
 
-        EXPECT_FALSE(Service::filtrageMesure(mesureNow, tomorrow_tm, empty_tm));
+        EXPECT_FALSE(Service::filtrageMesure(mesureYesterday, now_tm, empty_tm));
         EXPECT_FALSE(Service::filtrageMesure(mesureNow, empty_tm, yesterday_tm));
     }
     TEST(ServiceUnitTest, FiltrageCapteur) {
         Capteur capteurOrigin("sensorId", new Point(0, 0), "description");
         Capteur capteurParis("sensorId", new Point(2.21, 48.51), "descrption");
 
-        Territoire empty(new Point(0, 0), 0);
-        Territoire point(new Point(2.21, 48.51), 0);
-        Territoire circle(new Point(2, 48), 100);
+        Territoire empty(new Point(0, 0), 0); // All surface
+        Territoire point(new Point(2.21, 48.51), 0); // Radius 10km
+        Territoire circle(new Point(2, 48), 100); // Radius + 50km
 
         EXPECT_TRUE(Service::filtrageCapteur(capteurOrigin, empty, "sensorId"));
         EXPECT_TRUE(Service::filtrageCapteur(capteurParis, empty, "sensorId"));
@@ -288,7 +308,7 @@ namespace {
         EXPECT_FALSE(Service::filtrageCapteur(capteurParis, circle, "meaningless"));
     }
     TEST(ServiceUnitTest, DateNull){
-        struct tm empty;
+        struct tm empty = tm();
         time_t now = time(NULL);
         struct tm *today = localtime(&now);
         EXPECT_TRUE(Service::dateNull(empty));
@@ -305,6 +325,7 @@ namespace {
         EXPECT_FALSE(Service::plusOuMoins(-FLT_MAX, FLT_MAX, 100));
         EXPECT_FALSE(Service::plusOuMoins(FLT_MAX, -FLT_MAX, 100));
     }
+/*
     TEST(ServiceUnitTest, SurveillerComportementCapteur) {
         list<string> listS;
         listS.push_back("resources/ServiceTestData.csv");

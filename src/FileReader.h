@@ -64,7 +64,7 @@ public :
 	/*
 	 * Revient au début des mesures
 	 */
-	void DebutMesure ( );
+	void debutMesure ( );
 
 	/*
 	 * Lit la prochaine mesure valide des fichiers contenant les mesures,
