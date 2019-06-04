@@ -28,17 +28,19 @@ bool Service :: surveillerComportementCapteur ( string capteurID, paramFiltrage 
 	std :: cout << "Appel surveillerComportementCapteur" << endl;
 	bool bonEtat = true;
 	bool finLecture = false;
+	fileReader->lireAttributs();
+	fileReader->lireCapteurs(parametres, Service::filtrageCapteur);
 	fileReader->debutMesure();
 	while (finLecture == false)
 	{
 		// On s�lectionne les mesures qui satisfont les crit�res de s�lection temporelles
 		const Mesure * m = fileReader->prochaineMesure( parametres, filtrageMesure );
-		std :: cout << "lecture de mesure " << endl;
+		// std :: cout << "lecture de mesure " << endl;
 		//Si m == nullptr, alors il n'y a plus rien � lire 
 		if ( m == nullptr )
 		{
 			finLecture = true; 
-			std::cout << "fin de la lecture " << endl;
+			// std::cout << "fin de la lecture " << endl;
 			break;
 		}
 		//cout << " mesure lue :" << m->getValue() << endl;
@@ -64,6 +66,8 @@ bool Service :: surveillerComportementCapteur ( string capteurID, paramFiltrage 
 
 list <string> * Service :: surveillerComportementCapteurs (list <string> & capteursID)
 {
+	if (capteursID.empty())
+		throw "Illegal Argument Exception: empty list";
 	fileReader->lireAttributs();
 	paramFiltrage param_capteurs{ tm() ,tm() , Territoire(new Point(0.0, 0.0), 0), "" };
 	unordered_map < string, Capteur * > map_tous_les_capteurs = fileReader->lireCapteurs(param_capteurs, filtrageCapteur);
@@ -79,21 +83,25 @@ list <string> * Service :: surveillerComportementCapteurs (list <string> & capte
 
 	//liste d'id de capteurs d�fectueux
 	list <string> * liste_id_capteursDefectueux = new list<string>;
+	/*
 	std::cout << endl;
 	std::cout << "contenu liste_id_capteursDefectueux apr�s init" << endl;
 	std::cout << endl;
+	*/
+	/*
 	if (liste_id_capteursDefectueux->empty())
 	{
 
 		for (list<string> ::iterator ii = liste_id_capteursDefectueux->begin(); ii != liste_id_capteursDefectueux->end(); ii++)
 		{
-			std::cout << *ii << endl;
+			// std::cout << *ii << endl;
 		}
 	}
 	else
 	{
 		std::cout << "liste vide " << endl;
 	}
+	*/
 	for (list <string> :: iterator i = capteursID.begin(); i != capteursID.end(); i++)
 	{
 		paramFiltrage param { tm() ,tm() , Territoire(new Point(0.0, 0.0), 0)  , *i };
@@ -852,7 +860,7 @@ bool Service::filtrageMesure(Mesure & mesure, struct tm & dateInf, struct tm & d
 	// on retourne true
 {
 
-	cout << "Filtrage mesure appelee" << endl;
+	// cout << "Filtrage mesure appelee" << endl;
 	bool mesureAPrendre = false;
 	struct tm time = mesure.getTimestamp();
 	time_t timeMes = mktime(&time); 
