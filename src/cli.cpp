@@ -177,14 +177,15 @@ int menu ( int argc , char ** argv)
 	Service *service = new Service ( string ( argv[ 1 ] ) , string ( argv[ 2 ] ) , args );
 
 	paramFiltrage paramQualite = { NULL , NULL , NULL , NULL };
+	tuple < int, list < pair < string, float > > , float > resultQualite;
 
 
 	string lecture = "-1";
 	string nb_mesures;
 	string date1, date2,heure;
 	string rayon = "0";
-	string longitude = "0";
-	string latitude = "0";
+	string longitude = "0.0";
+	string latitude = "0.0";
 	string captorId;
 	list <string> list_captorID;
 	string type_date, type_zone;
@@ -246,7 +247,7 @@ int menu ( int argc , char ** argv)
 							if ( flag ) { cout << "Donnees invalides" << endl; }
 							cin >> longitude >> latitude;
 							
-							flag = ( ! is_number(longitude) || ! is_number(latitude) || abs ( stoi( longitude ) ) > 90 || abs ( stoi ( latitude ) ) > 90 );
+							flag = ( ! is_number(longitude) || ! is_number(latitude) || abs ( stof ( longitude ) ) > 90 || abs ( stof( latitude ) ) > 90 );
 						}
 						while ( flag );
 						cout << "Point selectionne : "<< longitude << "," << latitude  << endl;
@@ -282,6 +283,7 @@ int menu ( int argc , char ** argv)
 
 					//Aire totale
 					case 3:
+						
 						cout << "Aire totale selectionnee" << endl;
 						break;
 
@@ -361,12 +363,25 @@ int menu ( int argc , char ** argv)
 					cout << endl;
 					break;
 				}
+
+
+				// tuple <Indice ATMO , list pair < <idattribut , concentration moyenne > > , indice_fiabilité>
+				cout << "[Debug]" << "Calcul de la qualité moyenne" << endl;
+
+				paramQualite = { stringToDate(date1) , stringToDate(date2) , Territoire(new Point(stof(latitude) , stof(longitude)) , stoi(rayon))  , captorId };
+				resultQualite = service->calculerQualite(paramQualite);
+				cout << "Indice ATMO " << get<0>(resultQualite) << endl;
+				cout << "Indice fiabilite " << get<2>(resultQualite) << "%" << endl;
+				for (auto const& i : (get<1>(resultQualite)))
+				{
+
+					cout << i.first << "," << i.second << endl;
+				}
 				break;
 
 
-				cout << "[Debug]" << "Calcul de la qualité moyenne" << endl;
-				paramQualite = { stringToDate ( date1 ) , stringToDate ( date2 ) , Territoire ( new Point ( stoi ( latitude ) , stoi ( longitude ) ) , stoi ( rayon ) )  , captorId };
-				service->calculerQualite ( paramQualite );
+
+				
 
 
 			//Obtenir capteurs similaires

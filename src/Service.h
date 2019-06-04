@@ -41,6 +41,7 @@ public:
 	bool surveillerComportementCapteur ( string capteurID , paramFiltrage & parametres );
 	list < string > * surveillerComportementCapteurs ( list < string > & capteursID , paramFiltrage & parametres );
 	list < pair < Capteur , Capteur > > * obtenirCapteursSimilaires (struct tm & Date , int nbMesures );
+	// tuple <Indice ATMO , list pair < <idattribut , concentration moyenne > > , indice_fiabilité>
 	tuple < int , list < pair < string , float > > , float > calculerQualite ( paramFiltrage & parametres );
 
 	static bool filtrageCapteur ( Capteur & capteur , Territoire & territoire , string capteurId );
