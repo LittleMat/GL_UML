@@ -20,10 +20,9 @@ using namespace std;
 
 //----------------------------------------------------- Public methodes
 
-/*
+
 int main ( int argc, char ** argv )
 {
 	menu( argc , argv );
 	return 0;
 } // End of main
-*/
