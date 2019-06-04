@@ -16,7 +16,14 @@ using namespace std;
 //------------------------------------------------------ Personnal include
 #include "FileReader.h"
 //------------------------------------------------------------- Constantes
+regex FileReader::reg_mesure = regex( "(.*);(.*);(.*);(.*[0-9]+.*);" );
+regex FileReader::reg_date =  regex( "([0-9]*)-([0-9]{2})-([0-9]{2})T([0-9]{2}):([0-9]{2}):([0-9]{2}.[0-9]*)" );
+regex FileReader::reg_capt = regex( "(.*);(.*[0-9]+);(.*[0-9]+);(.*);" );
+regex FileReader::reg_attr = regex( "(.*);(.*\/.*);(.*);" );
 
+string FileReader::enteteFicherCapteurs = "SensorID;Latitude;Longitude;Description;";
+string FileReader::enteteFichierAttributs = "AttributeID;Unit;Description;";
+string FileReader::enteteFichierMesures = "Timestamp;SensorID;AttributeID;Value;";
 //----------------------------------------------------------------- PUBLIC
 
 //----------------------------------------------------- Public methodes
@@ -89,9 +96,6 @@ unordered_map < string, Capteur * > FileReader :: lireCapteurs ( paramFiltrage &
 
 		while ( getline ( infile , line ) )
 		{
-			//AttributeID;Unit;Description;
-			regex reg_attr( "(.*);(.*\/.*);(.*);" );
-
 			smatch matches;
 			regex_search ( line, matches, reg_attr );
 
@@ -230,10 +234,11 @@ unordered_map < string, Capteur * > FileReader :: lireCapteurs ( paramFiltrage &
 								//cout << "Mesure : " << m->getValue() << endl;
 
 								//Filtre la mesure avec les paramètres de l'utilisateur
-								if ( ! filtrageMesure ( * m, parametres.dateSup, parametres.dateInf ) )
+								if ( ! filtrageMesure ( * m, parametres.dateInf, parametres.dateSup ) )
 								{
 									cout << "Filtrage ne passe pas " << endl;
 									delete m;
+									m = nullptr;
 								}
 								else
 								{
