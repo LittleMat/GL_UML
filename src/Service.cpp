@@ -65,7 +65,8 @@ bool Service :: surveillerComportementCapteur ( string capteurID, paramFiltrage 
 list <string> * Service :: surveillerComportementCapteurs (list <string> & capteursID)
 {
 	fileReader->lireAttributs();
-	unordered_map < string, Capteur * > map_tous_les_capteurs = fileReader->lireCapteurs(parametres, filtrageCapteur);
+	paramFiltrage param_capteurs{ tm() ,tm() , Territoire(new Point(0.0, 0.0), 0), "" };
+	unordered_map < string, Capteur * > map_tous_les_capteurs = fileReader->lireCapteurs(param_capteurs, filtrageCapteur);
 	if (capteursID.front().compare("*") == 0)
 	{
 		capteursID.clear();
@@ -74,8 +75,6 @@ list <string> * Service :: surveillerComportementCapteurs (list <string> & capte
 			capteursID.push_back(it.first);
 		}
 	}
-	// Optimisation � faire dans le cas o� on demande tous les capteurs
-
 
 
 	//liste d'id de capteurs d�fectueux
@@ -555,16 +554,16 @@ tuple<int, list<pair<string, float>>, float>  Service::calculerQualite(paramFilt
 
 	int indiceATMO = calculIndiceATMO(composant, concentrationMax);
 
-	float fiabiliteMax = -1.0;
+	float fiabiliteMin = -1.0;
 	for (list<pair<string, float>> ::iterator it = fiabilites.begin(); it != fiabilites.end(); it++)
 	{
-		if (fiabiliteMax <= it->second)
+		if (fiabiliteMin >= it->second)
 		{
-			fiabiliteMax = it->second;
+			fiabiliteMin = it->second;
 		}
 	}
 
-	tuple<int, list<pair<string, float>>, float>  resultat_final = make_tuple(indiceATMO, concentrations, fiabiliteMax);
+	tuple<int, list<pair<string, float>>, float>  resultat_final = make_tuple(indiceATMO, concentrations, fiabiliteMin);
 
 	
 	return resultat_final;
