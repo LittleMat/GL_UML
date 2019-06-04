@@ -253,6 +253,7 @@ Mesure *FileReader ::prochaineMesure(paramFiltrage &parametres, bool (*filtrageM
 								continuer = false;
 							}
 						}
+						delete time;
 					}
 				}
 
