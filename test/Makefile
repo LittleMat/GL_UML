@@ -31,14 +31,14 @@ OBJ_FILES = $(patsubst $(SRC_DIR)/%.cpp,$(USER_DIR)/%.o,$(SRC_FILES))
 CPPFLAGS += -isystem $(GTEST_DIR)/include
 
 # Flags passed to the C++ compiler.
-CXXFLAGS += -g -Wall -Wextra -pthread -std=c++11
+CXXFLAGS += -g -Wall -Wextra -pthread -std=c++17
 
 # Google Test libraries
 GTEST_LIBS = libgtest.a libgtest_main.a
 
 # All tests produced by this Makefile.  Remember to add new tests you
 # created to the list.
-TESTS = sample1_unittest unitTest
+TESTS = unitTest
 
 # All Google Test headers.  Usually you shouldn't change this
 # definition.
@@ -75,20 +75,6 @@ libgtest.a : gtest-all.o
 
 libgtest_main.a : gtest-all.o gtest_main.o
 	$(AR) $(ARFLAGS) $@ $^
-
-# Builds a sample test.  A test should link with either gtest.a or
-# gtest_main.a, depending on whether it defines its own main()
-# function.
-
-sample1.o : $(USER_DIR)/sample1.cc $(USER_DIR)/sample1.h $(GTEST_HEADERS)
-	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c $(USER_DIR)/sample1.cc
-
-sample1_unittest.o : $(USER_DIR)/sample1_unittest.cc \
-                     $(USER_DIR)/sample1.h $(GTEST_HEADERS)
-	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c $(USER_DIR)/sample1_unittest.cc
-
-sample1_unittest : sample1.o sample1_unittest.o $(GTEST_LIBS)
-	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -L$(GTEST_LIB_DIR) -lgtest_main -lpthread $^ -o $@
 
 # Builds the unit test
 
