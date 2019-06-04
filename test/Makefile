@@ -31,7 +31,7 @@ OBJ_FILES = $(patsubst $(SRC_DIR)/%.cpp,$(USER_DIR)/%.o,$(SRC_FILES))
 CPPFLAGS += -isystem $(GTEST_DIR)/include
 
 # Flags passed to the C++ compiler.
-CXXFLAGS += -g -Wall -Wextra -pthread -std=c++11
+CXXFLAGS += -g -Wall -Wextra -pthread -std=c++17
 
 # Google Test libraries
 GTEST_LIBS = libgtest.a libgtest_main.a
