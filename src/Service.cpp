@@ -267,7 +267,7 @@ list <pair < Capteur, Capteur > > * Service :: obtenirCapteursSimilaires( struct
 	{
 		for (unordered_map< string, vector<float> > ::iterator it_2 = it->second.begin(); it_2 != it->second.end(); it_2++)
 		{
-			for (vector<float> ::iterator it_3 = it_2->second.begin(); size(it_2->second) < nbMesures; it_3++)
+			for (int i = 0 ;  size(it_2->second) < nbMesures; i++)
 			{
 				it_2->second.push_back(0.0);
 			}
