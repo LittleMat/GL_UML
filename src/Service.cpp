@@ -402,6 +402,8 @@ tuple<int, list<pair<string, float>>, float>  Service::calculerQualite(paramFilt
 		cout << i.first << endl;
 	}
 	
+	cout << "date inf " << parametres.dateInf.tm_hour << "  date sup " << parametres.dateSup.tm_hour << endl;
+	cout << "Point latitude" << parametres.territoire.getCentre()->getLatitude() << " longitude" << parametres.territoire.getCentre()->getLongitude() << endl;
 
 	// Surveiller les capteurs et enlever de la liste les capteurs d�faillants
 	/*
@@ -561,7 +563,7 @@ tuple<int, list<pair<string, float>>, float>  Service::calculerQualite(paramFilt
 
 	int indiceATMO = calculIndiceATMO(composant, concentrationMax);
 
-	float fiabiliteMin = 100.0;
+	float fiabiliteMin = 1;
 	for (list<pair<string, float>> ::iterator it = fiabilites.begin(); it != fiabilites.end(); it++)
 	{
 		if (fiabiliteMin >= it->second)
@@ -817,7 +819,7 @@ bool Service::filtrageCapteur(Capteur & capteur, Territoire & territoire , strin
 			&& territoire.getCentre()->getLatitude() != 0.0 && territoire.getCentre()->getLongitude() != 0.0)
 		{
 			Point * centre_zoneAcceptee = new Point(territoire.getCentre()->getLongitude(), territoire.getCentre()->getLatitude());
-			Territoire zoneAcceptee = Territoire(centre_zoneAcceptee, territoire.getRayon() + 10);
+			Territoire zoneAcceptee = Territoire(centre_zoneAcceptee, territoire.getRayon() + 10/*0000*/);
 			if (zoneAcceptee.contient(posCapteur))
 			{
 				capteurAPrendre = true;				

@@ -150,6 +150,7 @@ void afficherDate(struct tm date)
 struct tm stringToDateDetailed( string date )
 {
 
+
 	struct tm result = tm ( );
 	regex e( "([0-3][0-9])/([0-1][0-9])/([0-9][0-9][0-9][0-9]) ([0-2][0-9]):([0-5][0-9])" );
 	smatch matches;
@@ -355,13 +356,16 @@ int menu ( int argc , char ** argv)
 				if ( type_date == "*" ) { valeur = 0; }
 				else { valeur = stoi ( type_date ); }
 				
+				struct tm date2finale = stringToDateDetailed("0");
 				switch ( valeur ) 
 				{
 
+				
 				case 0:
 
 					date1 = "0";
 					date2 = "0";
+					
 					break;
 
 				case 1:
@@ -394,12 +398,14 @@ int menu ( int argc , char ** argv)
 					}
 					while ( flag );
 					cout << "dates selectionnees : " << date1 << " " << date2 << endl;
+
+					date2finale.tm_hour = 23;
+					date2finale.tm_min = 59;
 					cout << endl;
 					break;
 				}
-				struct tm date2finale = stringToDateDetailed(date2);
-				date2finale.tm_hour = 23;
-				date2finale.tm_min = 59;
+				
+				
 
 
 				// tuple <Indice ATMO , list pair < <idattribut , concentration moyenne > > , indice_fiabilit�>
