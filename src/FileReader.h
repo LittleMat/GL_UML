@@ -106,15 +106,14 @@ protected :
 	unordered_map < string, Attribut * > map_attributs;
 	unordered_map < string, Capteur * > map_capteurs;
 
-	regex reg_mesure;
-	regex reg_date;
-	regex reg_capt;
-	regex reg_attr;
+	static regex reg_mesure;
+	static regex reg_date;
+	static regex reg_capt;
+	static regex reg_attr;
 
-	string enteteFicherCapteurs;
-	string enteteFichierAttributs;
-	string enteteFichierMesures;
-
+	static string enteteFicherCapteurs;
+	static string enteteFichierAttributs;
+	static string enteteFichierMesures;
 };
 
 #endif // FILEREADER_H
