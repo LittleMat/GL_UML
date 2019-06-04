@@ -76,6 +76,16 @@ Point :: Point ( float longt, float lat )
 	latitude = lat;
 }//----- End of Point 
 
+Point::Point( )
+// Algorithm : 
+{
+#ifdef MAP
+	cout << "Appel au constructeur de <Point>" << endl;
+#endif
+	longitude = 0.0;
+	latitude = 0.0;
+}//----- End of Point 
+
 Point :: ~Point ( )
 // Algorithm : 
 {

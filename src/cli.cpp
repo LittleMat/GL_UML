@@ -176,7 +176,7 @@ int menu ( int argc , char ** argv)
 	cout << "fichier capteur " << string(argv[1]) << endl;
 	Service *service = new Service ( string ( argv[ 1 ] ) , string ( argv[ 2 ] ) , args );
 
-	paramFiltrage paramQualite = { NULL , NULL , NULL , NULL };
+	paramFiltrage paramQualite = { tm() , tm() , Territoire() , "" };
 	tuple < int, list < pair < string, float > > , float > resultQualite;
 
 
@@ -189,11 +189,25 @@ int menu ( int argc , char ** argv)
 	string captorId;
 	list <string> list_captorID;
 	string type_date, type_zone;
+	Territoire testTerritoire;
+	Point* testPoint;
+	
 	int index;
 	bool flag = true;
 
 	while ( stoi ( lecture ) != 4 ) 
 	{
+
+		//Remise a zero
+
+
+		longitude = "0.0";
+		latitude = "0.0";
+		paramQualite = { tm() , tm() , Territoire() , "" };
+		date1 = "0";
+		date2 = "0";
+		captorId = "";
+		rayon = "0";
 
 		cout << "Menu Principal" << endl;
 		cout << "[1] Obtenir la qualite moyenne de l air" << endl;
@@ -214,6 +228,7 @@ int menu ( int argc , char ** argv)
 		switch ( index )
 		{
 			//Obtenir la qualite moyenne de l air
+			
 			case 1 :	
 				int valeur;
 				cout << "Choississez le type de zone a etudier" << endl;
@@ -305,19 +320,37 @@ int menu ( int argc , char ** argv)
 				}
 				cout << endl;
 				cout << "Indiquer la periode temporelle" << endl;
-				cout << "[1]Depuis la mise en place des capteurs jusqu a une date donnee : date" << endl;
+				cout << "[1]A une date donnee plus ou moins une heure : date" << endl;
 				cout << "[2]Sur une plage de temps donnee delimitee par deux dates : date1 date2" << endl;
 				cout << "[*]Sur l integralite des mesures  * " << endl;
 				
 				flag = false;
+
+
+
+
+				/*
+				do
+				{
+				if ( flag ) cout << "date invalide" << endl;
+				cin >> date1 >> heure;
+
+				flag = ( ! is_date ( date1 ) || ! is_heure ( heure ) );
+				}
+				while ( flag );
+				cout << "date selectionnee : " << date1 << " " << heure << endl;
+				*/
+
+
 				do 
 				{
 					if ( flag ) { cout << "entree invalide" << endl; }
-					cin >> type_date;
+					cin >> type_date ;
 					flag = ( ( ! is_number ( type_date ) && type_date != "*" ) || ( is_number ( type_date ) && stoi ( type_date ) != 1 && stoi ( type_date ) != 2 )  );
 
 				}
 				while ( flag );
+				
 				cout << "[debug] " << "type date vaut " << type_date << endl;
 				if ( type_date == "*" ) { valeur = 0; }
 				else { valeur = stoi ( type_date ); }
@@ -333,15 +366,16 @@ int menu ( int argc , char ** argv)
 
 				case 1:
 
-					cout << "Rentrez une date au format : JJ/MM/AAAA" << endl;
+					cout << "Rentrez une date au format : JJ/MM/AAAA hh:mm" << endl;
 					flag = false;
 
 					do {
 						if ( flag ) { cout << "date invalide" << endl; }
-						cin >> date1 ;
-						flag = ( ! is_date ( date1 ) );
+						cin >> date1 >> heure ;
+						flag = (!is_heure(heure) || ! is_date ( date1 ) );
 					} 
 					while ( flag );
+					date1 = date1.append(" ").append(heure);
 					cout << "date selectionnee : " << date1 << endl;
 					cout << endl;
 					break;
@@ -363,15 +397,30 @@ int menu ( int argc , char ** argv)
 					cout << endl;
 					break;
 				}
+				struct tm date2finale = stringToDateDetailed(date2);
+				date2finale.tm_hour = 23;
+				date2finale.tm_min = 59;
 
 
 				// tuple <Indice ATMO , list pair < <idattribut , concentration moyenne > > , indice_fiabilit�>
-				cout << "[Debug]" << "Calcul de la qualit� moyenne" << endl;
+				cout << "[Debug]" << "Calcul de la qualite moyenne" << endl;
 
-				paramQualite = { stringToDate(date1) , stringToDate(date2) , Territoire(new Point(stof(latitude) , stof(longitude)) , stoi(rayon))  , captorId };
+				testTerritoire = Territoire(new Point(stof(longitude), stof(latitude)), stoi(rayon));
+				//testPoint = new Point(stof(longitude), stof(latitude));
+				//cout << "test Point " <<" latitude " << testPoint->getLatitude() << " longitude " << testPoint->getLongitude() << endl;
+				//cout << "test Territoire " << " latitude " << testTerritoire.getCentre()->getLatitude() << " longitude " << testTerritoire.getCentre()->getLongitude() << endl;
+
+				//cout << " latitude " << stof(latitude) << " longitude " << stof(longitude) << endl;
+				
+				paramQualite = { stringToDateDetailed(date1) , date2finale , testTerritoire  , captorId };
+				//cout << " latitude " << paramQualite.territoire.getCentre()->getLatitude() << " longitude " << paramQualite.territoire.getCentre()->getLongitude() << endl;
 				resultQualite = service->calculerQualite(paramQualite);
+
+
 				cout << "Indice ATMO " << get<0>(resultQualite) << endl;
 				cout << "Indice fiabilite " << get<2>(resultQualite) << "%" << endl;
+
+
 				for (auto const& i : (get<1>(resultQualite)))
 				{
 
@@ -410,8 +459,9 @@ int menu ( int argc , char ** argv)
 					flag = ( ! is_date ( date1 ) || ! is_heure ( heure ) );
 				} 
 				while ( flag );
-				cout << "date selectionnee : " << date1 << " " << heure << endl;
-
+				date1 = date1.append(" ").append(heure);
+				cout << "date selectionnee : " << date1 << endl;
+				
 
 				cout << "Rentrez le nombre de mesures pour la comparaison" << endl;
 				flag = false;
@@ -430,19 +480,17 @@ int menu ( int argc , char ** argv)
 
 				//list <pair < string, string > >
 				afficherDate(stringToDateDetailed(date1));
-<<<<<<< HEAD
+
 				list < pair < string, string > >* similaires;
-=======
-				list < pair < string , string > >* similaires;
->>>>>>> 5e2dcbd27867cca5abdf112093e6aed091cc5e3e
+
 				tm tmp = stringToDateDetailed(date1);
 				similaires = service->obtenirCapteursSimilaires ( tmp , stoi ( nb_mesures ) );
 
-				cout << "capteurs similaires : " << nb_mesures << endl;
+				cout << "capteurs similaires a " << captorId << endl;
 				for (auto const& i : *similaires) 
 				{
 
-					cout << i.first << " -- " << i.second << endl;
+					if(i.first == captorId) cout  << " - " << i.second << endl;
 				}
 				break;
 			}
@@ -484,6 +532,9 @@ int menu ( int argc , char ** argv)
 
 				cout << endl;
 				break;
+
+
+				
 		}
 	}
 	return 0;
