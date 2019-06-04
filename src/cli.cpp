@@ -428,8 +428,13 @@ int menu ( int argc , char ** argv)
 				cout << endl;
 
 
+				//list <pair < string, string > >
 				afficherDate(stringToDateDetailed(date1));
-				list < pair < Capteur , Capteur > >* similaires;
+<<<<<<< HEAD
+				list < pair < string, string > >* similaires;
+=======
+				list < pair < string , string > >* similaires;
+>>>>>>> 5e2dcbd27867cca5abdf112093e6aed091cc5e3e
 				tm tmp = stringToDateDetailed(date1);
 				similaires = service->obtenirCapteursSimilaires ( tmp , stoi ( nb_mesures ) );
 
@@ -437,7 +442,7 @@ int menu ( int argc , char ** argv)
 				for (auto const& i : *similaires) 
 				{
 
-					cout << i.first.getSensorID ( ) << " -- " << i.second.getSensorID ( )  << endl;
+					cout << i.first << " -- " << i.second << endl;
 				}
 				break;
 			}

@@ -112,7 +112,7 @@ list <string> * Service :: surveillerComportementCapteurs (list <string> & capte
 
 
 
-list <pair < Capteur, Capteur > > * Service :: obtenirCapteursSimilaires( struct tm & Date, int nbMesures )
+list <pair < string, string > > * Service :: obtenirCapteursSimilaires( struct tm & Date, int nbMesures )
 // HYPOTHESES APPLIQUEES DANS L'ALGORITHME
 // hypoth�se 0 : les concentrations des particules mesur�es � un instant t sont regroup�es les unes � la suite des autres
 // hypoth�se 1 : on consid�re que deux capteurs ont pris leurs mesures au m�me moment si la diff�rence entre leurs mesures est de +- 1 minute
@@ -267,7 +267,7 @@ list <pair < Capteur, Capteur > > * Service :: obtenirCapteursSimilaires( struct
 	{
 		for (unordered_map< string, vector<float> > ::iterator it_2 = it->second.begin(); it_2 != it->second.end(); it_2++)
 		{
-			for (vector<float> ::iterator it_3 = it_2->second.begin(); it_2->second.size() < nbMesures; it_3++)
+			for (int i = 0; size(it_2->second) < nbMesures; i++)
 			{
 				it_2->second.push_back(0.0);
 			}
@@ -295,6 +295,7 @@ list <pair < Capteur, Capteur > > * Service :: obtenirCapteursSimilaires( struct
 			{
 				std::cout << *it_3 << " ; ";
 			}
+			std::cout << endl;
 		}
 		std::cout << endl;
 	}
@@ -306,7 +307,7 @@ list <pair < Capteur, Capteur > > * Service :: obtenirCapteursSimilaires( struct
 
 
 	// Traitement
-	list<pair<Capteur, Capteur>> * capteurs_similaires = new list<pair<Capteur, Capteur>>;
+	list<pair<string, string>> * capteurs_similaires = new list<pair<string, string>>;
 	
 	for (unordered_map<string, unordered_map<string, vector<float> > > ::iterator it_capteur1 = capteurs_mesures.begin(); it_capteur1 != capteurs_mesures.end(); it_capteur1++)
 	{
@@ -328,22 +329,22 @@ list <pair < Capteur, Capteur > > * Service :: obtenirCapteursSimilaires( struct
 				
 				for (int i = 0; i < nbMesures; i++)
 				{
-
-					if (
-						! (plusOuMoins(it_c1_O3->second[i], it_c2_O3->second[i], 15) &&
+					similaire = similaire && (plusOuMoins(it_c1_O3->second[i], it_c2_O3->second[i], 15) &&
 						plusOuMoins(it_c1_NO2->second[i], it_c2_NO2->second[i], 20) &&
 						plusOuMoins(it_c1_SO2->second[i], it_c2_SO2->second[i], 15) &&
-						plusOuMoins(it_c1_PM10->second[i], it_c2_PM10->second[i], 4))
-						)
-					{
-						similaire = false;
-					}
+						plusOuMoins(it_c1_PM10->second[i], it_c2_PM10->second[i], 4));
 
 				}
-				
+	
 
 				if (similaire == true)
 				{
+					cout << it_capteur1->first << " et " << it_capteur2->first << " sont similaires " << endl;
+
+					capteurs_similaires->push_back(make_pair(it_capteur1->first, it_capteur2->first));
+
+
+					/*
 					//V�rfier si le couple n'est pas d�j� pr�sent
 					for (list<pair<Capteur, Capteur>> ::iterator it_list = capteurs_similaires->begin(); it_list != capteurs_similaires->end(); it_list++)
 					{
@@ -354,6 +355,7 @@ list <pair < Capteur, Capteur > > * Service :: obtenirCapteursSimilaires( struct
 							))
 						{
 
+							cout << "nouveaux capteurs " << endl;
 							// On instancie des nouveaux objet capteur dans la liste parce que sinon c'est ing�rable (delete)
 							Capteur * c1_ptr = map_capteurs.find(it_capteur1->first)->second;
 							Point * p1 = new Point(c1_ptr->getPosition()->getLongitude(), c1_ptr->getPosition()->getLatitude());
@@ -367,6 +369,7 @@ list <pair < Capteur, Capteur > > * Service :: obtenirCapteursSimilaires( struct
 							
 						}
 					}
+					*/
 
 				}
 
@@ -376,6 +379,7 @@ list <pair < Capteur, Capteur > > * Service :: obtenirCapteursSimilaires( struct
 		}
 
 	}
+	cout << "capteurs_similaires est de taille " << (capteurs_similaires->size()) << endl;
 	return capteurs_similaires;
 
 }//----- End of obtenirCapteursSimilaires
@@ -383,10 +387,7 @@ list <pair < Capteur, Capteur > > * Service :: obtenirCapteursSimilaires( struct
 
 bool Service::plusOuMoins(float v1, float v2, float ecart)
 {
-	if (abs(v1 - v2) <= ecart)
-		return true;
-	else
-		return false;
+	return(abs(v1 - v2) <= ecart);
 }
 
 tuple<int, list<pair<string, float>>, float>  Service::calculerQualite(paramFiltrage & parametres)
@@ -554,7 +555,7 @@ tuple<int, list<pair<string, float>>, float>  Service::calculerQualite(paramFilt
 
 	int indiceATMO = calculIndiceATMO(composant, concentrationMax);
 
-	float fiabiliteMin = -1.0;
+	float fiabiliteMin = 100.0;
 	for (list<pair<string, float>> ::iterator it = fiabilites.begin(); it != fiabilites.end(); it++)
 	{
 		if (fiabiliteMin >= it->second)
