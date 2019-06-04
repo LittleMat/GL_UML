@@ -53,6 +53,7 @@ bool Service :: surveillerComportementCapteur ( string capteurID, paramFiltrage 
 			if ( m -> getValue () < 0)
 			{
 				bonEtat = false;
+				delete m;
 				break;
 			}
 		}

@@ -299,6 +299,7 @@ TEST(FileReaderUnitTest, ProchaineMesure2)
     EXPECT_EQ(2017, 1900 + mesure->getTimestamp().tm_year);
     EXPECT_EQ("Sensor2", mesure->getSensorID());
     EXPECT_FLOAT_EQ(22.1864461494123, mesure->getValue());
+    delete mesure;
 }
 
 TEST(ServiceUnitTest, FiltrageMesure)
@@ -450,12 +451,6 @@ TEST(ServiceUnitTest, SurveillerComportementCapteurs)
     capteurs.push_back("Sensor2");
     capteurs.push_back("Sensor3");
     capteurs.push_back("Sensor4");
-    ASSERT_NO_THROW(service.surveillerComportementCapteurs(capteurs));
-    capteurs.push_back("Sensor0");
-    capteurs.push_back("Sensor1");
-    capteurs.push_back("Sensor2");
-    capteurs.push_back("Sensor3");
-    capteurs.push_back("Sensor4");
     list<string> *listCapteur = service.surveillerComportementCapteurs(capteurs);
     capteurs.push_back("Sensor0");
     capteurs.push_back("Sensor1");
@@ -481,7 +476,7 @@ TEST(ServiceUnitTest, SurveillerComportementCapteurs)
     capteurs.push_back("Sensor3");
     capteurs.push_back("Sensor4");
     EXPECT_TRUE(find(listCapteur->begin(), listCapteur->end(), "Sensor3") != listCapteur->end());
-    
+    delete listCapteur;
 }
 /*
     TEST(ServiceUnitTest, ObtenirCapteursSimilaires) {
