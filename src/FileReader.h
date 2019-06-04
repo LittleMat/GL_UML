@@ -83,7 +83,7 @@ public :
 
 	FileReader ( const std :: string & nomFichierCapteurs, const string & nomFichierAttributs, const std :: list < std :: string > & nomFichiersMesures );
 
-	FileReader ( );
+	//FileReader ( );
 
 	~FileReader ( );
 
