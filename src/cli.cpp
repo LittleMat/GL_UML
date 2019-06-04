@@ -236,7 +236,7 @@ int menu ( int argc , char ** argv)
 				switch ( valeur )
 				{
 
-					//Point Précis
+					//Point Prï¿½cis
 					case 1:
 						
 						cout << "Rentrez une latitude et une longitude" << endl;
@@ -365,8 +365,8 @@ int menu ( int argc , char ** argv)
 				}
 
 
-				// tuple <Indice ATMO , list pair < <idattribut , concentration moyenne > > , indice_fiabilité>
-				cout << "[Debug]" << "Calcul de la qualité moyenne" << endl;
+				// tuple <Indice ATMO , list pair < <idattribut , concentration moyenne > > , indice_fiabilitï¿½>
+				cout << "[Debug]" << "Calcul de la qualitï¿½ moyenne" << endl;
 
 				paramQualite = { stringToDate(date1) , stringToDate(date2) , Territoire(new Point(stof(latitude) , stof(longitude)) , stoi(rayon))  , captorId };
 				resultQualite = service->calculerQualite(paramQualite);
@@ -386,6 +386,7 @@ int menu ( int argc , char ** argv)
 
 			//Obtenir capteurs similaires
 			case 2 :
+			{
 				cout << "Rentrez l'id du capteur de reference" << endl;
 				flag = false;
 
@@ -429,7 +430,8 @@ int menu ( int argc , char ** argv)
 
 				afficherDate(stringToDateDetailed(date1));
 				list < pair < Capteur , Capteur > >* similaires;
-				similaires = service->obtenirCapteursSimilaires ( stringToDateDetailed ( date1 ) , stoi ( nb_mesures ) );
+				tm tmp = stringToDateDetailed(date1);
+				similaires = service->obtenirCapteursSimilaires ( tmp , stoi ( nb_mesures ) );
 
 				cout << "capteurs similaires : " << nb_mesures << endl;
 				for (auto const& i : *similaires) 
@@ -438,7 +440,7 @@ int menu ( int argc , char ** argv)
 					cout << i.first.getSensorID ( ) << " -- " << i.second.getSensorID ( )  << endl;
 				}
 				break;
-
+			}
 			//Verifier comportement capteurs
 			case 3:
 				cout << "Listez les id des capteurs que vous voulez surveiller" << endl;

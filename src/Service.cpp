@@ -28,7 +28,7 @@ bool Service :: surveillerComportementCapteur ( string capteurID, paramFiltrage 
 	std :: cout << "Appel surveillerComportementCapteur" << endl;
 	bool bonEtat = true;
 	bool finLecture = false;
-	fileReader->DebutMesure();
+	fileReader->debutMesure();
 	while (finLecture == false)
 	{
 		// On sï¿½lectionne les mesures qui satisfont les critï¿½res de sï¿½lection temporelles
@@ -123,7 +123,7 @@ list <pair < Capteur, Capteur > > * Service :: obtenirCapteursSimilaires( struct
 // Algorithm :
 {
 
-	fileReader->DebutMesure();
+	fileReader->debutMesure();
 
 	//On rï¿½cupï¿½re tous les capteurs
 	paramFiltrage param_capteurs{ tm() ,tm() , Territoire(new Point(0.0, 0.0), 0), "" };
@@ -164,7 +164,7 @@ list <pair < Capteur, Capteur > > * Service :: obtenirCapteursSimilaires( struct
 
 
 	// Visualiser la structure 
-	cout << "Visualisation de la structure après init" << endl;
+	cout << "Visualisation de la structure aprï¿½s init" << endl;
 	cout << endl;
 	cout << "**********************************************" << endl;
 	for (unordered_map< string, unordered_map< string, vector<float> > > ::iterator it = capteurs_mesures.begin(); it != capteurs_mesures.end(); it++)
@@ -267,7 +267,7 @@ list <pair < Capteur, Capteur > > * Service :: obtenirCapteursSimilaires( struct
 	{
 		for (unordered_map< string, vector<float> > ::iterator it_2 = it->second.begin(); it_2 != it->second.end(); it_2++)
 		{
-			for (vector<float> ::iterator it_3 = it_2->second.begin(); size(it_2->second) < nbMesures; it_3++)
+			for (vector<float> ::iterator it_3 = it_2->second.begin(); it_2->second.size() < nbMesures; it_3++)
 			{
 				it_2->second.push_back(0.0);
 			}
@@ -282,7 +282,7 @@ list <pair < Capteur, Capteur > > * Service :: obtenirCapteursSimilaires( struct
 
 
 	// Visualiser la structure 
-	std :: cout << "Visualisation de la structure après lecture" << endl;
+	std :: cout << "Visualisation de la structure aprï¿½s lecture" << endl;
 	std::cout << endl;
 	std::cout << "----------------------------------------------" << endl;
 	for (unordered_map< string, unordered_map< string, vector<float> > > ::iterator it = capteurs_mesures.begin(); it != capteurs_mesures.end(); it++)
@@ -392,7 +392,7 @@ bool Service::plusOuMoins(float v1, float v2, float ecart)
 tuple<int, list<pair<string, float>>, float>  Service::calculerQualite(paramFiltrage & parametres)
 {
 
-	fileReader->DebutMesure();
+	fileReader->debutMesure();
 	unordered_map <string, Attribut *> attributs = fileReader->lireAttributs();
 	unordered_map <string, Capteur *> capteurs = fileReader->lireCapteurs(parametres, filtrageCapteur);
 
@@ -834,7 +834,7 @@ bool Service::filtrageCapteur(Capteur & capteur, Territoire & territoire , strin
 			capteurAPrendre = true;
 		}
 
-	return capteurAPrendre && (capteur.getSensorID().empty() || capteur.getSensorID().compare(capteurId) == 0);
+	return capteurAPrendre && (capteurId.empty() || capteur.getSensorID().compare(capteurId) == 0);
 }
 
 bool Service::filtrageMesure(Mesure & mesure, struct tm & dateInf, struct tm & dateSup)
