@@ -341,6 +341,7 @@ list <pair < string, string > > * Service :: obtenirCapteursSimilaires( struct t
 				{
 					cout << it_capteur1->first << " et " << it_capteur2->first << " sont similaires " << endl;
 
+					capteurs_similaires->push_back(make_pair(it_capteur1->first, it_capteur2->first));
 
 
 					/*

@@ -430,7 +430,11 @@ int menu ( int argc , char ** argv)
 
 				//list <pair < string, string > >
 				afficherDate(stringToDateDetailed(date1));
+<<<<<<< HEAD
 				list < pair < string, string > >* similaires;
+=======
+				list < pair < string , string > >* similaires;
+>>>>>>> 5e2dcbd27867cca5abdf112093e6aed091cc5e3e
 				tm tmp = stringToDateDetailed(date1);
 				similaires = service->obtenirCapteursSimilaires ( tmp , stoi ( nb_mesures ) );
 
