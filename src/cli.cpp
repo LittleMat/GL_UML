@@ -139,7 +139,7 @@ bool check_dates ( string sA , string sB ) {
 
 struct tm stringToDate(string date) {
 
-	struct tm result;
+	struct tm result = tm();
 	int jourA, moisA, anneeA;
 	regex e("([0-3][0-9])/([0-1][0-9])/([0-9][0-9][0-9][0-9])");
 	smatch matches;
@@ -148,7 +148,7 @@ struct tm stringToDate(string date) {
 	{
 		result.tm_mday = stoi(matches[1].str());
 		result.tm_mon = stoi(matches[2].str());
-		result.tm_year = stoi(matches[3].str());
+		result.tm_year = stoi(matches[3].str()) - 1900; // Linda
 		result.tm_hour = 0;
 		result.tm_min = 0;
 	}
