@@ -717,8 +717,6 @@ bool Service::filtrageCapteur(Capteur & capteur, Territoire & territoire , strin
 	
 	bool capteurAPrendre = false;
 
-	if (capteurId.empty())
-	{
 		const Point * posCapteur = capteur.getPosition();
 		
 		// cas 1 : point consid�r� 
@@ -749,18 +747,8 @@ bool Service::filtrageCapteur(Capteur & capteur, Territoire & territoire , strin
 		{
 			capteurAPrendre = true;
 		}
-		
-	}
-	else
-	{ 
-		if(capteur.getSensorID().compare(capteurId) == 0)
-		{
-			capteurAPrendre = true;
-		}
-		
-	}
 
-	return capteurAPrendre;
+	return capteurAPrendre && (capteur.getSensorID().empty() || capteur.getSensorID().compare(capteurId) == 0);
 }
 
 bool Service::filtrageMesure(Mesure & mesure, struct tm & dateInf, struct tm & dateSup)
@@ -806,6 +794,12 @@ bool Service::filtrageMesure(Mesure & mesure, struct tm & dateInf, struct tm & d
 	else if ((dateNull(dateSup) == true) && (dateNull(dateInf) == true))
 	{
 		mesureAPrendre = true;
+	}
+	else {
+		time_t timeSup = mktime(&dateSup);
+
+		if ((timeMes >= timeSup - 3600) && (timeMes <= timeSup + 3600))
+			mesureAPrendre = true;
 	}
 	return mesureAPrendre;
 }
