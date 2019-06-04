@@ -41,6 +41,8 @@ public:
 	//-------------------------------------------- Constructor - destructor
 	Point ( float longt, float lat );
 
+	Point();
+
 	//Point ( );
 
 	~Point ( );

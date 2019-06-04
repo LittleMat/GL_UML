@@ -401,9 +401,15 @@ bool Service::plusOuMoins(float v1, float v2, float ecart)
 tuple<int, list<pair<string, float>>, float>  Service::calculerQualite(paramFiltrage & parametres)
 {
 
+	cout << "Calculer qualite air" << endl;
 	fileReader->debutMesure();
 	unordered_map <string, Attribut *> attributs = fileReader->lireAttributs();
 	unordered_map <string, Capteur *> capteurs = fileReader->lireCapteurs(parametres, filtrageCapteur);
+	cout << "capteurs " << endl;
+	for (auto i : capteurs) {
+		cout << i.first << endl;
+	}
+	
 
 	// Surveiller les capteurs et enlever de la liste les capteurs d�faillants
 	/*
@@ -572,7 +578,7 @@ tuple<int, list<pair<string, float>>, float>  Service::calculerQualite(paramFilt
 		}
 	}
 
-	tuple<int, list<pair<string, float>>, float>  resultat_final = make_tuple(indiceATMO, concentrations, fiabiliteMin);
+	tuple<int, list<pair<string, float>>, float>  resultat_final = make_tuple(indiceATMO, concentrations, fiabiliteMin * 100);
 
 	
 	return resultat_final;
