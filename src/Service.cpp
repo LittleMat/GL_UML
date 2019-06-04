@@ -62,7 +62,7 @@ bool Service :: surveillerComportementCapteur ( string capteurID, paramFiltrage 
 }//----- End of surveillerComportementCapteur 
 
 
-list <string> * Service :: surveillerComportementCapteurs (list <string> & capteursID, paramFiltrage & parametres)
+list <string> * Service :: surveillerComportementCapteurs (list <string> & capteursID)
 {
 	fileReader->lireAttributs();
 	unordered_map < string, Capteur * > map_tous_les_capteurs = fileReader->lireCapteurs(parametres, filtrageCapteur);
@@ -128,11 +128,7 @@ list <pair < Capteur, Capteur > > * Service :: obtenirCapteursSimilaires( struct
 
 	//On r�cup�re tous les capteurs
 	paramFiltrage param_capteurs{ tm() ,tm() , Territoire(new Point(0.0, 0.0), 0), "" };
-	/*param_capteurs.capteurId = "";
-	param_capteurs.dateInf = tm();
-	param_capteurs.dateSup = tm();
-	Territoire t = Territoire(Territoire(new Point(0.0, 0.0), 0));
-	param_capteurs.territoire = t;*/
+
 	unordered_map < std::string, Capteur * > map_capteurs = fileReader->lireCapteurs(param_capteurs, filtrageCapteur);
 
 	//On r�cup�re tous les attributs
@@ -142,11 +138,7 @@ list <pair < Capteur, Capteur > > * Service :: obtenirCapteursSimilaires( struct
 	//unordered_map<sensorID, unordered_map<AttributId, vector<value> > > capteurs_mesures;
 
 	paramFiltrage parametres { Date ,tm() , Territoire(new Point(0.0, 0.0), 0)  , "" };
-	/*parametres.capteurId = "";
-	parametres.dateInf = Date;
-	parametres.dateSup = tm();
-	Territoire t2 = Territoire(Territoire(new Point(0.0, 0.0), 0));
-	parametres.territoire = t2;*/
+
 
 	// On classe les donn�es pour faciliter le traitement
 
@@ -194,7 +186,7 @@ list <pair < Capteur, Capteur > > * Service :: obtenirCapteursSimilaires( struct
 
 	*/
 
-	int MaxSize = 0;
+
 	for (int i = 0; i < nbMesures; i++)
 	{
 		Mesure * m = fileReader->prochaineMesure(parametres, filtrageMesure);
@@ -247,14 +239,43 @@ list <pair < Capteur, Capteur > > * Service :: obtenirCapteursSimilaires( struct
 		delete m;
 	}
 
+
+	// Visualiser la structure 
+	std::cout << "Visualisation de la structure avant remplissage du vide" << endl;
+	std::cout << endl;
+	std::cout << "*********************************************" << endl;
+	for (unordered_map< string, unordered_map< string, vector<float> > > ::iterator it = capteurs_mesures.begin(); it != capteurs_mesures.end(); it++)
+	{
+		std::cout << "Capteur = " << it->first << endl;
+		for (unordered_map< string, vector<float> > ::iterator it_2 = it->second.begin(); it_2 != it->second.end(); it_2++)
+		{
+			std::cout << "Attribut = " << it_2->first << endl;
+			for (vector<float> ::iterator it_3 = it_2->second.begin(); it_3 != it_2->second.end(); it_3++)
+			{
+				std::cout << *it_3 << " ; ";
+			}
+		}
+		std::cout << endl;
+	}
+	std::cout << "*********************************************" << endl;
+	std::cout << endl;
+	std::cout << endl;
+
+
+
 	// Remplissage des zones vides
 	for (unordered_map< string, unordered_map< string, vector<float> > > ::iterator it = capteurs_mesures.begin(); it != capteurs_mesures.end(); it++)
 	{
 		for (unordered_map< string, vector<float> > ::iterator it_2 = it->second.begin(); it_2 != it->second.end(); it_2++)
 		{
-
+			for (vector<float> ::iterator it_3 = it_2->second.begin(); size(it_2->second) < nbMesures; it_3++)
+			{
+				it_2->second.push_back(0.0);
+			}
+			/*
 			vector<float> ::iterator it_3 = it_2->second.end();
 			fill(it_3, it_3 + nbMesures, 0.0); // FAUX : A CORRIGER
+			*/
 		}
 	}
 
@@ -305,7 +326,7 @@ list <pair < Capteur, Capteur > > * Service :: obtenirCapteursSimilaires( struct
 				unordered_map<string, vector<float> > ::iterator it_c2_PM10 = it_capteur2->second.find("PM10");
 
 				bool similaire = true;
-				/*
+				
 				for (int i = 0; i < nbMesures; i++)
 				{
 
@@ -320,7 +341,7 @@ list <pair < Capteur, Capteur > > * Service :: obtenirCapteursSimilaires( struct
 					}
 
 				}
-				*/
+				
 
 				if (similaire == true)
 				{

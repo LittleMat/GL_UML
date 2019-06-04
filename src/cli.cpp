@@ -468,9 +468,7 @@ int menu ( int argc , char ** argv)
 					list_captorID.push_back( "*" ); 
 				}
 				
-				paramFiltrage p = { tm() ,tm() , Territoire(new Point(0.0, 0.0), 0)  ,"" };
-
-				list<string>* defaillants = service->surveillerComportementCapteurs( list_captorID , p );
+				list<string>* defaillants = service->surveillerComportementCapteurs( list_captorID);
 				cout << "Liste capteurs defaillants : " << endl;
 				for ( auto const& i : *defaillants )
 				{
