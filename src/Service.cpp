@@ -41,12 +41,12 @@ bool Service :: surveillerComportementCapteur ( string capteurID, paramFiltrage 
 			cout << "fin de la lecture " << endl;
 			break;
 		}
-		cout << " mesure lue :" << m->getValue() << endl;
+		//cout << " mesure lue :" << m->getValue() << endl;
 		
 		// On regarde si la mesure sélectionnée concerne le capteur à surveiller
 		if ( capteurID.compare(m->getCapteur () -> getSensorID () ) == 0 )
 		{
-			cout << " mesure du capteur lue :" << m->getValue() <<  endl;
+			//cout << " mesure du capteur lue :" << m->getValue() <<  endl;
 
 			if ( m -> getValue () == NULL || m -> getValue () < 0)
 			{
@@ -77,8 +77,6 @@ list <string> * Service :: surveillerComportementCapteurs (list <string> & capte
 	// Optimisation à faire dans le cas où on demande tous les capteurs
 
 
-	//list <Capteur> * liste_capteursDefectueux = new list <Capteur>;
-
 
 	//liste d'id de capteurs défectueux
 	list <string> * liste_id_capteursDefectueux = new list<string>;
@@ -100,48 +98,15 @@ list <string> * Service :: surveillerComportementCapteurs (list <string> & capte
 	for (list <string> :: iterator i = capteursID.begin(); i != capteursID.end(); i++)
 	{
 		paramFiltrage param { tm() ,tm() , Territoire(new Point(0.0, 0.0), 0)  , *i };
-		/*Territoire t = Territoire(new Point(0.0, 0.0), 0);
-		param.capteurId = "";
-		param.dateInf = tm();
-		param.dateSup = tm();
-		param.territoire = t;
 
-		param.capteurId = *i;*/
 		if (surveillerComportementCapteur(*i, param) == false)
 		{
 			liste_id_capteursDefectueux->push_back(*i);
 		}
 	}
 	liste_id_capteursDefectueux->unique();
-	/*
-
-	// id -> Capteur
-	unordered_map < std::string, Capteur * > capteurs = fileReader->lireCapteurs(parametres, filtrageCapteur); 
-
-	for ( unordered_map <string, Capteur*> :: iterator it_map = capteurs.begin(); it_map != capteurs.end(); it_map++)
-	{
-		cout << "contenu map = " << "first " << it_map->first << " second" << it_map->second->getSensorID() << endl;
-		for ( list<string> :: iterator it_id = liste_id_capteursDefectueux.begin(); it_id != liste_id_capteursDefectueux.end(); it_id++)
-		{
-			if ( it_map->first.compare(*it_id) == 0
-				&& find(liste_id_capteursDefectueux.begin(), liste_id_capteursDefectueux.end(), it_map->first) != liste_id_capteursDefectueux.end() )
-			{
-				Point * pos = new Point(it_map->second->getPosition()->getLongitude(), it_map->second->getPosition()->getLatitude());
-				Capteur c = Capteur(it_map->second->getSensorID(), pos, it_map->second->getDescription());
-				liste_capteursDefectueux->push_back(c);
-			}
-		}
-	}
+	capteursID.clear();
 	
-	//!\\ Attention : dans le CLI, ne pas oublier le delete
-	cout << "contenu de liste_capteursDefectueux dans Service  " << endl;
-	for (list<Capteur> ::iterator it = liste_capteursDefectueux->begin(); it != liste_capteursDefectueux->end(); it++)
-	{
-		cout << "SensorID " << it->getSensorID() << endl;
-
-	}
-	return liste_capteursDefectueux;
-	*/
 	return liste_id_capteursDefectueux;
 
 }//----- End of surveillerComportementCapteurs
@@ -158,6 +123,9 @@ list <pair < Capteur, Capteur > > * Service :: obtenirCapteursSimilaires( struct
 
 // Algorithm :
 {
+
+	fileReader->DebutMesure();
+
 	//On récupère tous les capteurs
 	paramFiltrage param_capteurs{ tm() ,tm() , Territoire(new Point(0.0, 0.0), 0), "" };
 	/*param_capteurs.capteurId = "";
@@ -337,10 +305,12 @@ bool Service::plusOuMoins(float v1, float v2, float ecart)
 
 tuple<int, list<pair<string, float>>, float>  Service::calculerQualite(paramFiltrage & parametres)
 {
+
+	fileReader->DebutMesure();
 	unordered_map <string, Attribut *> attributs = fileReader->lireAttributs();
 	unordered_map <string, Capteur *> capteurs = fileReader->lireCapteurs(parametres, filtrageCapteur);
 
-	// Surveiller les capteurs 
+	// Surveiller les capteurs et enlever de la liste les capteurs défaillants
 	/*
 	list<string> liste_capteur =
 	list <Capteur> * listeCapteursDefectueux = surveillerComportementCapteurs(list <string> & capteursID, paramFiltrage & parametres)

@@ -5,9 +5,25 @@
 
 int main(int argc, char ** argv)
 {
-	list < string > test;
-	test.push_back("../data/data_10sensors_1year_v1.csv");
+	
+	list <string> args;
+	for (int i = 3; i < argc; i++)
+	{
+		args.push_back(string(argv[i]));
+	}
+	cout << "fichier capteur " << string(argv[1]) << endl;
+	Service *service = new Service(string(argv[1]), string(argv[2]), args);
+	paramFiltrage p = { tm() ,tm() , Territoire(new Point(0.0, 0.0), 0)  ,"" };
+	cout << service->surveillerComportementCapteur("Sensor1", p) << endl;
 
+	tuple<int, list<pair<string, float>>, float> res = service->calculerQualite(p);
+
+	cout << "indice ATMO = " << get <0> (res) << endl;
+	for (auto const i : get <1>(res)) {
+		std::cout << "AttributID = " << i.first << " ; " << "Valeur = " << i.second << endl;
+	}
+	cout << "fiabilité = " << get <2>(res) << endl;
+	
 	//test.push_back("data/data_test_2.csv");
 	//test.push_back("data/data_test_3.csv");
 	/*

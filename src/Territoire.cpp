@@ -81,9 +81,9 @@ Territoire :: Territoire ( )
 Territoire :: ~Territoire ( )
 // Algorithm : 
 {
-	//#ifdef MAP
+	#ifdef MAP
 		cout << "Appel au destructeur de <Territoire>" << endl;
-	//#endif
+	#endif
 
 	delete centre;
 }//----- End of ~Territoire 

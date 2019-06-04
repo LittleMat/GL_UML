@@ -137,6 +137,48 @@ bool check_dates ( string sA , string sB ) {
 	return false;
 }
 
+struct tm stringToDate(string date) {
+
+	struct tm result;
+	int jourA, moisA, anneeA;
+	regex e("([0-3][0-9])/([0-1][0-9])/([0-9][0-9][0-9][0-9])");
+	smatch matches;
+	regex_search(date, matches, e);
+	if (regex_match(date, e))
+	{
+		result.tm_mday = stoi(matches[1].str());
+		result.tm_mon = stoi(matches[2].str());
+		result.tm_year = stoi(matches[3].str());
+		result.tm_hour = 0;
+		result.tm_min = 0;
+	}
+	return result;
+}
+
+void afficherDate(struct tm date) {
+
+	cout << date.tm_mday << "\\" << date.tm_mon << "\\" << date.tm_year << " " << date.tm_hour << ":" << date.tm_min << endl;
+}
+
+struct tm stringToDateDetailed(string date) {
+
+	struct tm result = tm();
+	int jourA, moisA, anneeA;
+	regex e("([0-3][0-9])/([0-1][0-9])/([0-9][0-9][0-9][0-9]) ([0-2][0-9]):([0-5][0-9])");
+	smatch matches;
+	regex_search(date, matches, e);
+	if (regex_match(date, e))
+	{
+		result.tm_mday = stoi(matches[1].str());
+		result.tm_mon = stoi(matches[2].str());
+		result.tm_year = stoi(matches[3].str() ) - 1900; // Linda
+		result.tm_hour = stoi(matches[4].str());
+		result.tm_min = stoi(matches[5].str());
+
+	}
+	return result;
+}
+
 int menu ( int argc , char ** argv)
 {
 	list <string> args;
@@ -379,11 +421,24 @@ int menu ( int argc , char ** argv)
 				while ( flag );
 				cout << "nombre de mesures demandees : " << nb_mesures << endl;
 				cout << endl;
+
+
+				afficherDate(stringToDateDetailed(date1));
+				list < pair < Capteur , Capteur > >* similaires;
+				similaires = service->obtenirCapteursSimilaires(stringToDateDetailed(date1) , stoi ( nb_mesures ) );
+
+				cout << "capteurs similaires : " << nb_mesures << endl;
+				for (auto const& i : *similaires) {
+
+					cout << i.first.getSensorID() << " -- " << i.second.getSensorID() << endl;
+				}
+
 				break;
 
 			//Verifier comportement capteurs
 			case 3:
 				cout << "Listez les id des capteurs que vous voulez surveiller" << endl;
+				cout << "Rentrez -1 pour arreter la saisie" << endl;
 				cout << "Le caractere * designe l integralite des capteurs" << endl;
 
 
@@ -394,7 +449,6 @@ int menu ( int argc , char ** argv)
 				{
 					do 
 					{
-
 						if ( flag ) { cout << "Rentrez un id non vide" << endl; }
 						cin >> captorId;
 						flag = (captorId.empty ( ) );
@@ -409,25 +463,18 @@ int menu ( int argc , char ** argv)
 					
 				} 
 				while ( captorId != "*" && captorId != "-1" );
-				if ( captorId == "*" ) { list_captorID.push_back( "*" ); }
-				//cout << "liste des id : " << list_captorID << endl;
+				if ( captorId == "*" ) 
+				{ 
+					list_captorID.clear();
+					list_captorID.push_back( "*" ); 
+				}
 				
 				
-				paramFiltrage p { tm() ,tm() , Territoire(new Point(0.0, 0.0), 0)  ,"" };
-				/*p.capteurId = "";
-				p.dateInf = tm ();
-				p.dateSup = tm();
-				Point * point = new Point(0.0, 0.0);
-				//Territoire t (point, 0);
-				p.territoire = Territoire (point, 0);*/
-				cout << "latitude " << p.territoire.getCentre()->getLatitude() << endl;
-				cout << "longitude " << p.territoire.getCentre()->getLongitude() << endl;
+				paramFiltrage p = { tm() ,tm() , Territoire(new Point(0.0, 0.0), 0)  ,"" };
 
-				//cout << "latitude " << t.getCentre()->getLatitude() << endl;
-			//	cout << "longitude " << t.getCentre()->getLongitude() << endl;
+				
 
-				struct tm dateTest;
-				dateTest.tm_hour;
+				
 				//annee - 1900
 				//list<Capteur> * surveillerComportementCapteurs(list<string> & capteursID, paramFiltrage & parametres);
 				list<string>* defaillants = service->surveillerComportementCapteurs(list_captorID,p);
@@ -445,19 +492,3 @@ int menu ( int argc , char ** argv)
 	}
 	return 0;
 } // End of menu
-
-/*
-
-typedef struct
-{
-// Pour filtrageMesure
-struct tm dateInf;
-struct tm dateSup;
-//Pour filtrageCapteur
-Territoire territoire;
-string capteurId;
-} paramFiltrage;
-
-
-
-*/

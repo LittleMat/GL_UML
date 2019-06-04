@@ -79,9 +79,9 @@ Point :: Point ( float longt, float lat )
 Point :: ~Point ( )
 // Algorithm : 
 {
-	//#ifdef MAP
+	#ifdef MAP
 		cout << "Appel au destructeur de <Point>" << endl;
-	//#endif
+	#endif
 }//----- End of ~Point 
 
 
