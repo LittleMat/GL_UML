@@ -79,8 +79,10 @@ namespace {
     }
 
     TEST(TerritoireUnitTest, ConstructorIllegalArgument) {
-        EXPECT_ANY_THROW(Territoire t0(new Point(0, 0), -10));
+        Point *p = new Point(0, 0);
+        EXPECT_ANY_THROW(Territoire t0(p, -10));
         EXPECT_ANY_THROW(Territoire t1(nullptr, 10));
+        delete p;
     }
     TEST(TerritoireUnitTest, Constructor) {
         Territoire t0(new Point(0.14, 0.59), 125);
@@ -117,17 +119,12 @@ namespace {
         struct tm *now_t = localtime(&now);
         struct tm *future_t = localtime(&future);
         struct tm empty;
-        Attribut attribut("id", "unit", "description");
-        Capteur capteur("sensorId", new Point(0, 0), "");
-        EXPECT_ANY_THROW(Mesure(&empty, &attribut, 0, "sensorId", &capteur));
-        EXPECT_ANY_THROW(Mesure(now_t, nullptr, 0, "sensorId", &capteur));
-        EXPECT_ANY_THROW(Mesure(now_t, &attribut, -100, "sensorId", &capteur));
-        EXPECT_ANY_THROW(Mesure(now_t, &attribut, 0, "", &capteur));
-        EXPECT_ANY_THROW(Mesure(now_t, &attribut, 0, "meaningless", &capteur));
-        EXPECT_ANY_THROW(Mesure(now_t, &attribut, 0, "sensorId", nullptr));
-        EXPECT_ANY_THROW(Mesure(future_t, &attribut, 0, "sensorId", &capteur));
+        EXPECT_NO_THROW(Mesure(empty, "attributId", 0, "sensorId"));
+        EXPECT_ANY_THROW(Mesure(*now_t, "", 0, "sensorId"));
+        EXPECT_ANY_THROW(Mesure(*now_t, "attributId", 0, ""));
+        EXPECT_ANY_THROW(Mesure(*future_t, "attributId", 0, "sensorId"));
     }
-
+/*
     TEST(FileReaderUnitTest, ConstructorIllegalArgument) {
         list<string> listS;
         listS.push_back("resources/Data10.csv");
@@ -369,4 +366,5 @@ namespace {
         FileReader reader("resources/Sensor10.csv", "resources/AttributeType.csv", listS);
         Service service(&reader);
     }
+*/
 } // namespace

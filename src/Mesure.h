@@ -34,24 +34,21 @@ public :
 //----------------------------------------------------- Public methods
 
 	//Retourne l'attribut
-	const Attribut * getAttribut ( ) const;
+	string getAttributID () const;
 
 	//Retourne la valeur
 	float getValue ( ) const;
 
 	//Retourne l'id du capteur de la mesure
-	const std :: string getSensorID ( ) const;
-
-	//Retourne le capteur
-	const Capteur * getCapteur ( ) const;
+	string getSensorID ( ) const;
 
 	//Retourne le timestamp
-	struct tm * getTimestamp ( ) const;
+	struct tm getTimestamp ( ) const;
 
 
 //-------------------------------------------- Constructor - destructor
 		
-	Mesure ( struct tm * timestamp, Attribut * const attribut, float value, const std :: string sensorID, Capteur * capteur );
+	Mesure ( const struct tm& timestamp, const string& attributID, float value, const string& sensorID);
 
 	Mesure ( );
 
@@ -61,12 +58,10 @@ public :
 //----------------------------------------------------- Protected attributes
 
 protected :
-	struct tm * timestamp;
-	Attribut * attribut;
+	struct tm timestamp;
+	string attributID;
 	float value;
-	std :: string sensorID;
-	Capteur * capteur;
-
+	string sensorID;
 };
 
 #endif // MESURE_H

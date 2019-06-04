@@ -31,10 +31,10 @@ bool Service :: surveillerComportementCapteur ( string capteurID, paramFiltrage 
 	fileReader->DebutMesure();
 	while (finLecture == false)
 	{
-		// On sélectionne les mesures qui satisfont les critères de sélection temporelles
+		// On sï¿½lectionne les mesures qui satisfont les critï¿½res de sï¿½lection temporelles
 		const Mesure * m = fileReader->prochaineMesure( parametres, filtrageMesure );
 		cout << "lecture de mesure " << endl;
-		//Si m == nullptr, alors il n'y a plus rien à lire 
+		//Si m == nullptr, alors il n'y a plus rien ï¿½ lire 
 		if ( m == nullptr )
 		{
 			finLecture = true; 
@@ -43,12 +43,12 @@ bool Service :: surveillerComportementCapteur ( string capteurID, paramFiltrage 
 		}
 		//cout << " mesure lue :" << m->getValue() << endl;
 		
-		// On regarde si la mesure sélectionnée concerne le capteur à surveiller
-		if ( capteurID.compare(m->getCapteur () -> getSensorID () ) == 0 )
+		// On regarde si la mesure sï¿½lectionnï¿½e concerne le capteur ï¿½ surveiller
+		if ( capteurID.compare(m-> getSensorID () ) == 0 )
 		{
 			//cout << " mesure du capteur lue :" << m->getValue() <<  endl;
 
-			if ( m -> getValue () == NULL || m -> getValue () < 0)
+			if ( m -> getValue () < 0)
 			{
 				bonEtat = false;
 				break;
@@ -76,10 +76,10 @@ list <string> * Service :: surveillerComportementCapteurs (list <string> & capte
 	}
 
 
-	//liste d'id de capteurs défectueux
+	//liste d'id de capteurs dï¿½fectueux
 	list <string> * liste_id_capteursDefectueux = new list<string>;
 	cout << endl;
-	cout << "contenu liste_id_capteursDefectueux après init" << endl;
+	cout << "contenu liste_id_capteursDefectueux aprï¿½s init" << endl;
 	cout << endl;
 	if (liste_id_capteursDefectueux->empty())
 	{
@@ -113,18 +113,18 @@ list <string> * Service :: surveillerComportementCapteurs (list <string> & capte
 
 list <pair < Capteur, Capteur > > * Service :: obtenirCapteursSimilaires( struct tm & Date, int nbMesures )
 // HYPOTHESES APPLIQUEES DANS L'ALGORITHME
-// hypothèse 0 : les concentrations des particules mesurées à un instant t sont regroupées les unes à la suite des autres
-// hypothèse 1 : on considère que deux capteurs ont pris leurs mesures au même moment si la différence entre leurs mesures est de +- 1 minute
-// hypothèse 2 : un capteur à un instant t doit a des valeurs non null pour les 4 particules de l'air
-// hypothèse 3 : en considérant l'hypothèse 1 valide, on suppose que tous les capteurs prennent leurs mesures en même temps
-// (vrai dans le début du fichier .csv de mesures que j'ai lu)
+// hypothï¿½se 0 : les concentrations des particules mesurï¿½es ï¿½ un instant t sont regroupï¿½es les unes ï¿½ la suite des autres
+// hypothï¿½se 1 : on considï¿½re que deux capteurs ont pris leurs mesures au mï¿½me moment si la diffï¿½rence entre leurs mesures est de +- 1 minute
+// hypothï¿½se 2 : un capteur ï¿½ un instant t doit a des valeurs non null pour les 4 particules de l'air
+// hypothï¿½se 3 : en considï¿½rant l'hypothï¿½se 1 valide, on suppose que tous les capteurs prennent leurs mesures en mï¿½me temps
+// (vrai dans le dï¿½but du fichier .csv de mesures que j'ai lu)
 
 // Algorithm :
 {
 
 	fileReader->DebutMesure();
 
-	//On récupère tous les capteurs
+	//On rï¿½cupï¿½re tous les capteurs
 	paramFiltrage param_capteurs{ tm() ,tm() , Territoire(new Point(0.0, 0.0), 0), "" };
 	/*param_capteurs.capteurId = "";
 	param_capteurs.dateInf = tm();
@@ -133,7 +133,7 @@ list <pair < Capteur, Capteur > > * Service :: obtenirCapteursSimilaires( struct
 	param_capteurs.territoire = t;*/
 	unordered_map < std::string, Capteur * > map_capteurs = fileReader->lireCapteurs(param_capteurs, filtrageCapteur);
 
-	//On récupère tous les attributs
+	//On rï¿½cupï¿½re tous les attributs
 	unordered_map < std::string, Attribut * > map_attributs = fileReader->lireAttributs(); 
 
 	unordered_map< string, unordered_map< string, vector<float> > > capteurs_mesures;
@@ -146,7 +146,7 @@ list <pair < Capteur, Capteur > > * Service :: obtenirCapteursSimilaires( struct
 	Territoire t2 = Territoire(Territoire(new Point(0.0, 0.0), 0));
 	parametres.territoire = t2;*/
 
-	// On classe les données pour faciliter le traitement
+	// On classe les donnï¿½es pour faciliter le traitement
 	for (int i = 0; i < nbMesures; i++)
 	{
 		Mesure * m = fileReader->prochaineMesure(parametres, filtrageMesure);
@@ -155,13 +155,13 @@ list <pair < Capteur, Capteur > > * Service :: obtenirCapteursSimilaires( struct
 		
 		if (iterateur_sensorID != capteurs_mesures.end())
 		{			
-			//unordered_map<string, vector<float>> attributId_valeur = iterateur_sensorID->second; // juste là pour m'aider à coder
-			unordered_map<string, vector<float>> ::iterator iterateur_attributId = iterateur_sensorID->second.find(m->getAttribut()->getAttributID());
+			//unordered_map<string, vector<float>> attributId_valeur = iterateur_sensorID->second; // juste lï¿½ pour m'aider ï¿½ coder
+			unordered_map<string, vector<float>> ::iterator iterateur_attributId = iterateur_sensorID->second.find(m->getAttributID());
 			
 			if (iterateur_attributId != iterateur_sensorID->second.end())
 			{
-				//vector<float> N_valeurs = iterateur_attributId->second; // juste là pour m'aider à coder
-				//N_valeurs[i] = m->getValue(); // juste là pour m'aider à coder
+				//vector<float> N_valeurs = iterateur_attributId->second; // juste lï¿½ pour m'aider ï¿½ coder
+				//N_valeurs[i] = m->getValue(); // juste lï¿½ pour m'aider ï¿½ coder
 
 				iterateur_attributId->second[i] = m->getValue();
 			}
@@ -170,7 +170,7 @@ list <pair < Capteur, Capteur > > * Service :: obtenirCapteursSimilaires( struct
 				//A inserer dans la map
 				vector <float> v;
 				v[i] = m->getValue();
-				iterateur_sensorID->second.insert(make_pair(m->getAttribut()->getAttributID(), v));
+				iterateur_sensorID->second.insert(make_pair(m->getAttributID(), v));
 			}
 		}
 		else
@@ -179,8 +179,8 @@ list <pair < Capteur, Capteur > > * Service :: obtenirCapteursSimilaires( struct
 			vector <float> v;
 			v[i] = m->getValue();
 			unordered_map<string, vector<float> > map_a_inserer;
-			map_a_inserer.insert(make_pair(m->getAttribut()->getAttributID(), v));
-			capteurs_mesures.insert(make_pair(m->getCapteur()->getSensorID(), map_a_inserer));
+			map_a_inserer.insert(make_pair(m->getAttributID(), v));
+			capteurs_mesures.insert(make_pair(m->getSensorID(), map_a_inserer));
 		}
 
 		delete m;
@@ -223,7 +223,7 @@ list <pair < Capteur, Capteur > > * Service :: obtenirCapteursSimilaires( struct
 
 				if (similaire == true)
 				{
-					//Vérfier si le couple n'est pas déjà présent
+					//Vï¿½rfier si le couple n'est pas dï¿½jï¿½ prï¿½sent
 					for (list<pair<Capteur, Capteur>> ::iterator it_list = capteurs_similaires->begin(); it_list != capteurs_similaires->end(); it_list++)
 					{
 						if (
@@ -233,7 +233,7 @@ list <pair < Capteur, Capteur > > * Service :: obtenirCapteursSimilaires( struct
 							))
 						{
 
-							// On instancie des nouveaux objet capteur dans la liste parce que sinon c'est ingérable (delete)
+							// On instancie des nouveaux objet capteur dans la liste parce que sinon c'est ingï¿½rable (delete)
 							Capteur * c1_ptr = map_capteurs.find(it_capteur1->first)->second;
 							Point * p1 = new Point(c1_ptr->getPosition()->getLongitude(), c1_ptr->getPosition()->getLatitude());
 							Capteur c1 = Capteur(c1_ptr->getSensorID(), p1, c1_ptr->getDescription());
@@ -275,7 +275,7 @@ tuple<int, list<pair<string, float>>, float>  Service::calculerQualite(paramFilt
 	unordered_map <string, Attribut *> attributs = fileReader->lireAttributs();
 	unordered_map <string, Capteur *> capteurs = fileReader->lireCapteurs(parametres, filtrageCapteur);
 
-	// Surveiller les capteurs et enlever de la liste les capteurs défaillants
+	// Surveiller les capteurs et enlever de la liste les capteurs dï¿½faillants
 	/*
 	list<string> liste_capteur =
 	list <Capteur> * listeCapteursDefectueux = surveillerComportementCapteurs(list <string> & capteursID, paramFiltrage & parametres)
@@ -291,7 +291,7 @@ tuple<int, list<pair<string, float>>, float>  Service::calculerQualite(paramFilt
 	bool finLecture = false;
 	while (finLecture == false)
 	{
-		// On récupère lit une mesure
+		// On rï¿½cupï¿½re lit une mesure
 		const Mesure * m = fileReader->prochaineMesure(parametres, filtrageMesure);
 		
 		if (m == nullptr)
@@ -300,10 +300,10 @@ tuple<int, list<pair<string, float>>, float>  Service::calculerQualite(paramFilt
 			break;
 		}
 
-		// On calule l'indice de fiabilité 
+		// On calule l'indice de fiabilitï¿½ 
 		float fiabilite = 1.0; //il est de 1 pour l'aire totale ou un capteur en particulier
 
-		//On ne considère pas un capteur en particulier
+		//On ne considï¿½re pas un capteur en particulier
 		if (parametres.capteurId.compare("") == 0)
 		{
 			// Un point  
@@ -311,36 +311,36 @@ tuple<int, list<pair<string, float>>, float>  Service::calculerQualite(paramFilt
 				&& !(parametres.territoire.getCentre()->getLatitude() == 0 && parametres.territoire.getCentre()->getLongitude() == 0))
 			{
 
-				fiabilite = 1 - parametres.territoire.getCentre()->distance(m->getCapteur()->getPosition())/10;
+				fiabilite = 1 - parametres.territoire.getCentre()->distance(capteurs.at(m->getSensorID())->getPosition())/10;
 			}
-			// Un territoire ciblé
+			// Un territoire ciblï¿½
 			else if (parametres.territoire.getRayon() > 0
 				&& !(parametres.territoire.getCentre()->getLatitude() == 0 && parametres.territoire.getCentre()->getLongitude() == 0)
 				)
 			{
-				fiabilite = 1 - (parametres.territoire.getCentre()->distance(m->getCapteur()->getPosition()) - parametres.territoire.getRayon()) / 50;
+				fiabilite = 1 - (parametres.territoire.getCentre()->distance(capteurs.at(m->getSensorID())->getPosition()) - parametres.territoire.getRayon()) / 50;
 			}
 
 		}
 		if (fiabilite < 0)
 			fiabilite = 0;
 
-		// On insère la mesure dans la liste appropriée
-		if (m->getAttribut()->getAttributID().compare("O3") == 0)
+		// On insï¿½re la mesure dans la liste appropriï¿½e
+		if (m->getAttributID().compare("O3") == 0)
 		{
 			mesures_O3.push_back(make_pair(m->getValue(), fiabilite));
 		}
-		else if (m->getAttribut()->getAttributID().compare("SO2") == 0)
+		else if (m->getAttributID().compare("SO2") == 0)
 		{
 			mesures_SO2.push_back(make_pair(m->getValue(), fiabilite));
 
 		}
-		else if (m->getAttribut()->getAttributID().compare("NO2") == 0)
+		else if (m->getAttributID().compare("NO2") == 0)
 		{
 			mesures_NO2.push_back(make_pair(m->getValue(), fiabilite));
 
 		}
-		else if (m->getAttribut()->getAttributID().compare("PM10") == 0)
+		else if (m->getAttributID().compare("PM10") == 0)
 		{
 			mesures_PM10.push_back(make_pair(m->getValue(), fiabilite));
 		}
@@ -659,19 +659,19 @@ int Service :: calculIndiceATMO(string substance, float valeur)
 bool Service::filtrageCapteur(Capteur & capteur, Territoire & territoire , string capteurId )
 // Algorithm :
 // Si capteurId == null, 
-	// On récupère la position du capteur avec posCapteur = capteur.getPosition()
+	// On rï¿½cupï¿½re la position du capteur avec posCapteur = capteur.getPosition()
 
-	// Si territoire.getRayon() == 0 (point considéré)
+	// Si territoire.getRayon() == 0 (point considï¿½rï¿½)
 		// On regarde si la distance entre posCapteur et territoire.getCentre <= 10 km
 			// Si oui : on retourne true
 			// Sinon : on retourne false
 
-	// Si terrtoire.getRayon() != 0 et territoire.getCentre() != (0,0) (territoire considéré)
+	// Si terrtoire.getRayon() != 0 et territoire.getCentre() != (0,0) (territoire considï¿½rï¿½)
 		// On regarde si la distance entre posCapteur et (territoire.getCentre() + territoire.getRayon()) <= (50 + territoire.getRayon())
 			// Si oui : on retourne true
 			// Sinon : on retourne false
 
-	// Si terrtoire.getRayon() == 0 et territoire.getCentre() == (0,0) (aire totale considérée ou tous les capteurs) 
+	// Si terrtoire.getRayon() == 0 et territoire.getCentre() == (0,0) (aire totale considï¿½rï¿½e ou tous les capteurs) 
 		// on retourne true;
 
 // Si capteurId != null
@@ -686,7 +686,7 @@ bool Service::filtrageCapteur(Capteur & capteur, Territoire & territoire , strin
 	{
 		const Point * posCapteur = capteur.getPosition();
 		
-		// cas 1 : point considéré 
+		// cas 1 : point considï¿½rï¿½ 
 		if (territoire.getRayon() == 0.0
 			&& territoire.getCentre()->getLatitude() != 0.0 && territoire.getCentre()->getLongitude() != 0.0)
 		{
@@ -697,7 +697,7 @@ bool Service::filtrageCapteur(Capteur & capteur, Territoire & territoire , strin
 				capteurAPrendre = true;				
 			}
 		}
-		// cas 2 : territoire considéré
+		// cas 2 : territoire considï¿½rï¿½
 		else if (territoire.getRayon() != 0
 			&& territoire.getCentre()->getLatitude() != 0.0 && territoire.getCentre()->getLongitude() != 0.0)
 		{
@@ -708,7 +708,7 @@ bool Service::filtrageCapteur(Capteur & capteur, Territoire & territoire , strin
 				capteurAPrendre = true;
 			}
 		}
-		// cas 3 : aire totale considérée
+		// cas 3 : aire totale considï¿½rï¿½e
 		else if (territoire.getRayon() == 0.0
 			&& territoire.getCentre()->getLatitude() == 0.0 && territoire.getCentre()->getLongitude() == 0.0)
 		{
@@ -730,11 +730,11 @@ bool Service::filtrageCapteur(Capteur & capteur, Territoire & territoire , strin
 
 bool Service::filtrageMesure(Mesure & mesure, struct tm & dateInf, struct tm & dateSup)
 // Algorithm :
-// Si dateSup == null && dateInf != null (à un instant t)
-	// On regarde si mesure.getTimestamp() appartient à l'intervalle  [dateInf (en sec) - 60 (min) * 60 sec, dateInf (en sec) + 60 (min) * 60 sec] 
+// Si dateSup == null && dateInf != null (ï¿½ un instant t)
+	// On regarde si mesure.getTimestamp() appartient ï¿½ l'intervalle  [dateInf (en sec) - 60 (min) * 60 sec, dateInf (en sec) + 60 (min) * 60 sec] 
 		// Si oui : on retourne true
 		// Sinon : on retourne false
-// Si  dateSup != null && dateInf != null (période)
+// Si  dateSup != null && dateInf != null (pï¿½riode)
 	// On regarde si mesure.getTimestamp() >= dateInf et mesure.getTimestamp() <= dateSup
 		// Si oui : on retourne true
 		// Sinon : on retourne false
@@ -744,7 +744,8 @@ bool Service::filtrageMesure(Mesure & mesure, struct tm & dateInf, struct tm & d
 
 	cout << "Filtrage mesure appelee" << endl;
 	bool mesureAPrendre = false;
-	time_t timeMes = mktime(mesure.getTimestamp()); 
+	struct tm time = mesure.getTimestamp();
+	time_t timeMes = mktime(&time); 
 	
 	// A un instant t
 	if ((dateNull(dateSup) == true) && (dateNull(dateInf) == false))
@@ -755,7 +756,7 @@ bool Service::filtrageMesure(Mesure & mesure, struct tm & dateInf, struct tm & d
 			mesureAPrendre = true;
 
 	}
-	// Une période
+	// Une pï¿½riode
 	else if ((dateNull(dateSup) == false) && (dateNull(dateInf) == false))
 	{
 		time_t timeInf = mktime(&dateInf);
