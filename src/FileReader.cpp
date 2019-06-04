@@ -225,7 +225,7 @@ unordered_map < string, Capteur * > FileReader :: lireCapteurs ( paramFiltrage &
 							if( this -> map_attributs.count ( attributeID ) == 1 && this -> map_capteurs.count ( sensorID ) == 1 )
 							{
 								//Le sensorID et l'attributID existent et sont dans les map
-								m = new Mesure ( time, this -> map_attributs [ attributeID ], value, sensorID, this -> map_capteurs [ sensorID ] );
+								m = new Mesure (*time, attributeID, value, sensorID);
 
 								//cout << "Mesure : " << m->getValue() << endl;
 

@@ -27,9 +27,9 @@ using namespace std;
 
 //----------------------------------------------------- Public methodes
 
-const Attribut * Mesure :: getAttribut ( ) const
+string Mesure :: getAttributID ( ) const
 {
-	return this -> attribut;
+	return this -> attributID;
 }
 
 float Mesure :: getValue ( ) const
@@ -37,24 +37,20 @@ float Mesure :: getValue ( ) const
 	return this -> value;
 }
 
-const std :: string Mesure :: getSensorID ( ) const
+string Mesure :: getSensorID ( ) const
 {
 	return this -> sensorID;
 }
 
-const Capteur * Mesure :: getCapteur ( ) const
-{
-	return this -> capteur;
-}
-
-struct tm * Mesure :: getTimestamp ( ) const
+struct tm Mesure :: getTimestamp ( ) const
 {
 	return this -> timestamp;
 }
 
 //-------------------------------------------- Constructors - destructor
 
-Mesure :: Mesure (struct tm * timestamp, Attribut * const attribut, float value, std ::string sensorID, Capteur * capteur)
+Mesure :: Mesure (const struct tm& timestamp, const string& attributID, float value, const string& sensorID) :
+		timestamp(timestamp), attributID(attributID), value(value), sensorID(sensorID)
 // Algorithm :
 //
 {
@@ -63,22 +59,18 @@ Mesure :: Mesure (struct tm * timestamp, Attribut * const attribut, float value,
 			cout << "Appel au constructeur de <Mesure>" << endl;
 	#endif
 
-	this -> timestamp = timestamp;
-	this -> attribut = attribut;
-	this -> value = value;
-	this -> sensorID = sensorID;
-	this -> capteur = capteur;
+	if (this->attributID.empty() || this->sensorID.empty() || mktime(&this->timestamp) > time(NULL)) {
+		throw "Illegal Argument Exception";
+	}
 	
 }//-----End of Mesure
 
 Mesure::Mesure ( )
 {
-	this -> timestamp = NULL;
-	this -> attribut = NULL;
+	this -> timestamp = tm ( );
+	this -> attributID = string ( );
 	this -> value = NULL;
 	this -> sensorID = string ( );
-	this -> capteur = NULL;
-	
 }
 
 Mesure:: ~Mesure ( )
@@ -88,6 +80,4 @@ Mesure:: ~Mesure ( )
 	#ifdef MAP
 	cout << "Appel au destructeur de <Mesure>" << endl;
 	#endif
-
-	delete timestamp;
 }//----- End of ~Mesure 

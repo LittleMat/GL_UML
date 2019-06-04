@@ -264,7 +264,7 @@ int menu ( int argc , char ** argv)
 						break;
 
 					case 2:
-
+					
 						cout << "Rentrez une latitude et une longitude" << endl;
 						flag = false;
 
@@ -381,6 +381,7 @@ int menu ( int argc , char ** argv)
 
 			//Obtenir capteurs similaires
 			case 2 :
+			{
 				cout << "Rentrez l'id du capteur de reference" << endl;
 				flag = false;
 
@@ -427,7 +428,8 @@ int menu ( int argc , char ** argv)
 
 				afficherDate(stringToDateDetailed(date1));
 				list < pair < Capteur , Capteur > >* similaires;
-				similaires = service->obtenirCapteursSimilaires(stringToDateDetailed(date1) , stoi ( nb_mesures ) );
+				struct tm tmp = stringToDateDetailed(date1);
+				similaires = service->obtenirCapteursSimilaires(tmp , stoi ( nb_mesures ) );
 
 				cout << "capteurs similaires : " << nb_mesures << endl;
 				for (auto const& i : *similaires) {
@@ -436,7 +438,7 @@ int menu ( int argc , char ** argv)
 				}
 
 				break;
-
+			}
 			//Verifier comportement capteurs
 			case 3:
 				cout << "Listez les id des capteurs que vous voulez surveiller" << endl;
