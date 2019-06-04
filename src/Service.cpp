@@ -169,6 +169,27 @@ list <pair < Capteur, Capteur > > * Service :: obtenirCapteursSimilaires( struct
 	}
 
 
+	// Visualiser la structure 
+	cout << "Visualisation de la structure après init" << endl;
+	cout << endl;
+	cout << "**********************************************" << endl;
+	for (unordered_map< string, unordered_map< string, vector<float> > > ::iterator it = capteurs_mesures.begin(); it != capteurs_mesures.end(); it++)
+	{
+		cout << "Capteur = " << it->first << endl;
+		for (unordered_map< string, vector<float> > ::iterator it_2 = it->second.begin(); it_2 != it->second.end(); it_2++)
+		{
+			cout << "Attribut = " << it_2->first << endl;
+			for (vector<float> ::iterator it_3 = it_2->second.begin(); it_3 != it_2->second.end(); it_3++)
+			{
+				cout << *it_3 << " ; ";
+			}
+		}
+	}
+	cout << "**********************************************" << endl;
+	cout << endl;
+	cout << endl;
+
+
 	for (int i = 0; i < nbMesures; i++)
 	{
 		Mesure * m = fileReader->prochaineMesure(parametres, filtrageMesure);
@@ -194,7 +215,7 @@ list <pair < Capteur, Capteur > > * Service :: obtenirCapteursSimilaires( struct
 					//vector<float> N_valeurs = iterateur_attributId->second; // juste lï¿½ pour m'aider ï¿½ coder
 					//N_valeurs[i] = m->getValue(); // juste lï¿½ pour m'aider ï¿½ coder
 
-					iterateur_attributId->second[i] = m->getValue();
+					iterateur_attributId->second.push_back(m->getValue());
 				}
 				/* Plus nï¿½cessaire depuis la phase d'init
 				else
@@ -220,6 +241,30 @@ list <pair < Capteur, Capteur > > * Service :: obtenirCapteursSimilaires( struct
 
 		delete m;
 	}
+
+
+	// Visualiser la structure 
+	cout << "Visualisation de la structure après lecture" << endl;
+	cout << endl;
+	cout << "----------------------------------------------" << endl;
+	for (unordered_map< string, unordered_map< string, vector<float> > > ::iterator it = capteurs_mesures.begin(); it != capteurs_mesures.end(); it++)
+	{
+		cout << "Capteur = " << it->first << endl;
+		for (unordered_map< string, vector<float> > ::iterator it_2 = it->second.begin(); it_2 != it->second.end(); it_2++)
+		{
+			cout << "Attribut = " << it_2->first << endl;
+			for (vector<float> ::iterator it_3 = it_2->second.begin(); it_3 != it_2->second.end(); it_3++)
+			{
+				cout << *it_3 << " ; ";
+			}
+		}
+	}
+	cout << "----------------------------------------------" << endl;
+	cout << endl;
+	cout << endl;
+
+
+
 
 	// Traitement
 	list<pair<Capteur, Capteur>> * capteurs_similaires = new list<pair<Capteur, Capteur>>;
