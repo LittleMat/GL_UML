@@ -481,7 +481,9 @@ int menu ( int argc , char ** argv)
 				//list <pair < string, string > >
 				afficherDate(stringToDateDetailed(date1));
 
+
 				list < pair < string, string > >* similaires;
+
 
 				tm tmp = stringToDateDetailed(date1);
 				similaires = service->obtenirCapteursSimilaires ( tmp , stoi ( nb_mesures ) );
