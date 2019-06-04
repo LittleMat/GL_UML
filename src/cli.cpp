@@ -137,43 +137,45 @@ bool check_dates ( string sA , string sB ) {
 	return false;
 }
 
-struct tm stringToDate(string date) {
+struct tm stringToDate( string date )
+{
 
-	struct tm result;
-	int jourA, moisA, anneeA;
-	regex e("([0-3][0-9])/([0-1][0-9])/([0-9][0-9][0-9][0-9])");
+	struct tm result = tm ( ) ;
+
+	regex e( "([0-3][0-9])/([0-1][0-9])/([0-9][0-9][0-9][0-9])" );
 	smatch matches;
-	regex_search(date, matches, e);
-	if (regex_match(date, e))
+	regex_search ( date , matches , e );
+	if ( regex_match ( date , e ) )
 	{
-		result.tm_mday = stoi(matches[1].str());
-		result.tm_mon = stoi(matches[2].str());
-		result.tm_year = stoi(matches[3].str());
+		result.tm_mday = stoi ( matches[ 1 ].str ( ) );
+		result.tm_mon = stoi ( matches[ 2 ].str ( ) );
+		result.tm_year = stoi ( matches[ 3 ].str ( ) ) - 1900; // Linda
 		result.tm_hour = 0;
 		result.tm_min = 0;
 	}
 	return result;
 }
 
-void afficherDate(struct tm date) {
+void afficherDate(struct tm date)
+{
 
 	cout << date.tm_mday << "\\" << date.tm_mon << "\\" << date.tm_year << " " << date.tm_hour << ":" << date.tm_min << endl;
 }
 
-struct tm stringToDateDetailed(string date) {
+struct tm stringToDateDetailed( string date )
+{
 
-	struct tm result = tm();
-	int jourA, moisA, anneeA;
-	regex e("([0-3][0-9])/([0-1][0-9])/([0-9][0-9][0-9][0-9]) ([0-2][0-9]):([0-5][0-9])");
+	struct tm result = tm ( );
+	regex e( "([0-3][0-9])/([0-1][0-9])/([0-9][0-9][0-9][0-9]) ([0-2][0-9]):([0-5][0-9])" );
 	smatch matches;
-	regex_search(date, matches, e);
-	if (regex_match(date, e))
+	regex_search ( date , matches , e );
+	if ( regex_match ( date , e ) )
 	{
-		result.tm_mday = stoi(matches[1].str());
-		result.tm_mon = stoi(matches[2].str());
-		result.tm_year = stoi(matches[3].str() ) - 1900; // Linda
-		result.tm_hour = stoi(matches[4].str());
-		result.tm_min = stoi(matches[5].str());
+		result.tm_mday = stoi ( matches[ 1 ].str ( ) );
+		result.tm_mon = stoi ( matches[ 2 ].str ( ) );
+		result.tm_year = stoi ( matches[ 3 ].str ( ) ) - 1900; // Linda
+		result.tm_hour = stoi ( matches[ 4 ].str ( ) );
+		result.tm_min = stoi ( matches[ 5 ].str ( ));
 
 	}
 	return result;
@@ -262,7 +264,7 @@ int menu ( int argc , char ** argv)
 						break;
 
 					case 2:
-
+					
 						cout << "Rentrez une latitude et une longitude" << endl;
 						flag = false;
 
@@ -379,6 +381,7 @@ int menu ( int argc , char ** argv)
 
 			//Obtenir capteurs similaires
 			case 2 :
+			{
 				cout << "Rentrez l'id du capteur de reference" << endl;
 				flag = false;
 
@@ -425,7 +428,8 @@ int menu ( int argc , char ** argv)
 
 				afficherDate(stringToDateDetailed(date1));
 				list < pair < Capteur , Capteur > >* similaires;
-				similaires = service->obtenirCapteursSimilaires(stringToDateDetailed(date1) , stoi ( nb_mesures ) );
+				struct tm tmp = stringToDateDetailed(date1);
+				similaires = service->obtenirCapteursSimilaires(tmp , stoi ( nb_mesures ) );
 
 				cout << "capteurs similaires : " << nb_mesures << endl;
 				for (auto const& i : *similaires) {
@@ -434,7 +438,7 @@ int menu ( int argc , char ** argv)
 				}
 
 				break;
-
+			}
 			//Verifier comportement capteurs
 			case 3:
 				cout << "Listez les id des capteurs que vous voulez surveiller" << endl;
@@ -469,22 +473,13 @@ int menu ( int argc , char ** argv)
 					list_captorID.push_back( "*" ); 
 				}
 				
-				
 				paramFiltrage p = { tm() ,tm() , Territoire(new Point(0.0, 0.0), 0)  ,"" };
 
-				
-
-				
-				//annee - 1900
-				//list<Capteur> * surveillerComportementCapteurs(list<string> & capteursID, paramFiltrage & parametres);
 				list<string>* defaillants = service->surveillerComportementCapteurs(list_captorID,p);
 				cout << "Liste capteurs defaillants : " << endl;
 				for ( auto const& i : *defaillants ) {
 					std::cout << i << endl;
 				}
-				
-				//defaillants->clear();
-				
 
 				cout << endl;
 				break;

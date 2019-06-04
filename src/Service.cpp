@@ -74,6 +74,8 @@ list <string> * Service :: surveillerComportementCapteurs (list <string> & capte
 			capteursID.push_back(it.first);
 		}
 	}
+	// Optimisation � faire dans le cas o� on demande tous les capteurs
+
 
 
 	//liste d'id de capteurs d�fectueux
@@ -147,40 +149,73 @@ list <pair < Capteur, Capteur > > * Service :: obtenirCapteursSimilaires( struct
 	parametres.territoire = t2;*/
 
 	// On classe les donn�es pour faciliter le traitement
+
+	//init : 
+	// Pour chaque capteurs s�lectionn�s par la fonction de filtrage 
+	// et on ajoute une map dont les cl�s sont les attributs possibles des capteurs et les valeurs, des vecteurs contenant nbMesures �lements � 0.0
+	for (unordered_map < std::string, Capteur * > ::iterator it = map_capteurs.begin(); it != map_capteurs.end(); it++)
+	{	
+		unordered_map<string, vector<float>> map;
+		for (unordered_map < std::string, Attribut * > ::iterator it_att = map_attributs.begin(); it_att != map_attributs.end(); it_att++)
+		{
+			vector <float> val;
+			for (int i = 0; i < nbMesures; i++)
+			{
+				val[i] = 0.0;
+			}
+			map.insert(make_pair(it_att->first, val));
+		}
+
+	}
+
+
 	for (int i = 0; i < nbMesures; i++)
 	{
 		Mesure * m = fileReader->prochaineMesure(parametres, filtrageMesure);
 
-		unordered_map<string, unordered_map<string, vector<float> > >::iterator iterateur_sensorID = capteurs_mesures.find(m->getSensorID());
-		
-		if (iterateur_sensorID != capteurs_mesures.end())
-		{			
-			//unordered_map<string, vector<float>> attributId_valeur = iterateur_sensorID->second; // juste l� pour m'aider � coder
-			unordered_map<string, vector<float>> ::iterator iterateur_attributId = iterateur_sensorID->second.find(m->getAttributID());
-			
-			if (iterateur_attributId != iterateur_sensorID->second.end())
-			{
-				//vector<float> N_valeurs = iterateur_attributId->second; // juste l� pour m'aider � coder
-				//N_valeurs[i] = m->getValue(); // juste l� pour m'aider � coder
+		// �tape de s�lection du capteur
+		// Si dans la map des capteurs s�lectionn�s par les fonctions de filtrage spaciaux
+		// le capteur de la mesure est pr�sent, c'est qu'il faut anaylser ce capteur
 
-				iterateur_attributId->second[i] = m->getValue();
+		unordered_map < std::string, Capteur * > :: iterator trouveCapteur = map_capteurs.find(m->getSensorID());
+		if (trouveCapteur != map_capteurs.end())
+		{
+			unordered_map<string, unordered_map<string, vector<float> > >::iterator iterateur_sensorID = capteurs_mesures.find(m->getSensorID());
+
+			if (iterateur_sensorID != capteurs_mesures.end())
+			{
+				// On a trouv� sensorID
+				//unordered_map<string, vector<float>> attributId_valeur = iterateur_sensorID->second; // juste l� pour m'aider � coder
+				unordered_map<string, vector<float>> ::iterator iterateur_attributId = iterateur_sensorID->second.find(m->getAttributID());
+
+				// On a trouv� attributID
+				if (iterateur_attributId != iterateur_sensorID->second.end())
+				{
+					//vector<float> N_valeurs = iterateur_attributId->second; // juste l� pour m'aider � coder
+					//N_valeurs[i] = m->getValue(); // juste l� pour m'aider � coder
+
+					iterateur_attributId->second[i] = m->getValue();
+				}
+				/* Plus n�cessaire depuis la phase d'init
+				else
+				{
+					//A inserer dans la map
+					vector <float> v;
+					v[i] = m->getValue();
+					iterateur_sensorID->second.insert(make_pair(m->getAttribut()->getAttributID(), v));
+				}
+				*/
 			}
+			/*Plus n�cessaire depuis la phase d'init
 			else
 			{
-				//A inserer dans la map
+				//la valeur de l'id du capteur n'existe pas : A inserer dans la map
 				vector <float> v;
 				v[i] = m->getValue();
-				iterateur_sensorID->second.insert(make_pair(m->getAttributID(), v));
-			}
-		}
-		else
-		{
-			//A inserer dans la map
-			vector <float> v;
-			v[i] = m->getValue();
-			unordered_map<string, vector<float> > map_a_inserer;
-			map_a_inserer.insert(make_pair(m->getAttributID(), v));
-			capteurs_mesures.insert(make_pair(m->getSensorID(), map_a_inserer));
+				unordered_map<string, vector<float> > map_a_inserer;
+				map_a_inserer.insert(make_pair(m->getAttribut()->getAttributID(), v));
+				capteurs_mesures.insert(make_pair(m->getCapteur()->getSensorID(), map_a_inserer));
+			}*/
 		}
 
 		delete m;
