@@ -153,6 +153,7 @@ list <pair < Capteur, Capteur > > * Service :: obtenirCapteursSimilaires( struct
 	//init : 
 	// Pour chaque capteurs s�lectionn�s par la fonction de filtrage 
 	// et on ajoute une map dont les cl�s sont les attributs possibles des capteurs et les valeurs, des vecteurs contenant nbMesures �lements � 0.0
+	/*
 	for (unordered_map < std::string, Capteur * > ::iterator it = map_capteurs.begin(); it != map_capteurs.end(); it++)
 	{	
 		unordered_map<string, vector<float>> map;
@@ -161,10 +162,12 @@ list <pair < Capteur, Capteur > > * Service :: obtenirCapteursSimilaires( struct
 			vector <float> val;
 			for (int i = 0; i < nbMesures; i++)
 			{
-				val[i] = 0.0;
+				val.push_back(0.0);
+				
 			}
 			map.insert(make_pair(it_att->first, val));
 		}
+		capteurs_mesures.insert(make_pair(it->first, map));
 
 	}
 
@@ -188,6 +191,8 @@ list <pair < Capteur, Capteur > > * Service :: obtenirCapteursSimilaires( struct
 	cout << "**********************************************" << endl;
 	cout << endl;
 	cout << endl;
+
+	*/
 
 
 	for (int i = 0; i < nbMesures; i++)
@@ -217,26 +222,26 @@ list <pair < Capteur, Capteur > > * Service :: obtenirCapteursSimilaires( struct
 
 					iterateur_attributId->second.push_back(m->getValue());
 				}
-				/* Plus n�cessaire depuis la phase d'init
+				
 				else
 				{
 					//A inserer dans la map
 					vector <float> v;
-					v[i] = m->getValue();
-					iterateur_sensorID->second.insert(make_pair(m->getAttribut()->getAttributID(), v));
+					v.push_back( m->getValue());
+					iterateur_sensorID->second.insert(make_pair(m->getAttributID(), v));
 				}
-				*/
+				
 			}
-			/*Plus n�cessaire depuis la phase d'init
+			
 			else
 			{
 				//la valeur de l'id du capteur n'existe pas : A inserer dans la map
 				vector <float> v;
-				v[i] = m->getValue();
+				v.push_back(m->getValue());
 				unordered_map<string, vector<float> > map_a_inserer;
-				map_a_inserer.insert(make_pair(m->getAttribut()->getAttributID(), v));
-				capteurs_mesures.insert(make_pair(m->getCapteur()->getSensorID(), map_a_inserer));
-			}*/
+				map_a_inserer.insert(make_pair(m->getAttributID(), v));
+				capteurs_mesures.insert(make_pair(m->getSensorID(), map_a_inserer));
+			}
 		}
 
 		delete m;
@@ -258,6 +263,7 @@ list <pair < Capteur, Capteur > > * Service :: obtenirCapteursSimilaires( struct
 				cout << *it_3 << " ; ";
 			}
 		}
+		cout << endl;
 	}
 	cout << "----------------------------------------------" << endl;
 	cout << endl;
@@ -286,6 +292,7 @@ list <pair < Capteur, Capteur > > * Service :: obtenirCapteursSimilaires( struct
 				unordered_map<string, vector<float> > ::iterator it_c2_PM10 = it_capteur2->second.find("PM10");
 
 				bool similaire = true;
+				/*
 				for (int i = 0; i < nbMesures; i++)
 				{
 
@@ -300,6 +307,7 @@ list <pair < Capteur, Capteur > > * Service :: obtenirCapteursSimilaires( struct
 					}
 
 				}
+				*/
 
 				if (similaire == true)
 				{

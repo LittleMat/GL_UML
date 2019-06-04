@@ -16,6 +16,7 @@
 #include <string>
 #include "Attribut.h"
 #include "Capteur.h"
+#include <ctime>
 
 using namespace std;
 
