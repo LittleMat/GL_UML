@@ -25,7 +25,7 @@ using namespace std;
 
 bool Service :: surveillerComportementCapteur ( string capteurID, paramFiltrage & parametres )
 {
-	cout << "Appel surveillerComportementCapteur" << endl;
+	std :: cout << "Appel surveillerComportementCapteur" << endl;
 	bool bonEtat = true;
 	bool finLecture = false;
 	fileReader->DebutMesure();
@@ -33,12 +33,12 @@ bool Service :: surveillerComportementCapteur ( string capteurID, paramFiltrage 
 	{
 		// On sï¿½lectionne les mesures qui satisfont les critï¿½res de sï¿½lection temporelles
 		const Mesure * m = fileReader->prochaineMesure( parametres, filtrageMesure );
-		cout << "lecture de mesure " << endl;
+		std :: cout << "lecture de mesure " << endl;
 		//Si m == nullptr, alors il n'y a plus rien ï¿½ lire 
 		if ( m == nullptr )
 		{
 			finLecture = true; 
-			cout << "fin de la lecture " << endl;
+			std::cout << "fin de la lecture " << endl;
 			break;
 		}
 		//cout << " mesure lue :" << m->getValue() << endl;
@@ -80,20 +80,20 @@ list <string> * Service :: surveillerComportementCapteurs (list <string> & capte
 
 	//liste d'id de capteurs dï¿½fectueux
 	list <string> * liste_id_capteursDefectueux = new list<string>;
-	cout << endl;
-	cout << "contenu liste_id_capteursDefectueux aprï¿½s init" << endl;
-	cout << endl;
+	std::cout << endl;
+	std::cout << "contenu liste_id_capteursDefectueux aprï¿½s init" << endl;
+	std::cout << endl;
 	if (liste_id_capteursDefectueux->empty())
 	{
 
 		for (list<string> ::iterator ii = liste_id_capteursDefectueux->begin(); ii != liste_id_capteursDefectueux->end(); ii++)
 		{
-			cout << *ii << endl;
+			std::cout << *ii << endl;
 		}
 	}
 	else
 	{
-		cout << "liste vide " << endl;
+		std::cout << "liste vide " << endl;
 	}
 	for (list <string> :: iterator i = capteursID.begin(); i != capteursID.end(); i++)
 	{
@@ -194,7 +194,7 @@ list <pair < Capteur, Capteur > > * Service :: obtenirCapteursSimilaires( struct
 
 	*/
 
-
+	int MaxSize = 0;
 	for (int i = 0; i < nbMesures; i++)
 	{
 		Mesure * m = fileReader->prochaineMesure(parametres, filtrageMesure);
@@ -247,27 +247,40 @@ list <pair < Capteur, Capteur > > * Service :: obtenirCapteursSimilaires( struct
 		delete m;
 	}
 
-
-	// Visualiser la structure 
-	cout << "Visualisation de la structure après lecture" << endl;
-	cout << endl;
-	cout << "----------------------------------------------" << endl;
+	// Remplissage des zones vides
 	for (unordered_map< string, unordered_map< string, vector<float> > > ::iterator it = capteurs_mesures.begin(); it != capteurs_mesures.end(); it++)
 	{
-		cout << "Capteur = " << it->first << endl;
 		for (unordered_map< string, vector<float> > ::iterator it_2 = it->second.begin(); it_2 != it->second.end(); it_2++)
 		{
-			cout << "Attribut = " << it_2->first << endl;
+
+			vector<float> ::iterator it_3 = it_2->second.end();
+			fill(it_3, it_3 + nbMesures, 0.0); // FAUX : A CORRIGER
+		}
+	}
+
+
+
+
+	// Visualiser la structure 
+	std :: cout << "Visualisation de la structure après lecture" << endl;
+	std::cout << endl;
+	std::cout << "----------------------------------------------" << endl;
+	for (unordered_map< string, unordered_map< string, vector<float> > > ::iterator it = capteurs_mesures.begin(); it != capteurs_mesures.end(); it++)
+	{
+		std::cout << "Capteur = " << it->first << endl;
+		for (unordered_map< string, vector<float> > ::iterator it_2 = it->second.begin(); it_2 != it->second.end(); it_2++)
+		{
+			std::cout << "Attribut = " << it_2->first << endl;
 			for (vector<float> ::iterator it_3 = it_2->second.begin(); it_3 != it_2->second.end(); it_3++)
 			{
-				cout << *it_3 << " ; ";
+				std::cout << *it_3 << " ; ";
 			}
 		}
-		cout << endl;
+		std::cout << endl;
 	}
-	cout << "----------------------------------------------" << endl;
-	cout << endl;
-	cout << endl;
+	std::cout << "----------------------------------------------" << endl;
+	std::cout << endl;
+	std::cout << endl;
 
 
 
