@@ -38,25 +38,25 @@ class Service
 public:
 
 	//----------------------------------------------------- Public methods
-	bool surveillerComportementCapteur(string capteurID, paramFiltrage & parametres);
-	list<string> * surveillerComportementCapteurs(list<string> & capteursID, paramFiltrage & parametres);
-	list<pair<Capteur, Capteur>> * obtenirCapteursSimilaires(struct tm & Date, int nbMesures);
-	tuple<int, list<pair<string, float>>, float> calculerQualite(paramFiltrage & parametres);
+	bool surveillerComportementCapteur ( string capteurID , paramFiltrage & parametres );
+	list < string > * surveillerComportementCapteurs ( list < string > & capteursID , paramFiltrage & parametres );
+	list < pair < Capteur , Capteur > > * obtenirCapteursSimilaires (struct tm & Date , int nbMesures );
+	tuple < int , list < pair < string , float > > , float > calculerQualite ( paramFiltrage & parametres );
 
-	static bool filtrageCapteur(Capteur & capteur, Territoire & territoire, string capteurId);
-	static bool filtrageMesure(Mesure & m, struct tm & dateInf, struct tm & dateSup);
-	static bool dateNull(struct tm & date);
-	static bool plusOuMoins(float v1, float v2, float ecart);
-	static int calculIndiceATMO(string substance, float valeur);
+	static bool filtrageCapteur ( Capteur & capteur , Territoire & territoire , string capteurId );
+	static bool filtrageMesure ( Mesure & m , struct tm & dateInf , struct tm & dateSup );
+	static bool dateNull ( struct tm & date );
+	static bool plusOuMoins ( float v1 , float v2 , float ecart );
+	static int calculIndiceATMO ( string substance , float valeur );
 
 
 
 	//-------------------------------------------- Constructor - destructor
 
-	Service (const std::string & nomFichierCapteurs, const string & nomFichierAttributs, const std::list < std::string > & nomFichiersMesures);
+	Service ( const string & nomFichierCapteurs , const string & nomFichierAttributs , const list < string > & nomFichiersMesures );
 
 
-	~Service();
+	~Service ( ) ;
 
 protected:
 	//----------------------------------------------------- Protected attributes
