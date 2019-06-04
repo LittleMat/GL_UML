@@ -231,6 +231,7 @@ int menu ( int argc , char ** argv)
 			//Obtenir la qualite moyenne de l air
 			
 			case 1 :	
+			{
 				int valeur;
 				cout << "Choississez le type de zone a etudier" << endl;
 				cout << "[1] Point precis (lat, long)" << endl;
@@ -432,13 +433,8 @@ int menu ( int argc , char ** argv)
 
 					cout << i.first << "," << i.second << endl;
 				}
+				}
 				break;
-
-
-
-				
-
-
 			//Obtenir capteurs similaires
 			case 2 :
 			{
@@ -504,6 +500,7 @@ int menu ( int argc , char ** argv)
 			}
 			//Verifier comportement capteurs
 			case 3:
+			{
 				cout << "Listez les id des capteurs que vous voulez surveiller" << endl;
 				cout << "Rentrez -1 pour arreter la saisie" << endl;
 				cout << "Le caractere * designe l integralite des capteurs" << endl;
@@ -539,6 +536,7 @@ int menu ( int argc , char ** argv)
 				}
 
 				cout << endl;
+			}
 				break;
 
 

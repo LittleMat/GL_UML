@@ -243,13 +243,13 @@ Mesure *FileReader ::prochaineMesure(paramFiltrage &parametres, bool (*filtrageM
 							//Filtre la mesure avec les paramètres de l'utilisateur
 							if (!filtrageMesure(*m, parametres.dateInf, parametres.dateSup))
 							{
-								cout << "Filtrage ne passe pas " << endl;
+								// cout << "Filtrage ne passe pas " << endl;
 								delete m;
 								m = nullptr;
 							}
 							else
 							{
-								cout << "Mesure good : " << m->getValue() << endl;
+								// cout << "Mesure good : " << m->getValue() << endl;
 								continuer = false;
 							}
 						}

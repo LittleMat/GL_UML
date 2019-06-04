@@ -299,6 +299,7 @@ TEST(FileReaderUnitTest, ProchaineMesure2)
     EXPECT_EQ(2017, 1900 + mesure->getTimestamp().tm_year);
     EXPECT_EQ("Sensor2", mesure->getSensorID());
     EXPECT_FLOAT_EQ(22.1864461494123, mesure->getValue());
+    delete mesure;
 }
 
 TEST(ServiceUnitTest, FiltrageMesure)
@@ -444,17 +445,38 @@ TEST(ServiceUnitTest, SurveillerComportementCapteurs)
     passAll.dateInf = tm();
     passAll.dateSup = tm();
     list<string> capteurs;
+    ASSERT_ANY_THROW(service.surveillerComportementCapteurs(capteurs));
     capteurs.push_back("Sensor0");
     capteurs.push_back("Sensor1");
     capteurs.push_back("Sensor2");
     capteurs.push_back("Sensor3");
     capteurs.push_back("Sensor4");
-    EXPECT_NO_THROW(service.surveillerComportementCapteurs(capteurs));
     list<string> *listCapteur = service.surveillerComportementCapteurs(capteurs);
+    capteurs.push_back("Sensor0");
+    capteurs.push_back("Sensor1");
+    capteurs.push_back("Sensor2");
+    capteurs.push_back("Sensor3");
+    capteurs.push_back("Sensor4");
     EXPECT_TRUE(find(listCapteur->begin(), listCapteur->end(), "Sensor0") == listCapteur->end());
+    capteurs.push_back("Sensor0");
+    capteurs.push_back("Sensor1");
+    capteurs.push_back("Sensor2");
+    capteurs.push_back("Sensor3");
+    capteurs.push_back("Sensor4");
     EXPECT_TRUE(find(listCapteur->begin(), listCapteur->end(), "Sensor1") == listCapteur->end());
+    capteurs.push_back("Sensor0");
+    capteurs.push_back("Sensor1");
+    capteurs.push_back("Sensor2");
+    capteurs.push_back("Sensor3");
+    capteurs.push_back("Sensor4");
     EXPECT_TRUE(find(listCapteur->begin(), listCapteur->end(), "Sensor2") != listCapteur->end());
+    capteurs.push_back("Sensor0");
+    capteurs.push_back("Sensor1");
+    capteurs.push_back("Sensor2");
+    capteurs.push_back("Sensor3");
+    capteurs.push_back("Sensor4");
     EXPECT_TRUE(find(listCapteur->begin(), listCapteur->end(), "Sensor3") != listCapteur->end());
+    delete listCapteur;
 }
 /*
     TEST(ServiceUnitTest, ObtenirCapteursSimilaires) {
