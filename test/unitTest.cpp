@@ -243,9 +243,7 @@ namespace {
         EXPECT_EQ(2017, 1900 + mesure->getTimestamp().tm_year);
         EXPECT_EQ("Sensor0", mesure->getSensorID());
         EXPECT_FLOAT_EQ(17.8902017543936, mesure->getValue());
-
         delete mesure;
-
         for (int i = 0; i < 8; i++)
         {
             mesure = reader.prochaineMesure(passAll, Service::filtrageMesure);
@@ -254,6 +252,31 @@ namespace {
         }
         mesure = reader.prochaineMesure(passAll, Service::filtrageMesure);
         EXPECT_EQ(nullptr, mesure);
+    }
+    // Test if two data files are used
+    TEST(FileReaderUnitTest, ProchaineMesure2) {
+        list<string> listS;
+        listS.push_back("resources/Data10.csv");
+        listS.push_back("resources/Data20.csv");
+        FileReader reader("resources/Sensor10.csv", "resources/AttributeType.csv", listS);
+        paramFiltrage passAll;
+        passAll.dateInf = tm();
+        passAll.dateSup = tm();
+        Mesure *mesure = nullptr;
+        FileReader reader2("resources/Sensor10.csv", "resources/AttributeType.csv", listS);
+        reader.debutMesure();
+        reader.lireCapteurs(passAll, Service::filtrageCapteur);
+        reader.lireAttributs();
+        for (int i = 0; i < 9; i++) {
+            mesure = reader.prochaineMesure(passAll, Service::filtrageMesure);
+            ASSERT_TRUE(mesure != nullptr);
+            delete mesure;
+        }
+        mesure = reader.prochaineMesure(passAll, Service::filtrageMesure);
+        ASSERT_TRUE(mesure != nullptr);
+        EXPECT_EQ(2017, 1900 + mesure->getTimestamp().tm_year);
+        EXPECT_EQ("Sensor2", mesure->getSensorID());
+        EXPECT_FLOAT_EQ(22.1864461494123, mesure->getValue());
     }
 /*
     TEST(ServiceUnitTest, Constructor) {
