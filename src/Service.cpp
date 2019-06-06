@@ -25,7 +25,6 @@ using namespace std;
 
 bool Service :: surveillerComportementCapteur ( string capteurID, paramFiltrage & parametres )
 {
-	std :: cout << "Appel surveillerComportementCapteur" << endl;
 	bool bonEtat = true;
 	bool finLecture = false;
 	fileReader->lireAttributs();
@@ -84,25 +83,7 @@ list <string> * Service :: surveillerComportementCapteurs (list <string> & capte
 
 	//liste d'id de capteurs d�fectueux
 	list <string> * liste_id_capteursDefectueux = new list<string>;
-	/*
-	std::cout << endl;
-	std::cout << "contenu liste_id_capteursDefectueux apr�s init" << endl;
-	std::cout << endl;
-	*/
-	/*
-	if (liste_id_capteursDefectueux->empty())
-	{
 
-		for (list<string> ::iterator ii = liste_id_capteursDefectueux->begin(); ii != liste_id_capteursDefectueux->end(); ii++)
-		{
-			// std::cout << *ii << endl;
-		}
-	}
-	else
-	{
-		std::cout << "liste vide " << endl;
-	}
-	*/
 	for (list <string> :: iterator i = capteursID.begin(); i != capteursID.end(); i++)
 	{
 		paramFiltrage param { tm() ,tm() , new Territoire(new Point(0.0, 0.0), 2.1*rayon_Terre)  , *i };
@@ -414,17 +395,12 @@ bool Service::plusOuMoins(float v1, float v2, float ecart)
 tuple<int, list<pair<string, float>>, float>  Service::calculerQualite(paramFiltrage & parametres)
 {
 
-	cout << "Calculer qualite air" << endl;
 	fileReader->debutMesure();
 	unordered_map <string, Attribut *> attributs = fileReader->lireAttributs();
 	unordered_map <string, Capteur *> capteurs = fileReader->lireCapteurs(parametres, filtrageCapteur);
-	cout << "capteurs " << endl;
-	for (auto i : capteurs) {
-		cout << i.first << endl;
-	}
+
 	
 	//cout << "date inf " << parametres.dateInf.tm_hour << "  date sup " << parametres.dateSup.tm_hour << endl;
-	cout << "Point latitude " << parametres.territoire->getCentre()->getLatitude() << " longitude " << parametres.territoire->getCentre()->getLongitude() << endl;
 
 	// Surveiller les capteurs et enlever de la liste les capteurs d�faillants
 	/*
@@ -804,7 +780,6 @@ int Service :: calculIndiceATMO(string substance, float valeur)
 			indiceATMO = 10;
 		}
 	}
-	cout << "indice atmo calcule " << indiceATMO << endl;
 	return indiceATMO;
 
 }
@@ -893,7 +868,6 @@ bool Service::filtrageMesure(Mesure & mesure, struct tm & dateInf, struct tm & d
 	// on retourne true
 {
 
-	 cout << "Filtrage mesure appelee " ;
 	bool mesureAPrendre = false;
 	struct tm time = mesure.getTimestamp();
 	time_t timeMes = mktime(&time); 
@@ -929,7 +903,6 @@ bool Service::filtrageMesure(Mesure & mesure, struct tm & dateInf, struct tm & d
 		if ((timeMes >= timeSup - 3600) && (timeMes <= timeSup + 3600))
 			mesureAPrendre = true;
 	}
-	if (mesureAPrendre)cout << "mesure prise en compte " << endl;;
 	return mesureAPrendre;
 }
 

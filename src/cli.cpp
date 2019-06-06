@@ -221,12 +221,10 @@ int menu ( int argc , char ** argv)
 		{
 			cin >> lecture;
 			if ( is_number ( lecture ) ) {
-				cout << lecture << " est un nombre" << endl;
 				index = stoi ( lecture ); }
 
 		} 
 		while ( ! is_number ( lecture ) || index != 1 && index != 2 && index != 3 && index != 4 );
-		//cout << "Option[" << lecture << "] selectionnee " << endl;
 		cout <<  endl;
 
 		//MENU PRINCIPAL
@@ -249,7 +247,6 @@ int menu ( int argc , char ** argv)
 					if( is_number (type_zone) ) valeur = stoi ( type_zone );
 
 				} while ( ! is_number ( type_zone ) || valeur != 1 && valeur != 2 && valeur != 3 && valeur != 4 && valeur != 5 );
-				cout << "Option[" << type_zone << "] selectionnee " << endl;
 				cout << endl;
 				if ( valeur == 5 ) { break; }
 
@@ -271,7 +268,6 @@ int menu ( int argc , char ** argv)
 							flag = ( ! is_number(longitude) || ! is_number(latitude) || abs ( stof ( longitude ) ) > 90 || abs ( stof( latitude ) ) > 90 );
 						}
 						while ( flag );
-						cout << "Point selectionne : "<< longitude << "," << latitude  << endl;
 						break;
 
 					//Territoire
@@ -289,7 +285,6 @@ int menu ( int argc , char ** argv)
 						}
 						while ( flag );
 
-						cout << "Point selectionne : " << longitude << "," << latitude << endl;
 						cout << "Rentrez un rayon" << endl;
 						flag = false;
 						do 
@@ -391,7 +386,6 @@ int menu ( int argc , char ** argv)
 						flag = ( ! is_date ( date1 ) || ! is_date ( date2 ) || ! check_dates ( date1 , date2 ) );
 					}
 					while ( flag );
-					cout << "dates selectionnees : " << date1 << " " << date2 << endl;
 					date2finale = stringToDate(date2);
 					date2finale.tm_hour = 23;
 					date2finale.tm_min = 59;
@@ -402,22 +396,11 @@ int menu ( int argc , char ** argv)
 					break;
 				}
 			
-				cout << "[Debug]" << "Calcul de la qualite moyenne" << endl;
 
 				//testTerritoire = Territoire(new Point(stof(longitude), stof(latitude)), stoi(rayon));
 				
 				paramQualite = { date1finale , date2finale , new Territoire(new Point(stof(longitude), stof(latitude)), stoi(rayon))  , captorId };
-				
-
-				cout << "date1" << endl;
-				cout << date1finale.tm_mday << "/" << date1finale.tm_mon << "/" << date1finale.tm_year << " " << date1finale.tm_hour << ":" << date1finale.tm_min <<endl;
-
-				cout << "date2" << endl;
-				cout << date2finale.tm_mday << "/" << date2finale.tm_mon << "/" << date2finale.tm_year << " " << date2finale.tm_hour << ":" << date2finale.tm_min << endl;
 				resultQualite = service->calculerQualite(paramQualite);
-
-
-				
 
 				if (get<0>(resultQualite) > 0) {
 					cout << "Indice ATMO " << get<0>(resultQualite) << endl;
@@ -433,14 +416,8 @@ int menu ( int argc , char ** argv)
 				else {
 					cout << "[Warning] Mesure(s) Manquante(s) " << endl;
 					cout << "Indice ATMO " << "indefini" << endl;
-					cout << "Indice fiabilite " << get<2>(resultQualite) << "%" << endl;
-					for (auto const& i : (get<1>(resultQualite)))
-					{
-
-						if (i.second >= 0)cout << i.first << "," << i.second << endl;
-						else cout << i.first << "," << "Donnees manquantes " << endl;
-					}
 				}
+				cout << endl;
 			}
 			break;
 			//Obtenir capteurs similaires
@@ -458,7 +435,6 @@ int menu ( int argc , char ** argv)
 				while ( flag );
 
 				cout << "Rentrez une date de depart au format : JJ/MM/AAAA HH:MM" << endl;
-				cout << "exemple : 02/06/1996 16:30" << endl;
 				flag = false;
 
 				do
