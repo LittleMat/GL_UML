@@ -433,6 +433,13 @@ int menu ( int argc , char ** argv)
 				else {
 					cout << "[Warning] Mesure(s) Manquante(s) " << endl;
 					cout << "Indice ATMO " << "indefini" << endl;
+					cout << "Indice fiabilite " << get<2>(resultQualite) << "%" << endl;
+					for (auto const& i : (get<1>(resultQualite)))
+					{
+
+						if (i.second >= 0)cout << i.first << "," << i.second << endl;
+						else cout << i.first << "," << "Donnees manquantes " << endl;
+					}
 				}
 			}
 			break;

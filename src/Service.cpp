@@ -458,16 +458,14 @@ tuple<int, list<pair<string, float>>, float>  Service::calculerQualite(paramFilt
 		if (parametres.capteurId.compare("") == 0)
 		{
 			// Un point  
-			if (parametres.territoire->getRayon() == 0
-				&& !(parametres.territoire->getCentre()->getLatitude() == 0 && parametres.territoire->getCentre()->getLongitude() == 0))
+			if (parametres.territoire->getRayon() == 0 )
 			{
 
 				fiabilite = 1 - parametres.territoire->getCentre()->distance(capteurs.at(m->getSensorID())->getPosition())/10;
 			}
 			// Un territoire cibl�
-			else if (parametres.territoire->getRayon() > 0
-				&& !(parametres.territoire->getCentre()->getLatitude() == 0 && parametres.territoire->getCentre()->getLongitude() == 0)
-				)
+			else if (parametres.territoire->getRayon() > 0)
+				
 			{
 				fiabilite = 1 - (parametres.territoire->getCentre()->distance(capteurs.at(m->getSensorID())->getPosition()) - parametres.territoire->getRayon()) / (0.1*parametres.territoire->getRayon());
 			}
@@ -571,18 +569,26 @@ tuple<int, list<pair<string, float>>, float>  Service::calculerQualite(paramFilt
 	fiabilites.push_back(make_pair("PM10", fiabiliteMoyenne));
 
 
-	float concentrationMax = -1.0;
+	float indiceMax = -1.0;
+	int indiceATMO;
 	string composant;
 	for (list<pair<string, float>> ::iterator it = concentrations.begin(); it != concentrations.end(); it++)
 	{
-		if (concentrationMax <= it->second)
+		indiceATMO = calculIndiceATMO(it->first, it->second);
+		if (indiceATMO > indiceMax)
+		{
+			indiceMax = indiceATMO;
+		}
+		/*if (concentrationMax <= it->second)
 		{
 			concentrationMax = it->second;
 			composant = it->first;
-		}
+		}*/
 	}
 
-	int indiceATMO = calculIndiceATMO(composant, concentrationMax);
+	indiceATMO = indiceMax;
+
+	
 
 	float fiabiliteMin = 1;
 	for (list<pair<string, float>> ::iterator it = fiabilites.begin(); it != fiabilites.end(); it++)
@@ -755,7 +761,7 @@ int Service :: calculIndiceATMO(string substance, float valeur)
 		}
 
 	}
-	else if (substance.compare("PO10") == 0)
+	else if (substance.compare("PM10") == 0)
 	{
 		if (valeur >= 0 && valeur <= 6)
 		{
@@ -798,6 +804,7 @@ int Service :: calculIndiceATMO(string substance, float valeur)
 			indiceATMO = 10;
 		}
 	}
+	cout << "indice atmo calcule " << indiceATMO << endl;
 	return indiceATMO;
 
 }
@@ -886,7 +893,7 @@ bool Service::filtrageMesure(Mesure & mesure, struct tm & dateInf, struct tm & d
 	// on retourne true
 {
 
-	 cout << "Filtrage mesure appelee" << endl;
+	 cout << "Filtrage mesure appelee " ;
 	bool mesureAPrendre = false;
 	struct tm time = mesure.getTimestamp();
 	time_t timeMes = mktime(&time); 
@@ -922,6 +929,7 @@ bool Service::filtrageMesure(Mesure & mesure, struct tm & dateInf, struct tm & d
 		if ((timeMes >= timeSup - 3600) && (timeMes <= timeSup + 3600))
 			mesureAPrendre = true;
 	}
+	if (mesureAPrendre)cout << "mesure prise en compte " << endl;;
 	return mesureAPrendre;
 }
 
