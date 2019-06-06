@@ -192,6 +192,8 @@ int menu ( int argc , char ** argv)
 	string type_date, type_zone;
 	Territoire testTerritoire;
 	Point* testPoint;
+
+	std::ostringstream strs;
 	
 	int index;
 	bool flag = true;
@@ -256,7 +258,7 @@ int menu ( int argc , char ** argv)
 					//Point Pr�cis
 					case 1:
 						
-						cout << "Rentrez une latitude et une longitude" << endl;
+						cout << "Rentrez une longitude et une latitude" << endl;
 						flag = false;
 						
 						do 
@@ -301,6 +303,11 @@ int menu ( int argc , char ** argv)
 					//Aire totale
 					case 3:
 						
+						
+						strs << (2.1 * rayon_Terre);
+						rayon = strs.str();
+						strs.clear();
+						//rayon = (2.1 * rayon_Terre);
 						cout << "Aire totale selectionnee" << endl;
 						break;
 
@@ -331,17 +338,7 @@ int menu ( int argc , char ** argv)
 
 
 
-				/*
-				do
-				{
-				if ( flag ) cout << "date invalide" << endl;
-				cin >> date1 >> heure;
-
-				flag = ( ! is_date ( date1 ) || ! is_heure ( heure ) );
-				}
-				while ( flag );
-				cout << "date selectionnee : " << date1 << " " << heure << endl;
-				*/
+	
 
 
 				do 
@@ -361,7 +358,6 @@ int menu ( int argc , char ** argv)
 				switch ( valeur ) 
 				{
 
-				
 				case 0:
 
 					date1 = "0";
@@ -405,22 +401,12 @@ int menu ( int argc , char ** argv)
 					cout << endl;
 					break;
 				}
-				
-				
-
-
-				// tuple <Indice ATMO , list pair < <idattribut , concentration moyenne > > , indice_fiabilit�>
+			
 				cout << "[Debug]" << "Calcul de la qualite moyenne" << endl;
 
-				testTerritoire = Territoire(new Point(stof(longitude), stof(latitude)), stoi(rayon));
-				//testPoint = new Point(stof(longitude), stof(latitude));
-				//cout << "test Point " <<" latitude " << testPoint->getLatitude() << " longitude " << testPoint->getLongitude() << endl;
-				//cout << "test Territoire " << " latitude " << testTerritoire.getCentre()->getLatitude() << " longitude " << testTerritoire.getCentre()->getLongitude() << endl;
-
-				//cout << " latitude " << stof(latitude) << " longitude " << stof(longitude) << endl;
+				//testTerritoire = Territoire(new Point(stof(longitude), stof(latitude)), stoi(rayon));
 				
-				paramQualite = { stringToDateDetailed(date1) , date2finale , testTerritoire  , captorId };
-				//cout << " latitude " << paramQualite.territoire.getCentre()->getLatitude() << " longitude " << paramQualite.territoire.getCentre()->getLongitude() << endl;
+				paramQualite = { stringToDateDetailed(date1) , date2finale , Territoire(new Point(stof(longitude), stof(latitude)), stoi(rayon))  , captorId };
 				resultQualite = service->calculerQualite(paramQualite);
 
 

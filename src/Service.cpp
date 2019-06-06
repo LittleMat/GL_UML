@@ -823,9 +823,8 @@ bool Service::filtrageCapteur(Capteur & capteur, Territoire & territoire , strin
 
 		const Point * posCapteur = capteur.getPosition();
 		
-		// cas 1 : point consid�r� 
-		if (territoire.getRayon() == 0.0
-			&& territoire.getCentre()->getLatitude() != 0.0 && territoire.getCentre()->getLongitude() != 0.0)
+		// cas 1 : point considere 
+		if (territoire.getRayon() == 0.0)
 		{
 			Point * centre_zoneAcceptee = new Point(territoire.getCentre()->getLongitude(), territoire.getCentre()->getLatitude());
 			Territoire zoneAcceptee = Territoire(centre_zoneAcceptee, territoire.getRayon() + 10/*0000*/);
@@ -834,9 +833,8 @@ bool Service::filtrageCapteur(Capteur & capteur, Territoire & territoire , strin
 				capteurAPrendre = true;				
 			}
 		}
-		// cas 2 : territoire consid�r�
-		else if (territoire.getRayon() != 0
-			&& territoire.getCentre()->getLatitude() != 0.0 && territoire.getCentre()->getLongitude() != 0.0)
+		// cas 2 : territoire considere
+		else if (territoire.getRayon() != 0)
 		{
 			Point * centre_zoneAcceptee = new Point(territoire.getCentre()->getLongitude(), territoire.getCentre()->getLatitude());
 			Territoire zoneAcceptee = Territoire(centre_zoneAcceptee, territoire.getRayon() + 50);
@@ -844,12 +842,6 @@ bool Service::filtrageCapteur(Capteur & capteur, Territoire & territoire , strin
 			{
 				capteurAPrendre = true;
 			}
-		}
-		// cas 3 : aire totale consid�r�e
-		else if (territoire.getRayon() == 0.0
-			&& territoire.getCentre()->getLatitude() == 0.0 && territoire.getCentre()->getLongitude() == 0.0)
-		{
-			capteurAPrendre = true;
 		}
 
 	return capteurAPrendre && (capteurId.empty() || capteur.getSensorID().compare(capteurId) == 0);
