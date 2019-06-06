@@ -897,7 +897,6 @@ bool Service::filtrageMesure(Mesure & mesure, struct tm & dateInf, struct tm & d
 	// on retourne true
 
 {
-	cout << "entré dans mesure" << endl;
 	bool mesureAPrendre = false;
 	struct tm time = mesure.getTimestamp();
 	time_t timeMes = mktime(&time); 
