@@ -22,7 +22,7 @@
 #include "Attribut.h"
 #include "Territoire.h"
 
-typedef struct
+typedef struct param
 {
 	// Pour filtrageMesure
 	struct tm dateInf;
@@ -30,6 +30,9 @@ typedef struct
 	//Pour filtrageCapteur
 	Territoire * territoire;
 	string capteurId;
+	~param() {
+		delete territoire;
+	}
 } paramFiltrage;
 //!\\ ne surtout pas faire parametre.territoire = Territoire () car conversions bizarres
 // mais plutôt Territoire t = Territoire(); parametre.territoire = t;
