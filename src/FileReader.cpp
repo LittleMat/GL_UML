@@ -66,7 +66,7 @@ unordered_map<string, Capteur *> FileReader ::lireCapteurs(paramFiltrage &parame
 			Capteur *c = new Capteur(sensorID, position, description);
 
 			//Filtre permetant de filtrer les capteurs selon le choix de l'utilisateur
-			if (filtrageCapteur(*c, parametres.territoire, parametres.capteurId))
+			if (filtrageCapteur(*c, *parametres.territoire, parametres.capteurId))
 			{
 				this->map_capteurs[sensorID] = c;
 			}

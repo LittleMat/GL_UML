@@ -177,7 +177,7 @@ int menu ( int argc , char ** argv)
 	cout << "fichier capteur " << string(argv[1]) << endl;
 	Service *service = new Service ( string ( argv[ 1 ] ) , string ( argv[ 2 ] ) , args );
 
-	paramFiltrage paramQualite = { tm() , tm() , Territoire() , "" };
+	paramFiltrage paramQualite = { tm() , tm() , new Territoire() , "" };
 	tuple < int, list < pair < string, float > > , float > resultQualite;
 
 
@@ -206,7 +206,7 @@ int menu ( int argc , char ** argv)
 
 		longitude = "0.0";
 		latitude = "0.0";
-		paramQualite = { tm() , tm() , Territoire() , "" };
+		paramQualite = { tm() , tm() , new Territoire() , "" };
 		date1 = "0";
 		date2 = "0";
 		captorId = "";
@@ -323,7 +323,6 @@ int menu ( int argc , char ** argv)
 							flag = ( captorId.empty ( ) );
 						} 
 						while ( flag );
-
 						break;
 
 				}
@@ -334,11 +333,6 @@ int menu ( int argc , char ** argv)
 				cout << "[*]Sur l integralite des mesures  * " << endl;
 				
 				flag = false;
-
-
-
-
-	
 
 
 				do 
@@ -380,7 +374,7 @@ int menu ( int argc , char ** argv)
 					cout << "date selectionnee : " << date1 << endl;
 					cout << endl;
 					break;
-
+				// date1 date2
 				case 2:
 
 					cout << "Rentrez deux dates au format : JJ/MM/AAAA" << endl;
@@ -395,7 +389,7 @@ int menu ( int argc , char ** argv)
 					}
 					while ( flag );
 					cout << "dates selectionnees : " << date1 << " " << date2 << endl;
-
+					date2finale = stringToDate(date2);
 					date2finale.tm_hour = 23;
 					date2finale.tm_min = 59;
 					cout << endl;
@@ -406,21 +400,36 @@ int menu ( int argc , char ** argv)
 
 				//testTerritoire = Territoire(new Point(stof(longitude), stof(latitude)), stoi(rayon));
 				
-				paramQualite = { stringToDateDetailed(date1) , date2finale , Territoire(new Point(stof(longitude), stof(latitude)), stoi(rayon))  , captorId };
+				paramQualite = { stringToDate(date1) , date2finale , new Territoire(new Point(stof(longitude), stof(latitude)), stoi(rayon))  , captorId };
+				struct tm bidule = stringToDate(date1);
+
+				cout << "date1" << endl;
+				cout << bidule.tm_mday << "/" << bidule.tm_mon << "/" << bidule.tm_year << " " << bidule.tm_hour << ":" << bidule.tm_min <<endl;
+
+				cout << "date2" << endl;
+				cout << date2finale.tm_mday << "/" << date2finale.tm_mon << "/" << date2finale.tm_year << " " << date2finale.tm_hour << ":" << date2finale.tm_min << endl;
 				resultQualite = service->calculerQualite(paramQualite);
 
 
-				cout << "Indice ATMO " << get<0>(resultQualite) << endl;
-				cout << "Indice fiabilite " << get<2>(resultQualite) << "%" << endl;
+				
 
+				if (get<0>(resultQualite) > 0) {
+					cout << "Indice ATMO " << get<0>(resultQualite) << endl;
+					cout << "Indice fiabilite " << get<2>(resultQualite) << "%" << endl;
+					for (auto const& i : (get<1>(resultQualite)))
+					{
 
-				for (auto const& i : (get<1>(resultQualite)))
-				{
+						if(i.second >= 0)cout << i.first << "," << i.second << endl;
+						else cout << i.first << "," << "Donnees manquantes " << endl;
+					}
 
-					cout << i.first << "," << i.second << endl;
 				}
+				else {
+					cout << "[Warning] Mesure(s) Manquante(s) " << endl;
+					cout << "Indice ATMO " << "indefini" << endl;
 				}
-				break;
+			}
+			break;
 			//Obtenir capteurs similaires
 			case 2 :
 			{

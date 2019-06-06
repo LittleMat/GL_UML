@@ -28,7 +28,7 @@ typedef struct
 	struct tm dateInf;
 	struct tm dateSup;
 	//Pour filtrageCapteur
-	Territoire territoire;
+	Territoire * territoire;
 	string capteurId;
 } paramFiltrage;
 //!\\ ne surtout pas faire parametre.territoire = Territoire () car conversions bizarres

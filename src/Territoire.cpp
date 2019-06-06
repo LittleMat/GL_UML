@@ -85,7 +85,7 @@ Territoire :: ~Territoire ( )
 		cout << "Appel au destructeur de <Territoire>" << endl;
 	#endif
 
-//	delete centre;
+	delete centre;
 }//----- End of ~Territoire 
 
 

@@ -70,7 +70,7 @@ list <string> * Service :: surveillerComportementCapteurs (list <string> & capte
 	if (capteursID.empty())
 		throw "Illegal Argument Exception: empty list";
 	fileReader->lireAttributs();
-	paramFiltrage param_capteurs{ tm() ,tm() , Territoire(new Point(0.0, 0.0), 0), "" };
+	paramFiltrage param_capteurs{ tm() ,tm() , new Territoire(new Point(0.0, 0.0), 0), "" };
 	unordered_map < string, Capteur * > map_tous_les_capteurs = fileReader->lireCapteurs(param_capteurs, filtrageCapteur);
 	if (capteursID.front().compare("*") == 0)
 	{
@@ -105,7 +105,7 @@ list <string> * Service :: surveillerComportementCapteurs (list <string> & capte
 	*/
 	for (list <string> :: iterator i = capteursID.begin(); i != capteursID.end(); i++)
 	{
-		paramFiltrage param { tm() ,tm() , Territoire(new Point(0.0, 0.0), 0)  , *i };
+		paramFiltrage param { tm() ,tm() , new Territoire(new Point(0.0, 0.0), 0)  , *i };
 
 		if (surveillerComportementCapteur(*i, param) == false)
 		{
@@ -135,7 +135,7 @@ list <pair < string, string > > * Service :: obtenirCapteursSimilaires( struct t
 	fileReader->debutMesure();
 
 	//On r�cup�re tous les capteurs
-	paramFiltrage param_capteurs{ tm() ,tm() , Territoire(new Point(0.0, 0.0), 0), "" };
+	paramFiltrage param_capteurs{ tm() ,tm() , new Territoire(new Point(0.0, 0.0), 0), "" };
 
 	unordered_map < std::string, Capteur * > map_capteurs = fileReader->lireCapteurs(param_capteurs, filtrageCapteur);
 
@@ -145,7 +145,7 @@ list <pair < string, string > > * Service :: obtenirCapteursSimilaires( struct t
 	unordered_map< string, unordered_map< string, vector<float> > > capteurs_mesures;
 	//unordered_map<sensorID, unordered_map<AttributId, vector<value> > > capteurs_mesures;
 
-	paramFiltrage parametres { Date ,tm() , Territoire(new Point(0.0, 0.0), 0)  , "" };
+	paramFiltrage parametres { Date ,tm() , new Territoire(new Point(0.0, 0.0), 0)  , "" };
 
 
 	// On classe les donn�es pour faciliter le traitement
@@ -412,7 +412,7 @@ tuple<int, list<pair<string, float>>, float>  Service::calculerQualite(paramFilt
 	}
 	
 	cout << "date inf " << parametres.dateInf.tm_hour << "  date sup " << parametres.dateSup.tm_hour << endl;
-	cout << "Point latitude" << parametres.territoire.getCentre()->getLatitude() << " longitude" << parametres.territoire.getCentre()->getLongitude() << endl;
+	cout << "Point latitude" << parametres.territoire->getCentre()->getLatitude() << " longitude" << parametres.territoire->getCentre()->getLongitude() << endl;
 
 	// Surveiller les capteurs et enlever de la liste les capteurs d�faillants
 	/*
@@ -446,18 +446,18 @@ tuple<int, list<pair<string, float>>, float>  Service::calculerQualite(paramFilt
 		if (parametres.capteurId.compare("") == 0)
 		{
 			// Un point  
-			if (parametres.territoire.getRayon() == 0
-				&& !(parametres.territoire.getCentre()->getLatitude() == 0 && parametres.territoire.getCentre()->getLongitude() == 0))
+			if (parametres.territoire->getRayon() == 0
+				&& !(parametres.territoire->getCentre()->getLatitude() == 0 && parametres.territoire->getCentre()->getLongitude() == 0))
 			{
 
-				fiabilite = 1 - parametres.territoire.getCentre()->distance(capteurs.at(m->getSensorID())->getPosition())/10;
+				fiabilite = 1 - parametres.territoire->getCentre()->distance(capteurs.at(m->getSensorID())->getPosition())/10;
 			}
 			// Un territoire cibl�
-			else if (parametres.territoire.getRayon() > 0
-				&& !(parametres.territoire.getCentre()->getLatitude() == 0 && parametres.territoire.getCentre()->getLongitude() == 0)
+			else if (parametres.territoire->getRayon() > 0
+				&& !(parametres.territoire->getCentre()->getLatitude() == 0 && parametres.territoire->getCentre()->getLongitude() == 0)
 				)
 			{
-				fiabilite = 1 - (parametres.territoire.getCentre()->distance(capteurs.at(m->getSensorID())->getPosition()) - parametres.territoire.getRayon()) / 50;
+				fiabilite = 1 - (parametres.territoire->getCentre()->distance(capteurs.at(m->getSensorID())->getPosition()) - parametres.territoire->getRayon()) / (0.1*parametres.territoire->getRayon());
 			}
 
 		}
@@ -823,28 +823,41 @@ bool Service::filtrageCapteur(Capteur & capteur, Territoire & territoire , strin
 
 		const Point * posCapteur = capteur.getPosition();
 		
-		// cas 1 : point considere 
-		if (territoire.getRayon() == 0.0)
+		// cas 3 : capteur
+		if(! capteurId.empty())
 		{
-			Point * centre_zoneAcceptee = new Point(territoire.getCentre()->getLongitude(), territoire.getCentre()->getLatitude());
-			Territoire zoneAcceptee = Territoire(centre_zoneAcceptee, territoire.getRayon() + 10/*0000*/);
-			if (zoneAcceptee.contient(posCapteur))
-			{
-				capteurAPrendre = true;				
-			}
-		}
-		// cas 2 : territoire considere
-		else if (territoire.getRayon() != 0)
-		{
-			Point * centre_zoneAcceptee = new Point(territoire.getCentre()->getLongitude(), territoire.getCentre()->getLatitude());
-			Territoire zoneAcceptee = Territoire(centre_zoneAcceptee, territoire.getRayon() + 50);
-			if (zoneAcceptee.contient(posCapteur))
-			{
+			if (capteur.getSensorID().compare(capteurId) == 0) {
 				capteurAPrendre = true;
 			}
 		}
-
+		else
+		{
+			// cas 1 : point considere 
+			if (territoire.getRayon() == 0.0)
+			{
+				Point * centre_zoneAcceptee = new Point(territoire.getCentre()->getLongitude(), territoire.getCentre()->getLatitude());
+				Territoire zoneAcceptee = Territoire(centre_zoneAcceptee, territoire.getRayon() + 10/*0000*/);
+				if (zoneAcceptee.contient(posCapteur))
+				{
+					capteurAPrendre = true;
+				}
+			}
+			// cas 2 : territoire considere
+			else if (territoire.getRayon() != 0)
+			{
+				Point * centre_zoneAcceptee = new Point(territoire.getCentre()->getLongitude(), territoire.getCentre()->getLatitude());
+				Territoire zoneAcceptee = Territoire(centre_zoneAcceptee, 1.1 *territoire.getRayon() /*+ 50*/); //TODO mettre à jour la spec
+				if (zoneAcceptee.contient(posCapteur))
+				{
+					capteurAPrendre = true;
+				}
+			}
+		}
+		return capteurAPrendre;
+	/*	
+	if(capteurAPrendre && (capteurId.empty() || capteur.getSensorID().compare(capteurId) == 0))cout << "Capteur " << capteur.getSensorID() << " pris en compte" << endl;
 	return capteurAPrendre && (capteurId.empty() || capteur.getSensorID().compare(capteurId) == 0);
+	*/
 }
 
 bool Service::filtrageMesure(Mesure & mesure, struct tm & dateInf, struct tm & dateSup)
