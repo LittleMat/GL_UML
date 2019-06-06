@@ -204,7 +204,7 @@ Mesure *FileReader ::prochaineMesure(paramFiltrage &parametres, bool (*filtrageM
 					string sensorID = matches[2].str();
 					string attributeID = matches[3].str();
 					float value = stof(matches[4].str());
-					// cout << timestamp << " - " << sensorID << " - " << attributeID << " - " << value << endl;
+					//cout << timestamp << " - " << sensorID << " - " << attributeID << " - " << value << endl;
 
 					//Search for the date
 					regex_search(timestamp, time_match, reg_date);
