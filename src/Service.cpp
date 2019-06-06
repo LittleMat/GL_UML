@@ -259,7 +259,7 @@ list <pair < string, string > > * Service :: obtenirCapteursSimilaires( struct t
 
 				bool similaire = true;
 				
-				for (int i = 0; i < nbMesures; i++)
+				for (int i = 0; i < nbMesures; i++)  
 				{
 					similaire = similaire && (plusOuMoins(it_c1_O3->second[i], it_c2_O3->second[i], 15) &&
 						plusOuMoins(it_c1_NO2->second[i], it_c2_NO2->second[i], 20) &&
