@@ -225,6 +225,9 @@ TEST(FileReaderUnitTest, LireCapteur)
     listS.push_back("resources/Data10.csv");
     FileReader reader("resources/Sensor10.csv", "resources/AttributeType.csv", listS);
     paramFiltrage passAll;
+    passAll.dateInf = tm();
+    passAll.dateSup = tm();
+    passAll.territoire = new Territoire(new Point(0, 0), 0);
     unordered_map<string, Capteur *> capteurs;
 
     EXPECT_ANY_THROW(capteurs = reader.lireCapteurs(passAll, NULL));
@@ -251,6 +254,7 @@ TEST(FileReaderUnitTest, ProchaineMesure)
     paramFiltrage passAll;
     passAll.dateInf = tm();
     passAll.dateSup = tm();
+    passAll.territoire = new Territoire(new Point(0, 0), 0);
     Mesure *mesure = nullptr;
 
     EXPECT_ANY_THROW(mesure = reader.prochaineMesure(passAll, nullptr));
@@ -283,6 +287,7 @@ TEST(FileReaderUnitTest, ProchaineMesure2)
     paramFiltrage passAll;
     passAll.dateInf = tm();
     passAll.dateSup = tm();
+    passAll.territoire = new Territoire(new Point(0, 0), 0);
     Mesure *mesure = nullptr;
     FileReader reader2("resources/Sensor10.csv", "resources/AttributeType.csv", listS);
     reader.debutMesure();
@@ -431,6 +436,7 @@ TEST(ServiceUnitTest, SurveillerComportementCapteur)
     paramFiltrage passAll;
     passAll.dateInf = tm();
     passAll.dateSup = tm();
+    passAll.territoire = new Territoire(new Point(0, 0), 0);
     EXPECT_TRUE(service.surveillerComportementCapteur("Sensor0", passAll));
     EXPECT_TRUE(service.surveillerComportementCapteur("Sensor1", passAll));
     EXPECT_FALSE(service.surveillerComportementCapteur("Sensor2", passAll));
@@ -444,6 +450,7 @@ TEST(ServiceUnitTest, SurveillerComportementCapteurs)
     paramFiltrage passAll;
     passAll.dateInf = tm();
     passAll.dateSup = tm();
+    passAll.territoire = new Territoire(new Point(0, 0), 0);
     list<string> capteurs;
     ASSERT_ANY_THROW(service.surveillerComportementCapteurs(capteurs));
     capteurs.push_back("Sensor0");
