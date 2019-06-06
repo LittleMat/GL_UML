@@ -411,8 +411,8 @@ tuple<int, list<pair<string, float>>, float>  Service::calculerQualite(paramFilt
 		cout << i.first << endl;
 	}
 	
-	cout << "date inf " << parametres.dateInf.tm_hour << "  date sup " << parametres.dateSup.tm_hour << endl;
-	cout << "Point latitude" << parametres.territoire->getCentre()->getLatitude() << " longitude" << parametres.territoire->getCentre()->getLongitude() << endl;
+	//cout << "date inf " << parametres.dateInf.tm_hour << "  date sup " << parametres.dateSup.tm_hour << endl;
+	cout << "Point latitude " << parametres.territoire->getCentre()->getLatitude() << " longitude " << parametres.territoire->getCentre()->getLongitude() << endl;
 
 	// Surveiller les capteurs et enlever de la liste les capteurs d�faillants
 	/*

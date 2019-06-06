@@ -220,7 +220,9 @@ int menu ( int argc , char ** argv)
 		do 
 		{
 			cin >> lecture;
-			if ( is_number ( lecture ) ) { index = stoi ( lecture ); }
+			if ( is_number ( lecture ) ) {
+				cout << lecture << " est un nombre" << endl;
+				index = stoi ( lecture ); }
 
 		} 
 		while ( ! is_number ( lecture ) || index != 1 && index != 2 && index != 3 && index != 4 );
@@ -244,7 +246,7 @@ int menu ( int argc , char ** argv)
 				
 				do {	
 					cin >> type_zone;
-					if( is_number ( lecture ) ) valeur = stoi ( type_zone );
+					if( is_number (type_zone) ) valeur = stoi ( type_zone );
 
 				} while ( ! is_number ( type_zone ) || valeur != 1 && valeur != 2 && valeur != 3 && valeur != 4 && valeur != 5 );
 				cout << "Option[" << type_zone << "] selectionnee " << endl;
@@ -275,7 +277,7 @@ int menu ( int argc , char ** argv)
 					//Territoire
 					case 2:
 
-						cout << "Rentrez une latitude et une longitude" << endl;
+						cout << "Rentrez une longitude et une latitude" << endl;
 						flag = false;
 
 						do 
@@ -344,11 +346,11 @@ int menu ( int argc , char ** argv)
 				}
 				while ( flag );
 				
-				cout << "[debug] " << "type date vaut " << type_date << endl;
 				if ( type_date == "*" ) { valeur = 0; }
 				else { valeur = stoi ( type_date ); }
 				
 				struct tm date2finale = stringToDateDetailed("0");
+				struct tm date1finale = stringToDateDetailed("0");
 				switch ( valeur ) 
 				{
 
@@ -372,6 +374,7 @@ int menu ( int argc , char ** argv)
 					while ( flag );
 					date1 = date1.append(" ").append(heure);
 					cout << "date selectionnee : " << date1 << endl;
+					date1finale = stringToDateDetailed(date1);
 					cout << endl;
 					break;
 				// date1 date2
@@ -392,6 +395,9 @@ int menu ( int argc , char ** argv)
 					date2finale = stringToDate(date2);
 					date2finale.tm_hour = 23;
 					date2finale.tm_min = 59;
+
+					date1finale = stringToDate(date1);
+
 					cout << endl;
 					break;
 				}
@@ -400,11 +406,11 @@ int menu ( int argc , char ** argv)
 
 				//testTerritoire = Territoire(new Point(stof(longitude), stof(latitude)), stoi(rayon));
 				
-				paramQualite = { stringToDate(date1) , date2finale , new Territoire(new Point(stof(longitude), stof(latitude)), stoi(rayon))  , captorId };
-				struct tm bidule = stringToDate(date1);
+				paramQualite = { date1finale , date2finale , new Territoire(new Point(stof(longitude), stof(latitude)), stoi(rayon))  , captorId };
+				
 
 				cout << "date1" << endl;
-				cout << bidule.tm_mday << "/" << bidule.tm_mon << "/" << bidule.tm_year << " " << bidule.tm_hour << ":" << bidule.tm_min <<endl;
+				cout << date1finale.tm_mday << "/" << date1finale.tm_mon << "/" << date1finale.tm_year << " " << date1finale.tm_hour << ":" << date1finale.tm_min <<endl;
 
 				cout << "date2" << endl;
 				cout << date2finale.tm_mday << "/" << date2finale.tm_mon << "/" << date2finale.tm_year << " " << date2finale.tm_hour << ":" << date2finale.tm_min << endl;
