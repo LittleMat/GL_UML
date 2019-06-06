@@ -70,7 +70,7 @@ list <string> * Service :: surveillerComportementCapteurs (list <string> & capte
 	if (capteursID.empty())
 		throw "Illegal Argument Exception: empty list";
 	fileReader->lireAttributs();
-	paramFiltrage param_capteurs{ tm() ,tm() , new Territoire(new Point(0.0, 0.0), 0), "" };
+	paramFiltrage param_capteurs{ tm() ,tm() , new Territoire(new Point(0.0, 0.0), 2.1*rayon_Terre), "" };
 	unordered_map < string, Capteur * > map_tous_les_capteurs = fileReader->lireCapteurs(param_capteurs, filtrageCapteur);
 	if (capteursID.front().compare("*") == 0)
 	{
@@ -105,7 +105,7 @@ list <string> * Service :: surveillerComportementCapteurs (list <string> & capte
 	*/
 	for (list <string> :: iterator i = capteursID.begin(); i != capteursID.end(); i++)
 	{
-		paramFiltrage param { tm() ,tm() , new Territoire(new Point(0.0, 0.0), 0)  , *i };
+		paramFiltrage param { tm() ,tm() , new Territoire(new Point(0.0, 0.0), 2.1*rayon_Terre)  , *i };
 
 		if (surveillerComportementCapteur(*i, param) == false)
 		{
@@ -135,9 +135,11 @@ list <pair < string, string > > * Service :: obtenirCapteursSimilaires( struct t
 	fileReader->debutMesure();
 
 	//On r�cup�re tous les capteurs
-	paramFiltrage param_capteurs{ tm() ,tm() , new Territoire(new Point(0.0, 0.0), 0), "" };
+	paramFiltrage param_capteurs{ tm() ,tm() , new Territoire(new Point(0.0, 0.0), 2.1*rayon_Terre), "" };
 
 	unordered_map < std::string, Capteur * > map_capteurs = fileReader->lireCapteurs(param_capteurs, filtrageCapteur);
+
+	cout << "taille capteur = " << map_capteurs.size() << endl;
 
 	//On r�cup�re tous les attributs
 	unordered_map < std::string, Attribut * > map_attributs = fileReader->lireAttributs(); 
@@ -145,7 +147,7 @@ list <pair < string, string > > * Service :: obtenirCapteursSimilaires( struct t
 	unordered_map< string, unordered_map< string, vector<float> > > capteurs_mesures;
 	//unordered_map<sensorID, unordered_map<AttributId, vector<value> > > capteurs_mesures;
 
-	paramFiltrage parametres { Date ,tm() , new Territoire(new Point(0.0, 0.0), 0)  , "" };
+	paramFiltrage parametres { Date ,tm() , new Territoire(new Point(0.0, 0.0), 2.1*rayon_Terre)  , "" };
 
 
 	// On classe les donn�es pour faciliter le traitement
@@ -193,11 +195,21 @@ list <pair < string, string > > * Service :: obtenirCapteursSimilaires( struct t
 	cout << endl;
 
 	*/
-
+	/*Attention :
+	Il faudrait pour chaque map d'un id de capteurs 
+	*/
 
 	for (int i = 0; i < nbMesures; i++)
 	{
 		Mesure * m = fileReader->prochaineMesure(parametres, filtrageMesure);
+
+
+
+		if (m == nullptr)
+			break;
+
+		cout << i << endl;
+		cout << m->getSensorID() << endl;
 
 		// �tape de s�lection du capteur
 		// Si dans la map des capteurs s�lectionn�s par les fonctions de filtrage spaciaux
@@ -874,7 +886,7 @@ bool Service::filtrageMesure(Mesure & mesure, struct tm & dateInf, struct tm & d
 	// on retourne true
 {
 
-	// cout << "Filtrage mesure appelee" << endl;
+	 cout << "Filtrage mesure appelee" << endl;
 	bool mesureAPrendre = false;
 	struct tm time = mesure.getTimestamp();
 	time_t timeMes = mktime(&time); 
