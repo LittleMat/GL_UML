@@ -199,6 +199,103 @@ list <pair < string, string > > * Service :: obtenirCapteursSimilaires( struct t
 	Il faudrait pour chaque map d'un id de capteurs 
 	*/
 
+	// Init 
+	for (unordered_map < std::string, Capteur * > :: iterator it = map_capteurs.begin(); it != map_capteurs.end(); it++)
+	{
+
+		unordered_map< string, vector<float> >  map_temp;
+		vector <float> vect;
+		for (int i = 0; i < nbMesures; i++)
+		{
+			vect.push_back(-1);
+		}
+		map_temp.insert(make_pair("03", vect));
+		map_temp.insert(make_pair("NO2", vect));
+		map_temp.insert(make_pair("SO2", vect));
+		map_temp.insert(make_pair("PM10", vect));
+
+		capteurs_mesures.insert(make_pair(it->first, map_temp));
+	}
+
+
+
+
+	std::cout << "Visualisation de la structure avant remplissage du vide" << endl;
+	std::cout << endl;
+	std::cout << "*********************************************" << endl;
+	for (unordered_map< string, unordered_map< string, vector<float> > > ::iterator it = capteurs_mesures.begin(); it != capteurs_mesures.end(); it++)
+	{
+		std::cout << "Capteur = " << it->first << endl;
+		for (unordered_map< string, vector<float> > ::iterator it_2 = it->second.begin(); it_2 != it->second.end(); it_2++)
+		{
+			std::cout << "Attribut = " << it_2->first << endl;
+			for (vector<float> ::iterator it_3 = it_2->second.begin(); it_3 != it_2->second.end(); it_3++)
+			{
+				std::cout << *it_3 << " ; ";
+			}
+		}
+		std::cout << endl;
+	}
+	std::cout << "*********************************************" << endl;
+	std::cout << endl;
+	std::cout << endl;
+
+
+
+	for (int i = 0; i < nbMesures; i++)
+	{
+		Mesure * m = fileReader->prochaineMesure(parametres, filtrageMesure);
+
+
+
+		if (m == nullptr)
+			break;
+
+		cout << "ici" << endl;
+		cout << i << endl;
+		cout << m->getSensorID() << endl;
+
+		// �tape de s�lection du capteur
+		// Si dans la map des capteurs s�lectionn�s par les fonctions de filtrage spaciaux
+		// le capteur de la mesure est pr�sent, c'est qu'il faut anaylser ce capteur
+
+		unordered_map < std::string, Capteur * > ::iterator trouveCapteur = map_capteurs.find(m->getSensorID());
+		if (trouveCapteur != map_capteurs.end())
+		{
+			unordered_map<string, unordered_map<string, vector<float> > >::iterator iterateur_sensorID = capteurs_mesures.find(m->getSensorID());
+
+			if (iterateur_sensorID != capteurs_mesures.end())
+			{
+				// On a trouve sensorID
+				//unordered_map<string, vector<float>> attributId_valeur = iterateur_sensorID->second; // juste l� pour m'aider � coder
+				unordered_map<string, vector<float>> ::iterator iterateur_attributId = iterateur_sensorID->second.find(m->getAttributID());
+
+				for (int ii = 0; ii < nbMesures; ii++)
+				{
+					// A reprendre ... 
+					cout << "valeur test a afficher = " << iterateur_attributId->second[ii] << endl;
+					if (iterateur_attributId->second[ii] == -1)
+					{
+						
+						iterateur_attributId->second[ii] = m->getValue();
+					}
+				}
+
+			}
+		}
+
+		delete m;
+	}
+
+
+
+
+
+
+
+
+
+	/*
 	for (int i = 0; i < nbMesures; i++)
 	{
 		Mesure * m = fileReader->prochaineMesure(parametres, filtrageMesure);
@@ -222,16 +319,13 @@ list <pair < string, string > > * Service :: obtenirCapteursSimilaires( struct t
 
 			if (iterateur_sensorID != capteurs_mesures.end())
 			{
-				// On a trouv� sensorID
+				// On a trouve sensorID
 				//unordered_map<string, vector<float>> attributId_valeur = iterateur_sensorID->second; // juste l� pour m'aider � coder
 				unordered_map<string, vector<float>> ::iterator iterateur_attributId = iterateur_sensorID->second.find(m->getAttributID());
 
-				// On a trouv� attributID
+				// On a trouve attributID
 				if (iterateur_attributId != iterateur_sensorID->second.end())
 				{
-					//vector<float> N_valeurs = iterateur_attributId->second; // juste l� pour m'aider � coder
-					//N_valeurs[i] = m->getValue(); // juste l� pour m'aider � coder
-
 					iterateur_attributId->second.push_back(m->getValue());
 				}
 				
@@ -258,6 +352,7 @@ list <pair < string, string > > * Service :: obtenirCapteursSimilaires( struct t
 
 		delete m;
 	}
+	*/
 
 
 	// Visualiser la structure 
@@ -288,14 +383,24 @@ list <pair < string, string > > * Service :: obtenirCapteursSimilaires( struct t
 	{
 		for (unordered_map< string, vector<float> > ::iterator it_2 = it->second.begin(); it_2 != it->second.end(); it_2++)
 		{
+			/*
 			for (int i = 0; size(it_2->second) < nbMesures; i++)
 			{
 				it_2->second.push_back(0.0);
 			}
+			*/
 			/*
 			vector<float> ::iterator it_3 = it_2->second.end();
 			fill(it_3, it_3 + nbMesures, 0.0); // FAUX : A CORRIGER
 			*/
+
+			for (int ii = 0; ii < nbMesures; ii++)
+			{
+				if (it_2->second[ii] == -1)
+				{
+					it_2->second[ii] = 0;
+				}
+			}
 		}
 	}
 
