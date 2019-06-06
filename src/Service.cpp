@@ -25,7 +25,6 @@ using namespace std;
 
 bool Service :: surveillerComportementCapteur ( string capteurID, paramFiltrage & parametres )
 {
-	std :: cout << "Appel surveillerComportementCapteur" << endl;
 	bool bonEtat = true;
 	bool finLecture = false;
 	fileReader->lireAttributs();
@@ -84,25 +83,7 @@ list <string> * Service :: surveillerComportementCapteurs (list <string> & capte
 
 	//liste d'id de capteurs d�fectueux
 	list <string> * liste_id_capteursDefectueux = new list<string>;
-	/*
-	std::cout << endl;
-	std::cout << "contenu liste_id_capteursDefectueux apr�s init" << endl;
-	std::cout << endl;
-	*/
-	/*
-	if (liste_id_capteursDefectueux->empty())
-	{
 
-		for (list<string> ::iterator ii = liste_id_capteursDefectueux->begin(); ii != liste_id_capteursDefectueux->end(); ii++)
-		{
-			// std::cout << *ii << endl;
-		}
-	}
-	else
-	{
-		std::cout << "liste vide " << endl;
-	}
-	*/
 	for (list <string> :: iterator i = capteursID.begin(); i != capteursID.end(); i++)
 	{
 		paramFiltrage param { tm() ,tm() , new Territoire(new Point(0.0, 0.0), 2.1*rayon_Terre)  , *i };
@@ -519,17 +500,12 @@ bool Service::plusOuMoins(float v1, float v2, float ecart)
 tuple<int, list<pair<string, float>>, float>  Service::calculerQualite(paramFiltrage & parametres)
 {
 
-	cout << "Calculer qualite air" << endl;
 	fileReader->debutMesure();
 	unordered_map <string, Attribut *> attributs = fileReader->lireAttributs();
 	unordered_map <string, Capteur *> capteurs = fileReader->lireCapteurs(parametres, filtrageCapteur);
-	cout << "capteurs " << endl;
-	for (auto i : capteurs) {
-		cout << i.first << endl;
-	}
+
 	
-	cout << "date inf " << parametres.dateInf.tm_hour << "  date sup " << parametres.dateSup.tm_hour << endl;
-	cout << "Point latitude" << parametres.territoire->getCentre()->getLatitude() << " longitude" << parametres.territoire->getCentre()->getLongitude() << endl;
+	//cout << "date inf " << parametres.dateInf.tm_hour << "  date sup " << parametres.dateSup.tm_hour << endl;
 
 	// Surveiller les capteurs et enlever de la liste les capteurs d�faillants
 	/*
@@ -563,16 +539,14 @@ tuple<int, list<pair<string, float>>, float>  Service::calculerQualite(paramFilt
 		if (parametres.capteurId.compare("") == 0)
 		{
 			// Un point  
-			if (parametres.territoire->getRayon() == 0
-				&& !(parametres.territoire->getCentre()->getLatitude() == 0 && parametres.territoire->getCentre()->getLongitude() == 0))
+			if (parametres.territoire->getRayon() == 0 )
 			{
 
 				fiabilite = 1 - parametres.territoire->getCentre()->distance(capteurs.at(m->getSensorID())->getPosition())/10;
 			}
 			// Un territoire cibl�
-			else if (parametres.territoire->getRayon() > 0
-				&& !(parametres.territoire->getCentre()->getLatitude() == 0 && parametres.territoire->getCentre()->getLongitude() == 0)
-				)
+			else if (parametres.territoire->getRayon() > 0)
+				
 			{
 				fiabilite = 1 - (parametres.territoire->getCentre()->distance(capteurs.at(m->getSensorID())->getPosition()) - parametres.territoire->getRayon()) / (0.1*parametres.territoire->getRayon());
 			}
@@ -676,18 +650,26 @@ tuple<int, list<pair<string, float>>, float>  Service::calculerQualite(paramFilt
 	fiabilites.push_back(make_pair("PM10", fiabiliteMoyenne));
 
 
-	float concentrationMax = -1.0;
+	float indiceMax = -1.0;
+	int indiceATMO;
 	string composant;
 	for (list<pair<string, float>> ::iterator it = concentrations.begin(); it != concentrations.end(); it++)
 	{
-		if (concentrationMax <= it->second)
+		indiceATMO = calculIndiceATMO(it->first, it->second);
+		if (indiceATMO > indiceMax)
+		{
+			indiceMax = indiceATMO;
+		}
+		/*if (concentrationMax <= it->second)
 		{
 			concentrationMax = it->second;
 			composant = it->first;
-		}
+		}*/
 	}
 
-	int indiceATMO = calculIndiceATMO(composant, concentrationMax);
+	indiceATMO = indiceMax;
+
+	
 
 	float fiabiliteMin = 1;
 	for (list<pair<string, float>> ::iterator it = fiabilites.begin(); it != fiabilites.end(); it++)
@@ -860,7 +842,7 @@ int Service :: calculIndiceATMO(string substance, float valeur)
 		}
 
 	}
-	else if (substance.compare("PO10") == 0)
+	else if (substance.compare("PM10") == 0)
 	{
 		if (valeur >= 0 && valeur <= 6)
 		{
@@ -991,7 +973,6 @@ bool Service::filtrageMesure(Mesure & mesure, struct tm & dateInf, struct tm & d
 	// on retourne true
 {
 
-	 cout << "Filtrage mesure appelee" << endl;
 	bool mesureAPrendre = false;
 	struct tm time = mesure.getTimestamp();
 	time_t timeMes = mktime(&time); 
