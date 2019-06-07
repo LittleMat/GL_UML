@@ -855,6 +855,11 @@ bool Service::filtrageCapteur(Capteur & capteur, Territoire & territoire , strin
 					capteurAPrendre = true;
 				}
 			}
+			// cas 4 : tous les capteurs
+			else if (territoire.getRayon() >= M_PI * rayon_Terre)
+			{
+				capteurAPrendre = true;
+			}
 			// cas 2 : territoire considere
 			else if (territoire.getRayon() != 0)
 			{

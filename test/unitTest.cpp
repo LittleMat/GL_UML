@@ -344,18 +344,22 @@ TEST(ServiceUnitTest, FiltrageCapteur)
     Capteur capteurOrigin("sensorId", new Point(0, 0), "description");
     Capteur capteurParis("sensorId", new Point(2.21, 48.51), "descrption");
 
-    Territoire empty(new Point(0, 0), 0);        // All surface
+    Territoire empty(new Point(0, 0), M_PI * rayon_Terre); // All surface
     Territoire point(new Point(2.21, 48.51), 0); // Radius 10km
-    Territoire circle(new Point(2, 48), 100);    // Radius + 50km
+    Territoire circle(new Point(2, 48), 100);    // Radius * 1.1
 
-    EXPECT_TRUE(Service::filtrageCapteur(capteurOrigin, empty, "sensorId"));
-    EXPECT_TRUE(Service::filtrageCapteur(capteurParis, empty, "sensorId"));
-    EXPECT_TRUE(Service::filtrageCapteur(capteurParis, point, "sensorId"));
-    EXPECT_TRUE(Service::filtrageCapteur(capteurParis, circle, "sensorId"));
+    EXPECT_TRUE(Service::filtrageCapteur(capteurOrigin, empty, ""));
+    EXPECT_FALSE(Service::filtrageCapteur(capteurOrigin, point, ""));
+    EXPECT_FALSE(Service::filtrageCapteur(capteurOrigin, circle, ""));
+    EXPECT_TRUE(Service::filtrageCapteur(capteurParis, empty, ""));
+    EXPECT_TRUE(Service::filtrageCapteur(capteurParis, point, ""));
+    EXPECT_TRUE(Service::filtrageCapteur(capteurParis, circle, ""));
 
     // the territoire will be ignored in the presence of capteurId
     EXPECT_TRUE(Service::filtrageCapteur(capteurOrigin, point, "sensorId"));
     EXPECT_TRUE(Service::filtrageCapteur(capteurOrigin, circle, "sensorId"));
+    
+    EXPECT_FALSE(Service::filtrageCapteur(capteurOrigin, empty, "meaningless"));
     EXPECT_FALSE(Service::filtrageCapteur(capteurParis, point, "meaningless"));
     EXPECT_FALSE(Service::filtrageCapteur(capteurParis, circle, "meaningless"));
 }
