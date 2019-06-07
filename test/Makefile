@@ -88,3 +88,8 @@ unitTest.o : $(USER_DIR)/unitTest.cpp $(GTEST_HEADERS)
 unitTest : unitTest.o $(GTEST_LIBS) $(OBJ_FILES)
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -L$(GTEST_LIB_DIR) -lgtest_main -lpthread $^ -o $@
 
+systemTest.o : $(USER_DIR)/systemTest.cpp $(GTEST_HEADERS)
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -I../src -c $(USER_DIR)/systemTest.cpp
+
+systemTest : systemTest.o $(GTEST_LIBS) $(OBJ_FILES)
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -L$(GTEST_LIB_DIR) -lgtest_main -lpthread $^ -o $@

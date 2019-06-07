@@ -28,7 +28,7 @@ main: main.o cli.o Capteur.o FileReader.o Mesure.o Point.o Service.o Territoire.
 
 %.o: ${SRCDIR}/%.cpp
 	@echo -e "\033[33mCompilation de $@\033[0m"
-	if [[ ! -d ${BINDIR} ]]; then mkdir ${BINDIR}; fi
+	if [ ! -d ${BINDIR} ]; then mkdir ${BINDIR}; fi
 	g++ ${CPPFLAGS} ${FLAGS} -c $< -o ${BINDIR}/$@
 
 clean:
