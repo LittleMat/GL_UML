@@ -27,7 +27,7 @@ bool Service :: surveillerComportementCapteur ( string capteurID, paramFiltrage 
 {
 	bool bonEtat = true;
 	bool finLecture = false;
-	unordered_map<string, Attribut*> attributs = fileReader->lireAttributs();
+	fileReader->lireAttributs();
 	fileReader->lireCapteurs(parametres, Service::filtrageCapteur);
 	fileReader->debutMesure();
 	while (finLecture == false)
@@ -59,11 +59,6 @@ bool Service :: surveillerComportementCapteur ( string capteurID, paramFiltrage 
 		delete m;		
 	}
 
-	for (auto it : attributs)
-	{
-		delete it.second;
-	}
-
 	return bonEtat;
 
 }//----- End of surveillerComportementCapteur 
@@ -73,7 +68,7 @@ list <string> * Service :: surveillerComportementCapteurs (list <string> & capte
 {
 	if (capteursID.empty())
 		throw "Illegal Argument Exception: empty list";
-	unordered_map <string, Attribut* > attributs = fileReader->lireAttributs();
+	fileReader->lireAttributs();
 	paramFiltrage param_capteurs{ tm() ,tm() , new Territoire(new Point(0.0, 0.0), 2.1*rayon_Terre), "" };
 	unordered_map < string, Capteur * > map_tous_les_capteurs = fileReader->lireCapteurs(param_capteurs, filtrageCapteur);
 	if (capteursID.front().compare("*") == 0)
@@ -101,11 +96,6 @@ list <string> * Service :: surveillerComportementCapteurs (list <string> & capte
 	liste_id_capteursDefectueux->unique();
 	capteursID.clear();
 
-	for (auto it : attributs)
-	{
-		delete it.second;
-	}
-	
 	return liste_id_capteursDefectueux;
 
 }//----- End of surveillerComportementCapteurs

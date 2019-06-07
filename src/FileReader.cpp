@@ -85,7 +85,7 @@ unordered_map<string, Attribut *> FileReader ::lireAttributs()
 	ifstream infile(this->nomFichierAttributs);
 
 	//Idem que lireCapteurs
-	if (this->map_capteurs.size() != 0)
+	if (this->map_attributs.size() != 0)
 	{
 		for (auto it : this->map_attributs)
 		{
