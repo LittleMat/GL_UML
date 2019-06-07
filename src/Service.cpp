@@ -875,7 +875,8 @@ bool Service::filtrageCapteur(Capteur & capteur, Territoire & territoire , strin
 
 bool Service::filtrageMesure(Mesure & mesure, struct tm & dateInf, struct tm & dateSup)
 // Algorithm :
-// Si dateSup == null && dateInf != null (a un instant t)
+// Si dateInf != null && dateSup == null (periode)
+// Si dateInf == null && dateSup != null (a un instant t)
 	// On regarde si mesure.getTimestamp() appartient a l'intervalle  [dateInf (en sec) - 60 (min) * 60 sec, dateInf (en sec) + 60 (min) * 60 sec] 
 		// Si oui : on retourne true
 		// Sinon : on retourne false
@@ -892,11 +893,11 @@ bool Service::filtrageMesure(Mesure & mesure, struct tm & dateInf, struct tm & d
 	time_t timeMes = mktime(&time); 
 	
 	// A un instant t
-	if ((dateNull(dateSup) == true) && (dateNull(dateInf) == false))
+	if ((dateNull(dateSup) == false) && (dateNull(dateInf) == true))
 	{
-		time_t timeInf = mktime(&dateInf);
+		time_t timeSup = mktime(&dateSup);
 
-		if ((timeMes >= timeInf - 3600) && (timeMes <= timeInf + 3600))
+		if ((timeMes >= timeSup - 3600) && (timeMes <= timeSup + 3600))
 			mesureAPrendre = true;
 
 	}
@@ -918,9 +919,9 @@ bool Service::filtrageMesure(Mesure & mesure, struct tm & dateInf, struct tm & d
 	}
 
 	// A partir d'un instant t
-	else if ((dateNull(dateInf) == true) && (dateNull(dateSup) == false)) {
-		time_t timeSup = mktime(&dateSup);
-		if (timeMes >= timeSup)
+	else if ((dateNull(dateInf) == false) && (dateNull(dateSup) == true)) {
+		time_t timeInf = mktime(&dateInf);
+		if (timeMes >= timeInf)
 			mesureAPrendre = true;
 	}
 	return mesureAPrendre;

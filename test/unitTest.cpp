@@ -322,14 +322,16 @@ TEST(ServiceUnitTest, FiltrageMesure)
     Mesure mesureYesterday(yesterday_tm, "attributId", 10, "sensorId");
     Mesure mesureBeforeYesterday(beforeYesterday_tm, "attributId", 10, "sensorId");
 
-    EXPECT_TRUE(Service::filtrageMesure(mesureYesterday, beforeYesterday_tm, yesterday_tm));
-    // An instant around now_tm
-    EXPECT_FALSE(Service::filtrageMesure(mesureYesterday, empty_tm, now_tm));
+    EXPECT_TRUE(Service::filtrageMesure(mesureYesterday, beforeYesterday_tm, now_tm));
+    // An instant around a given time
     EXPECT_TRUE(Service::filtrageMesure(mesureNow, empty_tm, halfHour_tm));
-    EXPECT_TRUE(Service::filtrageMesure(mesureNow, halfHour_tm, empty_tm));
-    // An instant around yesterday_tm
-    EXPECT_FALSE(Service::filtrageMesure(mesureNow, yesterday_tm, empty_tm));
+    EXPECT_FALSE(Service::filtrageMesure(mesureYesterday, empty_tm, now_tm));
 
+    // A periode since a given time
+    EXPECT_TRUE(Service::filtrageMesure(mesureNow, halfHour_tm, empty_tm));
+    EXPECT_TRUE(Service::filtrageMesure(mesureNow, yesterday_tm, empty_tm));
+
+    // All accepted
     EXPECT_TRUE(Service::filtrageMesure(mesureBeforeYesterday, empty_tm, empty_tm));
     EXPECT_TRUE(Service::filtrageMesure(mesureYesterday, empty_tm, empty_tm));
     EXPECT_TRUE(Service::filtrageMesure(mesureNow, empty_tm, empty_tm));
@@ -351,8 +353,9 @@ TEST(ServiceUnitTest, FiltrageCapteur)
     EXPECT_TRUE(Service::filtrageCapteur(capteurParis, point, "sensorId"));
     EXPECT_TRUE(Service::filtrageCapteur(capteurParis, circle, "sensorId"));
 
-    EXPECT_FALSE(Service::filtrageCapteur(capteurOrigin, point, "sensorId"));
-    EXPECT_FALSE(Service::filtrageCapteur(capteurOrigin, circle, "sensorId"));
+    // the territoire will be ignored in the presence of capteurId
+    EXPECT_TRUE(Service::filtrageCapteur(capteurOrigin, point, "sensorId"));
+    EXPECT_TRUE(Service::filtrageCapteur(capteurOrigin, circle, "sensorId"));
     EXPECT_FALSE(Service::filtrageCapteur(capteurParis, point, "meaningless"));
     EXPECT_FALSE(Service::filtrageCapteur(capteurParis, circle, "meaningless"));
 }
@@ -432,7 +435,7 @@ TEST(ServiceUnitTest, SurveillerComportementCapteur)
     list<string> listS;
     listS.push_back("resources/ServiceTestData.csv");
     Service service("resources/Sensor10.csv", "resources/AttributeType.csv", listS);
-    
+
     paramFiltrage passAll;
     passAll.dateInf = tm();
     passAll.dateSup = tm();
@@ -485,32 +488,36 @@ TEST(ServiceUnitTest, SurveillerComportementCapteurs)
     EXPECT_TRUE(find(listCapteur->begin(), listCapteur->end(), "Sensor3") != listCapteur->end());
     delete listCapteur;
 }
-/*
-    TEST(ServiceUnitTest, ObtenirCapteursSimilaires) {
-        list<string> listS;
-        listS.push_back("resources/ServiceTestData.csv");
-        FileReader reader("resources/Sensor10.csv", "resources/AttributeType.csv", listS);
-        Service service(&reader);
-        struct tm time;
-        time.tm_year = 117;
-        time.tm_yday = 1;
-        time.tm_mon = 0;
-        list<pair<Capteur, Capteur>> * similar = service.obtenirCapteursSimilaires(time, 2);
-        ASSERT_TRUE(similar->size() == 2);
-        if (similar->front().first.getSensorID() == "Sensor0") {
-            EXPECT_EQ("Sensor1", similar->front().second.getSensorID());
-        }
-        if (similar->front().first.getSensorID() == "Sensor1") {
-            EXPECT_EQ("Sensor0", similar->front().second.getSensorID());
-        }
-        similar->pop_front();
-        if (similar->front().first.getSensorID() == "Sensor0") {
-            EXPECT_EQ("Sensor1", similar->front().second.getSensorID());
-        }
-        if (similar->front().first.getSensorID() == "Sensor1") {
-            EXPECT_EQ("Sensor0", similar->front().second.getSensorID());
-        }
+TEST(ServiceUnitTest, ObtenirCapteursSimilaires)
+{
+    list<string> listS;
+    listS.push_back("resources/ServiceTestData.csv");
+    Service service("resources/Sensor10.csv", "resources/AttributeType.csv", listS);
+    struct tm time;
+    time.tm_year = 117;
+    time.tm_yday = 1;
+    time.tm_mon = 0;
+    list<pair<string, string>> *similar = service.obtenirCapteursSimilaires(time, 2);
+    ASSERT_TRUE(similar->size() == 2);
+    if (similar->front().first == "Sensor0")
+    {
+        EXPECT_EQ("Sensor1", similar->front().second);
     }
+    if (similar->front().first == "Sensor1")
+    {
+        EXPECT_EQ("Sensor0", similar->front().second);
+    }
+    similar->pop_front();
+    if (similar->front().first == "Sensor0")
+    {
+        EXPECT_EQ("Sensor1", similar->front().second);
+    }
+    if (similar->front().first == "Sensor1")
+    {
+        EXPECT_EQ("Sensor0", similar->front().second);
+    }
+}
+/*
     TEST(ServiceUnitTest, CalculerQualite) {
         list<string> listS;
         listS.push_back("resources/ServiceTestData.csv");
