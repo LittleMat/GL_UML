@@ -23,10 +23,10 @@ using namespace std;
 //----------------------------------------------------------------- PUBLIC
 
 //----------------------------------------------------- Public methods
-Point * Territoire :: getCentre ( ) const
+Point Territoire :: getCentre ( ) const
 // Algorithm : 
 {
-	return centre;
+	return *centre;
 }//----- End of getCentre 
 
 int Territoire :: getRayon ( ) const
@@ -52,31 +52,19 @@ bool Territoire :: contient ( const Point * p ) const
 }//----- End of contient 
 
  //-------------------------------------------- Constructor - destructor
-Territoire :: Territoire ( Point * c, int r )
+Territoire :: Territoire ( const Point& c, int r )
 // Algorithm : 
 {
 	#ifdef MAP
 		cout << "Appel au constructeur de <Territoire>" << endl;
 	#endif
 
-	if (c == nullptr || r < 0)
+	if (r < 0)
 		throw "Illegal Argument Exception";
-	centre = c;
+	this->centre = new Point(c.getLongitude(), c.getLatitude());
 	//c = new Point(c->getLongitude(), c->getLatitude());
-	rayon = r;
+	this->rayon = r;
 }//----- End of Territoire 
-
-Territoire :: Territoire ( )
-// Algorithm : 
-{
-	#ifdef MAP
-		cout << "Appel au constructeur par d�faut de <Territoire>" << endl;
-	#endif
-
-	rayon = 0;
-	centre = new Point (0, 0);
-}
-
 
 Territoire :: ~Territoire ( )
 // Algorithm : 

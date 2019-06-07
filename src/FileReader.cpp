@@ -28,9 +28,9 @@ string FileReader::enteteFichierMesures = "Timestamp;SensorID;AttributeID;Value;
 
 //----------------------------------------------------- Public methodes
 
-unordered_map<string, Capteur *> FileReader ::lireCapteurs(paramFiltrage &parametres, bool (*filtrageCapteur)(Capteur &, Territoire &, string))
+unordered_map<string, Capteur *> FileReader ::lireCapteurs( function<bool(Capteur&)> predicateCapteur )
 {
-	if (filtrageCapteur == nullptr || *filtrageCapteur == NULL)
+	if (predicateCapteur == NULL)
 	{
 		throw "Illegal Argument Exception: parameter is nullptr";
 	}
@@ -66,7 +66,7 @@ unordered_map<string, Capteur *> FileReader ::lireCapteurs(paramFiltrage &parame
 			Capteur *c = new Capteur(sensorID, position, description);
 
 			//Filtre permetant de filtrer les capteurs selon le choix de l'utilisateur
-			if (filtrageCapteur(*c, *parametres.territoire, parametres.capteurId))
+			if (predicateCapteur(*c))
 			{
 				this->map_capteurs[sensorID] = c;
 			}
@@ -168,13 +168,13 @@ void FileReader ::getLineModifie(ifstream &fichierMesureEnCours, string &line)
 	}
 }
 
-Mesure *FileReader ::prochaineMesure(paramFiltrage &parametres, bool (*filtrageMesure)(Mesure &, struct tm &, struct tm &))
+Mesure *FileReader ::prochaineMesure(function<bool(Mesure&)> predicateMesure)
 {
 #ifdef MAP
 	cout << "Appel prochaineMesure" << endl;
 #endif
 
-	if (filtrageMesure == nullptr || *filtrageMesure == NULL)
+	if (predicateMesure == NULL)
 	{
 		throw "Illegal Argument Exception: parameter is null";
 	}
@@ -241,7 +241,7 @@ Mesure *FileReader ::prochaineMesure(paramFiltrage &parametres, bool (*filtrageM
 							//cout << "Mesure : " << m->getValue() << endl;
 
 							//Filtre la mesure avec les paramètres de l'utilisateur
-							if (!filtrageMesure(*m, parametres.dateInf, parametres.dateSup))
+							if (!predicateMesure(*m))
 							{
 								// cout << "Filtrage ne passe pas " << endl;
 								delete m;

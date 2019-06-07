@@ -1,7 +1,7 @@
 ﻿EXENAME=exec
 
 # default compiler flags
-CPPFLAGS=-Wall -Wextra -pedantic -std=c++17 -lm
+CPPFLAGS=-g -Wall -Wextra -pedantic -std=c++17 -lm
 # variable that can be used to add more flags from the command line
 FLAGS=
 
@@ -21,7 +21,7 @@ default: ${DEFAULT}
 main: main.o cli.o Capteur.o FileReader.o Mesure.o Point.o Service.o Territoire.o Attribut.o
 	@echo -e "\033[33mCompilation de main\033[0m"
 	cd ${BINDIR} && \
-	g++ ${CPPFLAGS} ${FLAGS} \
+	clang++ ${CPPFLAGS} ${FLAGS} \
 		*.o \
         -o ../${EXENAME} \
 	&& chmod +x ../${EXENAME}
@@ -29,7 +29,7 @@ main: main.o cli.o Capteur.o FileReader.o Mesure.o Point.o Service.o Territoire.
 %.o: ${SRCDIR}/%.cpp
 	@echo -e "\033[33mCompilation de $@\033[0m"
 	if [ ! -d ${BINDIR} ]; then mkdir ${BINDIR}; fi
-	g++ ${CPPFLAGS} ${FLAGS} -c $< -o ${BINDIR}/$@
+	clang++ ${CPPFLAGS} ${FLAGS} -c $< -o ${BINDIR}/$@
 
 clean:
 	@if [ -d ${BINDIR} ]; then \

@@ -69,7 +69,7 @@ Mesure::Mesure ( )
 {
 	this -> timestamp = tm ( );
 	this -> attributID = string ( );
-	this -> value = NULL;
+	this -> value = 0.0;
 	this -> sensorID = string ( );
 }
 

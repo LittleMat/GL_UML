@@ -31,7 +31,7 @@ public:
 
 	//----------------------------------------------------- Public methods
 	//Retourne le centre
-	Point * getCentre ( ) const;
+	Point getCentre ( ) const;
 
 	//Retourne le rayon
 	int getRayon ( ) const;
@@ -40,7 +40,7 @@ public:
 	bool contient ( const Point * p ) const;
 
 	//-------------------------------------------- Constructor - destructor
-	Territoire ( Point * c, int r );
+	Territoire ( const Point& c, int r );
 
 	Territoire ( );
 

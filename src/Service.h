@@ -18,6 +18,7 @@ e-mail               : guilhem.cerba@insa-lyon.fr, zihang.ye@insa-lyon.fr, linda
 #include <string>
 #include <ctime>
 #include <cmath>
+#include <functional>
 
 #include "FileReader.h"
 #include "Capteur.h"
@@ -38,14 +39,14 @@ class Service
 public:
 
 	//----------------------------------------------------- Public methods
-	bool surveillerComportementCapteur ( string capteurID , paramFiltrage & parametres );
-	list < string > * surveillerComportementCapteurs ( list < string > & capteursID);
+	list < string > * surveillerComportementCapteurs ( list < string > & capteursID, function<bool(Mesure&)> predicateMesure);
 	list < pair < string , string > > * obtenirCapteursSimilaires (struct tm & Date , int nbMesures );
-	// tuple <Indice ATMO , list pair < <idattribut , concentration moyenne > > , indice_fiabilité>
-	tuple < int , list < pair < string , float > > , float > calculerQualite ( paramFiltrage & parametres );
+	// tuple <Indice ATMO , list pair < <idattribut , concentration moyenne > > , indice_fiabilitï¿½>
+	tuple < int , list < pair < string , float > > , float > calculerQualite ( string& capteurId, function<bool(Mesure&)> predicateMesure, function<float(Capteur&)> fiabilite );
 
-	static bool filtrageCapteur ( Capteur & capteur , Territoire & territoire , string capteurId );
-	static bool filtrageMesure ( Mesure & m , struct tm & dateInf , struct tm & dateSup );
+	static function<bool(const Capteur&, const Territoire&, const string&)> filtrageCapteur;
+	static function<bool(Mesure&, struct tm&, struct tm&)> filtrageMesure;
+	static function<float(const Capteur&, const Territoire&)> fiabilite;
 	static bool dateNull ( struct tm & date );
 	static bool plusOuMoins ( float v1 , float v2 , float ecart );
 	static int calculIndiceATMO ( string substance , float valeur );

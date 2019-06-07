@@ -22,22 +22,6 @@
 #include "Attribut.h"
 #include "Territoire.h"
 
-typedef struct param
-{
-	// Pour filtrageMesure
-	struct tm dateInf;
-	struct tm dateSup;
-	//Pour filtrageCapteur
-	Territoire * territoire;
-	string capteurId;
-	~param() {
-		delete territoire;
-	}
-} paramFiltrage;
-//!\\ ne surtout pas faire parametre.territoire = Territoire () car conversions bizarres
-// mais plutôt Territoire t = Territoire(); parametre.territoire = t;
-
-
 //------------------------------------------------------------------------
 // Goal of the <FileReader> class
 // FileReader permet de lire les différents type de fichiers et de retourner une map de capteurs
@@ -56,7 +40,7 @@ public :
 	/*
 	 * Lit les capteurs valides du fichiers contenant les capteurs et retourne une map de capteurs, met à jour l'attribut map_capteurs
 	 */
-	std :: unordered_map < std :: string , Capteur * > lireCapteurs ( paramFiltrage & parametres, bool ( * filtrageCapteur ) ( Capteur & , Territoire &, string ) ); 
+	std :: unordered_map < std :: string , Capteur * > lireCapteurs ( function<bool(Capteur&)> ); 
 	
 
 	/*
@@ -72,7 +56,7 @@ public :
 	/*
 	 * Lit la prochaine mesure valide des fichiers contenant les mesures,
 	 */
-	Mesure * prochaineMesure ( paramFiltrage& parametres, bool ( * filtrageMesure ) ( Mesure &, struct tm &, struct tm & ) ); 
+	Mesure * prochaineMesure (function<bool(Mesure&)> predicateMesure ); 
 
 
 	/*
