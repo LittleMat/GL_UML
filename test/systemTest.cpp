@@ -38,7 +38,7 @@ TEST(ErrorTest, EmptyParameters)
     char programName[] = "./exec";
     char fileCapteur[] = "resources/Sensor10.csv";
     char fileAttribute[] = "resources/AttributeType.csv";
-    char fileData[] = "Data10.csv";
+    char fileData[] = "resources/Data10.csv";
 
     parameters[0] = programName;
     EXPECT_NO_THROW(menu(1, parameters));
@@ -111,7 +111,7 @@ TEST(ErrorTest, WrongParameters)
     char programName[] = "./exec";
     char* fileCapteur = "resources/Sensor10.csv";
     char* fileAttribute = "resources/AttributeType.csv";
-    char* fileData = "Data10.csv";
+    char* fileData = "resources/Data10.csv";
     parameters[0] = programName;
     parameters[1] = fileCapteur;
     parameters[2] = fileAttribute;
@@ -145,5 +145,53 @@ TEST(ErrorTest, WrongParameters)
     free(parameters);
     cin.rdbuf(cinBuf);
     cout.rdbuf(coutBuf);
+}
+TEST(FunctionTest, Exit)
+{
+    // Redirect cin cout
+    istringstream sin("4\n");
+    ostringstream sout;
+    streambuf *cinBuf = cin.rdbuf(sin.rdbuf());
+    streambuf *coutBuf = cout.rdbuf(sout.rdbuf());
+    
+    // Parameters for the program
+    char **parameters = (char **)malloc(4 * sizeof(char *));
+    char programName[] = "./exec";
+    char* fileCapteur = "resources/Sensor10.csv";
+    char* fileAttribute = "resources/AttributeType.csv";
+    char* fileData = "resources/Data10.csv";
+    parameters[0] = programName;
+    parameters[1] = fileCapteur;
+    parameters[2] = fileAttribute;
+    parameters[3] = fileData;
+
+    EXPECT_NO_THROW(menu(4, parameters));
+    
+    // Result
+    EXPECT_EQ(string("Menu Principal\n")
+        + string("[1] Obtenir la qualite moyenne de l air\n")
+        + string("[2] Obtenir capteurs similaires\n")
+        + string("[3] Verifier comportement capteurs\n")
+        + string("[4] Quitter application\n"), sout.str());
+
+    free(parameters);
+    cin.rdbuf(cinBuf);
+    cout.rdbuf(coutBuf);
+}
+TEST(FunctionTest, SurveillerComportementCapteur)
+{
+
+}
+TEST(FunctionTest, SurveillerComportementCapteurs)
+{
+
+}
+TEST(FunctionTest, ObtenirCapteursSimilaires)
+{
+
+}
+TEST(FunctionTest, CalculerQualite)
+{
+
 }
 } //namespace
