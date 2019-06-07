@@ -69,7 +69,7 @@ list <string> * Service :: surveillerComportementCapteurs (list <string> & capte
 	if (capteursID.empty())
 		throw "Illegal Argument Exception: empty list";
 	fileReader->lireAttributs();
-	paramFiltrage param_capteurs{ tm() ,tm() , new Territoire(new Point(0.0, 0.0), 2.1*rayon_Terre), "" };
+	paramFiltrage param_capteurs{ tm() ,tm() , new Territoire(new Point(0.0, 0.0), M_PI * RAYON_TERRE), "" };
 	unordered_map < string, Capteur * > map_tous_les_capteurs = fileReader->lireCapteurs(param_capteurs, filtrageCapteur);
 	if (capteursID.front().compare("*") == 0)
 	{
@@ -86,7 +86,7 @@ list <string> * Service :: surveillerComportementCapteurs (list <string> & capte
 
 	for (list <string> :: iterator i = capteursID.begin(); i != capteursID.end(); i++)
 	{
-		paramFiltrage param { tm() ,tm() , new Territoire(new Point(0.0, 0.0), 2.1*rayon_Terre)  , *i };
+		paramFiltrage param { tm() ,tm() , new Territoire(new Point(0.0, 0.0), M_PI * RAYON_TERRE)  , *i };
 
 		if (surveillerComportementCapteur(*i, param) == false)
 		{
@@ -116,7 +116,7 @@ list <pair < string, string > > * Service :: obtenirCapteursSimilaires( struct t
 	fileReader->debutMesure();
 
 	//On recupere tous les capteurs
-	paramFiltrage param_capteurs{ tm() ,tm() , new Territoire(new Point(0.0, 0.0), 2.1*rayon_Terre), "" };
+	paramFiltrage param_capteurs{ tm() ,tm() , new Territoire(new Point(0.0, 0.0), M_PI * RAYON_TERRE), "" };
 
 	unordered_map < std::string, Capteur * > map_capteurs = fileReader->lireCapteurs(param_capteurs, filtrageCapteur);
 
@@ -128,7 +128,7 @@ list <pair < string, string > > * Service :: obtenirCapteursSimilaires( struct t
 	unordered_map< string, unordered_map< string, vector<float> > > capteurs_mesures;
 	//unordered_map<sensorID, unordered_map<AttributId, vector<value> > > capteurs_mesures;
 
-	paramFiltrage parametres { tm() , Date , new Territoire(new Point(0.0, 0.0), 2.1*rayon_Terre)  , "" };
+	paramFiltrage parametres { tm() , Date , new Territoire(new Point(0.0, 0.0), M_PI * RAYON_TERRE)  , "" };
 
 
 	// On classe les donnees pour faciliter le traitement
@@ -854,11 +854,6 @@ bool Service::filtrageCapteur(Capteur & capteur, Territoire & territoire , strin
 				{
 					capteurAPrendre = true;
 				}
-			}
-			// cas 4 : tous les capteurs
-			else if (territoire.getRayon() >= M_PI * rayon_Terre)
-			{
-				capteurAPrendre = true;
 			}
 			// cas 2 : territoire considere
 			else if (territoire.getRayon() != 0)

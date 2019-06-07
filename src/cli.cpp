@@ -301,7 +301,7 @@ int menu ( int argc , char ** argv)
 					case 3:
 						
 						
-						strs << (2.1 * rayon_Terre);
+						strs << (M_PI * RAYON_TERRE);
 						rayon = strs.str();
 						strs.clear();
 						//rayon = (2.1 * rayon_Terre);
