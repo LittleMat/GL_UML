@@ -10,7 +10,7 @@
 //------------- Realisation of <FileReader> (file FileReader.cpp) ----------------
 
 //---------------------------------------------------------------- INCLUDE
-using namespace std;
+
 //--------------------------------------------------------- System include
 
 //------------------------------------------------------ Personnal include
@@ -19,7 +19,7 @@ using namespace std;
 regex FileReader::reg_mesure = regex("(.*);(.*);(.*);(.*[0-9]+.*);");
 regex FileReader::reg_date = regex("([0-9]*)-([0-9]{2})-([0-9]{2})T([0-9]{2}):([0-9]{2}):([0-9]{2}.[0-9]*)");
 regex FileReader::reg_capt = regex("(.*);(.*[0-9]+);(.*[0-9]+);(.*);");
-regex FileReader::reg_attr = regex("(.*);(.*\/.*);(.*);");
+regex FileReader::reg_attr = regex("(.*);(.*/.*);(.*);");
 
 string FileReader::enteteFicherCapteurs = "SensorID;Latitude;Longitude;Description;";
 string FileReader::enteteFichierAttributs = "AttributeID;Unit;Description;";
