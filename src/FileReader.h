@@ -7,6 +7,7 @@
 *************************************************************************/
 
 //---------- Interface of <FileReader> (file FileReader.h) ----------------
+#define _USE_MATH_DEFINES
 #ifndef FILEREADER_H
 #define FILEREADER_H
 
@@ -21,6 +22,7 @@
 #include "Mesure.h"
 #include "Attribut.h"
 #include "Territoire.h"
+#include <functional>
 
 //------------------------------------------------------------------------
 // Goal of the <FileReader> class

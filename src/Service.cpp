@@ -31,7 +31,7 @@ list<string> *Service ::surveillerComportementCapteurs(list<string> &capteursID,
 	Territoire territoire(Point(0.0, 0.0), M_PI * RAYON_TERRE);
 	string empty;
 	using namespace placeholders;
-	function<bool(Capteur &)> passAllCapteurs = bind(Service::filtrageCapteur, _1, territoire, empty);
+	function<bool(Capteur &)> passAllCapteurs = bind(Service::filtrageCapteur, _1, cref(territoire), empty);
 	function<bool(Capteur &)> predicateCapteurs = [passAllCapteurs, capteursID](Capteur &capteur) -> bool {
 		if (capteursID.front().compare("*") == 0)
 		{
@@ -43,7 +43,8 @@ list<string> *Service ::surveillerComportementCapteurs(list<string> &capteursID,
 		}
 	};
 	unordered_map<string, Capteur *> capteurs = fileReader->lireCapteurs(predicateCapteurs);
-	//liste d'id de capteurs d�fectueux
+
+	//liste d'id de capteurs defectueux
 	list<string> *liste_id_capteursDefectueux = new list<string>;
 
 	fileReader->debutMesure();
@@ -51,17 +52,15 @@ list<string> *Service ::surveillerComportementCapteurs(list<string> &capteursID,
 	function<bool(Mesure &)> predicateMesureWithCapteur = [predicateMesure, capteurs](Mesure &mesure) -> bool { return predicateMesure(mesure) && capteurs.find(mesure.getSensorID()) != capteurs.end(); };
 	while (!finLecture)
 	{
-		// On s�lectionne les mesures qui satisfont les crit�res de s�lection temporelles
+		// On selectionne les mesures qui satisfont les criteres de selection temporels
 		const Mesure *m = fileReader->prochaineMesure(predicateMesureWithCapteur);
-		// std :: cout << "lecture de mesure " << endl;
-		//Si m == nullptr, alors il n'y a plus rien � lire
+
+		//Si m == nullptr, alors il n'y a plus rien a lire
 		if (m == nullptr)
 		{
 			finLecture = true;
-			// std::cout << "fin de la lecture " << endl;
 			break;
 		}
-		//cout << " mesure lue :" << m->getValue() << endl;
 
 		if (m->getValue() < 0)
 		{
@@ -79,13 +78,11 @@ list<string> *Service ::surveillerComportementCapteurs(list<string> &capteursID,
 
 list<pair<string, string>> *Service ::obtenirCapteursSimilaires(struct tm & date, int nbMesures)
 // HYPOTHESES APPLIQUEES DANS L'ALGORITHME
-// hypoth�se 0 : les concentrations des particules mesur�es � un instant t sont regroup�es les unes � la suite des autres
-// hypoth�se 1 : on consid�re que deux capteurs ont pris leurs mesures au m�me moment si la diff�rence entre leurs mesures est de +- 1 minute
-// hypoth�se 2 : un capteur � un instant t doit a des valeurs non null pour les 4 particules de l'air
-// hypoth�se 3 : en consid�rant l'hypoth�se 1 valide, on suppose que tous les capteurs prennent leurs mesures en m�me temps
-// (vrai dans le d�but du fichier .csv de mesures que j'ai lu)
-
-// Algorithm :
+// hypothese 0 : les concentrations des particules mesurees a un instant t sont regroupees les unes a la suite des autres
+// hypothese 1 : on considere que deux capteurs ont pris leurs mesures au meme moment si la difference entre leurs mesures est de +- 1 minute
+// hypothese 2 : un capteur a un instant t doit a des valeurs non null pour les 4 particules de l'air
+// hypothese 3 : en considerant l'hypothese 1 valide, on suppose que tous les capteurs prennent leurs mesures en meme temps
+// (vrai dans le debut du fichier .csv de mesures que j'ai lu)
 {
 
 	fileReader->debutMesure();
@@ -94,7 +91,7 @@ list<pair<string, string>> *Service ::obtenirCapteursSimilaires(struct tm & date
 	using namespace placeholders;
 	Territoire earth(Point(0.0, 0.0), M_PI * RAYON_TERRE);
 	string empty;
-	function<bool(Capteur&)> predicateCapteur = bind(Service::filtrageCapteur,  _1, earth, empty);
+	function<bool(Capteur&)> predicateCapteur = bind(Service::filtrageCapteur,  _1, cref(earth), empty);
 
 	unordered_map<std::string, Capteur *> map_capteurs = fileReader->lireCapteurs(predicateCapteur);
 
@@ -316,7 +313,7 @@ tuple<int, list<pair<string, float>>, float> Service::calculerQualite(string &ca
 		delete m;
 	}
 
-	// On calcul les moyennes
+	// On calcule les moyennes
 	float moyenne_concentrations_O3 = -1;
 	float moyenne_concentrations_NO2 = -1;
 	float moyenne_concentrations_SO2 = -1;
@@ -762,7 +759,7 @@ int Service ::calculIndiceATMO(string substance, float valeur)
  */
 
 function<bool(const Capteur &, const Territoire &, const string &)> Service::filtrageCapteur = [](const Capteur &capteur, const Territoire &territoire, const string &capteurId) -> bool {
-	return (!capteurId.empty() && capteur.getSensorID() == capteurId) || fiabilite(capteur, territoire) > 0;
+	return (!capteurId.empty() && capteur.getSensorID().compare(capteurId) == 0) || fiabilite(capteur, territoire) > 0;
 };
 
 function<float(const Capteur &, const Territoire &)> Service::fiabilite = [](const Capteur &capteur, const Territoire &territoire) -> float {
@@ -786,16 +783,22 @@ function<float(const Capteur &, const Territoire &)> Service::fiabilite = [](con
 };
 
 // Algorithm :
-// Si dateInf != null && dateSup == null (periode)
-// Si dateInf == null && dateSup != null (a un instant t)
-// On regarde si mesure.getTimestamp() appartient a l'intervalle  [dateInf (en sec) - 60 (min) * 60 sec, dateInf (en sec) + 60 (min) * 60 sec]
+// Si dateInf != null && dateSup == null (a partir de l'instant t)
+// On regarde si mesure.getTimetamp() > dateInf
 // Si oui : on retourne true
 // Sinon : on retourne false
+
+// Si dateInf == null && dateSup != null (a un instant t)
+// On regarde alors si mesure.getTimestamp() appartient a l'intervalle  [dateInf (en sec) - 60 (min) * 60 sec, dateInf (en sec) + 60 (min) * 60 sec]
+// Si oui : on retourne true
+// Sinon : on retourne false
+
 // Si  dateSup != null && dateInf != null (periode)
 // On regarde si mesure.getTimestamp() >= dateInf et mesure.getTimestamp() <= dateSup
 // Si oui : on retourne true
 // Sinon : on retourne false
-// Si dateSup == null && dateInf == null (tout l'historique=
+
+// Si dateSup == null && dateInf == null (tout l'historique)
 // on retourne true
 
 function<bool(Mesure &, struct tm &, struct tm &)> Service::filtrageMesure = [](Mesure &mesure, struct tm &dateInf, struct tm &dateSup) -> bool {

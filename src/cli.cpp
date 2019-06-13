@@ -253,7 +253,7 @@ int menu(int argc, char **argv)
 			switch (valeur)
 			{
 
-			//Point Pr�cis
+			//Point Precis
 			case 1:
 
 				cout << "Rentrez une longitude et une latitude" << endl;
@@ -316,7 +316,7 @@ int menu(int argc, char **argv)
 			case 4:
 				cout << "Rentrez l'id d'un capteur" << endl;
 				flag = false;
-
+				rayon = "6379";
 				do
 				{
 					if (flag)
