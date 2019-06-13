@@ -30,7 +30,7 @@ using namespace placeholders;
 bool is_number(string s)
 {
 
-	regex e("[-\\+]?([0-9]*\\\.[0-9]+|[0-9]+)");
+	regex e("[-\\+]?([0-9]*\\.[0-9]+|[0-9]+)");
 
 	return regex_match(s, e);
 }
@@ -219,7 +219,7 @@ int menu(int argc, char **argv)
 				index = stoi(lecture);
 			}
 
-		} while (!is_number(lecture) || index != 1 && index != 2 && index != 3 && index != 4);
+		} while (!is_number(lecture) || (index != 1 && index != 2 && index != 3 && index != 4));
 		cout << endl;
 
 		//MENU PRINCIPAL
@@ -243,7 +243,7 @@ int menu(int argc, char **argv)
 				if (is_number(type_zone))
 					valeur = stoi(type_zone);
 
-			} while (!is_number(type_zone) || valeur != 1 && valeur != 2 && valeur != 3 && valeur != 4 && valeur != 5);
+			} while (!is_number(type_zone) || (valeur != 1 && valeur != 2 && valeur != 3 && valeur != 4 && valeur != 5));
 			cout << endl;
 			if (valeur == 5)
 			{

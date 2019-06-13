@@ -90,7 +90,7 @@ protected :
 	std :: vector < std :: string > nomFichiersMesures;
 	ifstream fichierMesureEnCours;
 
-	int idFichierMesures;
+	unsigned long idFichierMesures;
 
 	unordered_map < string, Attribut * > map_attributs;
 	unordered_map < string, Capteur * > map_capteurs;
