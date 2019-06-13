@@ -14,7 +14,7 @@ e-mail               : guilhem.cerba@insa-lyon.fr, zihang.ye@insa-lyon.fr, linda
 #include <iostream>
 #include <math.h>
 using namespace std;
-const static double RAYON_TERRE = 6371;
+const static double RAYON_TERRE = 6378;
 //------------------------------------------------------------------------
 // Goal of the <Point> class
 // Représente un point aux coordonnées latitude longitude

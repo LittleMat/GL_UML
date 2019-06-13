@@ -27,6 +27,8 @@ list<string> *Service ::surveillerComportementCapteurs(list<string> &capteursID,
 {
 	if (capteursID.empty())
 		throw "Illegal Argument Exception: empty list";
+	if (predicateMesure == NULL)
+		throw "Illegal Argument Exception";
 
 	Territoire territoire(Point(0.0, 0.0), M_PI * RAYON_TERRE);
 	string empty;
@@ -43,6 +45,7 @@ list<string> *Service ::surveillerComportementCapteurs(list<string> &capteursID,
 		}
 	};
 	unordered_map<string, Capteur *> capteurs = fileReader->lireCapteurs(predicateCapteurs);
+	fileReader->lireAttributs();
 
 	//liste d'id de capteurs defectueux
 	list<string> *liste_id_capteursDefectueux = new list<string>;
@@ -759,7 +762,7 @@ int Service ::calculIndiceATMO(string substance, float valeur)
  */
 
 function<bool(const Capteur &, const Territoire &, const string &)> Service::filtrageCapteur = [](const Capteur &capteur, const Territoire &territoire, const string &capteurId) -> bool {
-	return (!capteurId.empty() && capteur.getSensorID().compare(capteurId) == 0) || fiabilite(capteur, territoire) > 0;
+	return (!capteurId.empty() && capteur.getSensorID().compare(capteurId) == 0) || (capteurId.empty() && fiabilite(capteur, territoire) > 0);
 };
 
 function<float(const Capteur &, const Territoire &)> Service::fiabilite = [](const Capteur &capteur, const Territoire &territoire) -> float {
@@ -773,9 +776,10 @@ function<float(const Capteur &, const Territoire &)> Service::fiabilite = [](con
 		fiabilite = 1 - territoire.getCentre().distance(capteur.getPosition()) / 10;
 	}
 	// Un territoire cible
-	else if (territoire.getRayon() > 0)
+	else
 	{
-		fiabilite = 1 - (territoire.getCentre().distance(capteur.getPosition()) - territoire.getRayon()) / (0.1 * territoire.getRayon());
+		float distance = territoire.getCentre().distance(capteur.getPosition());
+		fiabilite = distance < territoire.getRayon() ? 1 : 1 - (distance - territoire.getRayon()) / (0.1 * territoire.getRayon());
 	}
 	if (fiabilite < 0)
 		fiabilite = 0;
