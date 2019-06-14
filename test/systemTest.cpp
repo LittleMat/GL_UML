@@ -140,7 +140,11 @@ TEST(FunctionTest, Exit)
     EXPECT_NO_THROW(menu(4, parameters));
 
     // Result
-    EXPECT_EQ(string("Menu Principal\n") + string("[1] Obtenir la qualite moyenne de l air\n") + string("[2] Obtenir capteurs similaires\n") + string("[3] Verifier comportement capteurs\n") + string("[4] Quitter application\n\n"), sout.str());
+    EXPECT_EQ(string("Menu Principal\n") 
+            + string("[1] Obtenir la qualite moyenne de l air\n") 
+            + string("[2] Obtenir capteurs similaires\n") 
+            + string("[3] Verifier comportement capteurs\n") 
+            + string("[4] Quitter application\n\n\n"), sout.str());
 
     free(parameters);
     cin.rdbuf(cinBuf);
@@ -168,18 +172,18 @@ TEST(FunctionTest, SurveillerComportementCapteurs)
             + string("[1] Obtenir la qualite moyenne de l air\n") 
             + string("[2] Obtenir capteurs similaires\n") 
             + string("[3] Verifier comportement capteurs\n") 
-            + string("[4] Quitter application\n\n") 
+            + string("[4] Quitter application\n\n\n") 
             + string("Listez les id des capteurs que vous voulez surveiller\n") 
             + string("Rentrez -1 pour arreter la saisie\n") 
             + string("Le caractere * designe l integralite des capteurs\n") 
             + string("Liste capteurs defaillants : \n") 
             + string("Sensor2\n") 
-            + string("Sensor3\n\n") 
+            + string("Sensor3\n\n\n") 
             + string("Menu Principal\n") 
             + string("[1] Obtenir la qualite moyenne de l air\n") 
             + string("[2] Obtenir capteurs similaires\n")
             + string("[3] Verifier comportement capteurs\n") 
-            + string("[4] Quitter application\n\n")
+            + string("[4] Quitter application\n\n\n")
             , sout.str());
 
     free(parameters);
@@ -208,17 +212,17 @@ TEST(FunctionTest, SurveillerComportementCapteurs2)
             + string("[1] Obtenir la qualite moyenne de l air\n") 
             + string("[2] Obtenir capteurs similaires\n") 
             + string("[3] Verifier comportement capteurs\n") 
-            + string("[4] Quitter application\n\n") 
+            + string("[4] Quitter application\n\n\n") 
             + string("Listez les id des capteurs que vous voulez surveiller\n") 
             + string("Rentrez -1 pour arreter la saisie\n") 
             + string("Le caractere * designe l integralite des capteurs\n") 
             + string("Liste capteurs defaillants : \n") 
-            + string("Sensor3\n\n") 
+            + string("Sensor3\n\n\n") 
             + string("Menu Principal\n") 
             + string("[1] Obtenir la qualite moyenne de l air\n") 
             + string("[2] Obtenir capteurs similaires\n") 
             + string("[3] Verifier comportement capteurs\n") 
-            + string("[4] Quitter application\n\n"), sout.str());
+            + string("[4] Quitter application\n\n\n"), sout.str());
 
     free(parameters);
     cin.rdbuf(cinBuf);
@@ -246,19 +250,19 @@ TEST(FunctionTest, ObtenirCapteursSimilaires)
             + string("[1] Obtenir la qualite moyenne de l air\n") 
             + string("[2] Obtenir capteurs similaires\n") 
             + string("[3] Verifier comportement capteurs\n") 
-            + string("[4] Quitter application\n\n") 
+            + string("[4] Quitter application\n\n\n") 
             + string("Rentrez l'id du capteur de reference\n")
             + string("Rentrez une date de depart au format : JJ/MM/AAAA HH:MM\n")
             + string("date selectionnee : 01/01/2017 00:00\n")
             + string("Rentrez le nombre de mesures pour la comparaison\n")
             + string("nombre de mesures demandees : 1\n\n")
             + string("capteurs similaires a Sensor0:\n")
-            + string(" - Sensor1\n")
-            + string("\nMenu Principal\n") 
+            + string(" - Sensor1")
+            + string("\n\nMenu Principal\n") 
             + string("[1] Obtenir la qualite moyenne de l air\n") 
             + string("[2] Obtenir capteurs similaires\n") 
             + string("[3] Verifier comportement capteurs\n") 
-            + string("[4] Quitter application\n\n"), sout.str());
+            + string("[4] Quitter application\n\n\n"), sout.str());
 
     free(parameters);
     cin.rdbuf(cinBuf);
@@ -286,18 +290,18 @@ TEST(FunctionTest, CalculerQualite)
             + string("[1] Obtenir la qualite moyenne de l air\n") 
             + string("[2] Obtenir capteurs similaires\n") 
             + string("[3] Verifier comportement capteurs\n") 
-            + string("[4] Quitter application\n\n") 
+            + string("[4] Quitter application\n\n\n") 
             + string("Choississez le type de zone a etudier\n")
             + string("[1] Point precis (lat, long)\n")
             + string("[2] Territoire (Point, rayon)\n")
             + string("[3] Aire totale\n")
             + string("[4] Capteur\n")
-            + string("[5] Retour\n")
+            + string("[5] Retour\n\n")
             + string("\nRentrez l'id d'un capteur\n") 
             + string("\nIndiquer la periode temporelle\n")
             + string("[1]A une date donnee plus ou moins une heure : date\n")
             + string("[2]Sur une plage de temps donnee delimitee par deux dates : date1 date2\n")
-            + string("[*]Sur l integralite des mesures  * \n")
+            + string("[*]Sur l integralite des mesures  * \n\n")
             + string("Indice ATMO 3\n")
             + string("Indice fiabilite 100%\n")
             + string("O3,49.2417\n")
@@ -308,7 +312,7 @@ TEST(FunctionTest, CalculerQualite)
             + string("[1] Obtenir la qualite moyenne de l air\n") 
             + string("[2] Obtenir capteurs similaires\n") 
             + string("[3] Verifier comportement capteurs\n") 
-            + string("[4] Quitter application\n\n"), sout.str());
+            + string("[4] Quitter application\n\n\n"), sout.str());
 
     free(parameters);
     cin.rdbuf(cinBuf);
