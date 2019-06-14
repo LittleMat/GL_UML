@@ -80,7 +80,7 @@ list<string> *Service ::surveillerComportementCapteurs(list<string> &capteursID,
 
 } //----- End of surveillerComportementCapteurs
 
-list<pair<string, string>> *Service ::obtenirCapteursSimilaires(struct tm & date, int nbMesures)
+list<pair<string, string>> *Service :: obtenirCapteursSimilaires(struct tm & date, int nbMesures)
 {
 
 	fileReader->debutMesure();
@@ -154,8 +154,7 @@ list<pair<string, string>> *Service ::obtenirCapteursSimilaires(struct tm & date
 		delete m;
 	}
 
-	// Remplissage des zones vides
-	/*
+	// Remplissage des zones vides (== -1) 
 	for (unordered_map<string, unordered_map<string, vector<float>>>::iterator it = capteurs_mesures.begin(); it != capteurs_mesures.end(); it++)
 	{
 		for (unordered_map<string, vector<float>>::iterator it_2 = it->second.begin(); it_2 != it->second.end(); it_2++)
@@ -169,7 +168,6 @@ list<pair<string, string>> *Service ::obtenirCapteursSimilaires(struct tm & date
 			}
 		}
 	}
-	*/
 
 	// Traitement
 	list<pair<string, string>> *capteurs_similaires = new list<pair<string, string>>;
@@ -194,14 +192,6 @@ list<pair<string, string>> *Service ::obtenirCapteursSimilaires(struct tm & date
 
 				for (int i = 0; i < nbMesures; i++)
 				{
-					if (it_c1_O3->second[i] == -1 || it_c2_O3->second[i] == -1
-						|| it_c1_NO2->second[i] == -1 || it_c2_NO2->second[i] == -1
-						|| it_c1_SO2->second[i] == -1 || it_c2_SO2->second[i] == -1
-						|| it_c1_PM10->second[i] == -1 || it_c2_PM10->second[i] == -1)
-					{
-						similaire = false;
-						break;
-					}
 					similaire = similaire && (plusOuMoins(it_c1_O3->second[i], it_c2_O3->second[i], 15) &&
 											  plusOuMoins(it_c1_NO2->second[i], it_c2_NO2->second[i], 20) &&
 											  plusOuMoins(it_c1_SO2->second[i], it_c2_SO2->second[i], 15) &&
