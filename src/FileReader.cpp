@@ -133,12 +133,10 @@ bool FileReader ::fichierLisible()
 
 	if (fichierMesureEnCours.eof())
 	{
-		//cout << "Reached end of file" << endl;
 		//Regarde s'il reste encore un fichier de mesure
 		idFichierMesures++;
 		if (idFichierMesures < nomFichiersMesures.size())
 		{
-			//cout << "Nb : " << nomFichiersMesures.size() << "  name : " << nomFichiersMesures.front() << endl;
 			fichierMesureEnCours.clear();
 			fichierMesureEnCours.close();
 
@@ -204,7 +202,6 @@ Mesure *FileReader ::prochaineMesure(function<bool(Mesure&)> predicateMesure)
 					string sensorID = matches[2].str();
 					string attributeID = matches[3].str();
 					float value = stof(matches[4].str());
-					//cout << timestamp << " - " << sensorID << " - " << attributeID << " - " << value << endl;
 
 					//Search for the date
 					regex_search(timestamp, time_match, reg_date);
@@ -219,37 +216,19 @@ Mesure *FileReader ::prochaineMesure(function<bool(Mesure&)> predicateMesure)
 						time->tm_min = stoi(time_match[5].str());
 						time->tm_sec = floor(stof(time_match[6].str()));
 
-						// cout << time->tm_year << " - " << time->tm_mon << " - " << time->tm_mday << " - " << time->tm_hour << " - " << time->tm_min << " - " << time->tm_sec << endl;
-
-						//TODO : à enlever après tests
-						/*
-							if ( this -> map_attributs.count ( attributeID ) == 0 )
-							{
-								cout << "Pb avec attributeID" << endl;
-							}
-
-							if ( this -> map_capteurs.count ( sensorID ) == 0 )
-							{
-								cout << "Pb avec capteurID" << endl;
-							}
-							*/
 						if (this->map_attributs.find(attributeID) != this->map_attributs.end() && this->map_capteurs.find(sensorID) != this->map_capteurs.end())
 						{
 							//Le sensorID et l'attributID existent et sont dans les map
 							m = new Mesure(*time, attributeID, value, sensorID);
 
-							//cout << "Mesure : " << m->getValue() << endl;
-
 							//Filtre la mesure avec les paramètres de l'utilisateur
 							if (!predicateMesure(*m))
 							{
-								// cout << "Filtrage ne passe pas " << endl;
 								delete m;
 								m = nullptr;
 							}
 							else
 							{
-								// cout << "Mesure good : " << m->getValue() << endl;
 								continuer = false;
 							}
 						}
@@ -268,12 +247,6 @@ Mesure *FileReader ::prochaineMesure(function<bool(Mesure&)> predicateMesure)
 
 	return m;
 }
-
-/*
-	const list < string > FileReader :: getNomFichiersMesures ( ) const 
-	{
-		return this -> nomFichiersMesures;
-	}*/
 
 //-------------------------------------------- Constructors - destructor
 
@@ -341,8 +314,6 @@ FileReader ::FileReader(const string &nomFichierCapteurs, const string &nomFichi
 	{
 		cout << "ouverture de " << this->nomFichiersMesures[idFichierMesures] << endl;
 		this->fichierMesureEnCours.open(this->nomFichiersMesures[idFichierMesures]);
-		//cout << fichierMesureEnCours.fail() << endl;
-
 		cout << "ouverture fichier : " << fichierMesureEnCours.is_open() << endl;
 	}
 	else
@@ -352,27 +323,10 @@ FileReader ::FileReader(const string &nomFichierCapteurs, const string &nomFichi
 #endif
 } // End of constructor
 
-/*
-FileReader :: FileReader ( )
-{	
-	#ifdef MAP
-	    cerr << "Default constructor of <FileReader>" << endl;
-	#endif
-
-	this -> nomFichierCapteurs = "";
-	this -> nomFichierAttributs = "";
-
-	reg_mesure = regex( "(.*);(.*);(.*);(.*[0-9]+);" );
-	reg_date = regex( "([0-9]*)-([0-9]{2})-([0-9]{2})T([0-9]{2}):([0-9]{2}):([0-9]{2}.[0-9]*)" );
-	reg_capt = regex( "(.*);(.*[0-9]+);(.*[0-9]+);(.*);" );
-	reg_attr = regex( "(.*);(.*\/.*);(.*);" );
-}*/
-
 FileReader ::~FileReader()
 {
 
 	//Ferme le dernier fichier de mesure
-	//TODO : vérifier qu'ouvert
 	fichierMesureEnCours.clear();
 	fichierMesureEnCours.close();
 
