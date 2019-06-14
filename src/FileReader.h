@@ -75,35 +75,30 @@ public :
 protected :
 	
 //----------------------------------------------------- Protected attributes
-	std :: string nomFichierCapteurs;
-	std :: string nomFichierAttributs;
-	std :: vector < std :: string > nomFichiersMesures;
-	ifstream fichierMesureEnCours;
+	std :: string nomFichierCapteurs; 					//Nom du fichier contenant les capteurs
+	std :: string nomFichierAttributs; 					//Nom du fichier contenant les attributs
+	std :: vector < std :: string > nomFichiersMesures; //Liste des noms des fichiers contenant les mesures
+	ifstream fichierMesureEnCours; 						//Fichier de mesure actuellement ouvert
 
-	unsigned long idFichierMesures;
+	unsigned long idFichierMesures;						//Id du fichier dans la liste nomFichiersMesures actuellement ouvert
 
-	unordered_map < string, Attribut * > map_attributs;
-	unordered_map < string, Capteur * > map_capteurs;
+	unordered_map < string, Attribut * > map_attributs;	//Map des attributs 
+	unordered_map < string, Capteur * > map_capteurs;	//Map des capteurs
 
-	static regex reg_mesure;
-	static regex reg_date;
-	static regex reg_capt;
-	static regex reg_attr;
+	static regex reg_mesure;							//Regex de filtrage des mesures
+	static regex reg_date;								//Regex de filtrage des dates
+	static regex reg_capt;								//Regex de filtrage des capteurs
+	static regex reg_attr;								//Regex de filtrage des attributs
 
-	static string enteteFicherCapteurs;
-	static string enteteFichierAttributs;
-	static string enteteFichierMesures;
+	static string enteteFicherCapteurs;					//Entête des fichiers contenant les capteurs (pour filtrer les bons/mauvais fichiers)
+	static string enteteFichierAttributs;				//Entête des fichiers contenant les capteurs (pour filtrer les bons/mauvais fichiers)
+	static string enteteFichierMesures;					//Entête des fichiers contenant les mesures (pour filtrer les bons/mauvais fichiers)
 
 //----------------------------------------------------- Protected methods
 	/*
 	* Renvoie vrai s'il reste des fichiers de mesure à lire
 	*/
 	bool fichierLisible();
-
-	/*
-	* getLine modifié pour lire de l'utf-16 (spécifique à nos fichiers en entrée, filtre les char dont le code héxadécimal est 0 ou d)
-	*/
-	void getLineModifie(ifstream & fichierMesureEnCours, string & line);
 };
 
 #endif // FILEREADER_H
