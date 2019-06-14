@@ -127,7 +127,7 @@ struct tm stringToDate(string date)
 	{
 		result.tm_mday = stoi(matches[1].str());
 		result.tm_mon = stoi(matches[2].str());
-		result.tm_year = stoi(matches[3].str()) - 1900; // Linda
+		result.tm_year = stoi(matches[3].str()) - 1900;
 		result.tm_hour = 0;
 		result.tm_min = 0;
 	}
@@ -217,6 +217,7 @@ int menu(int argc, char **argv)
 		cout << "[2] Obtenir capteurs similaires" << endl;
 		cout << "[3] Verifier comportement capteurs" << endl;
 		cout << "[4] Quitter application" << endl;
+		cout << endl;
 		do
 		{
 			cin >> lecture;
@@ -242,6 +243,7 @@ int menu(int argc, char **argv)
 			cout << "[3] Aire totale" << endl;
 			cout << "[4] Capteur" << endl;
 			cout << "[5] Retour" << endl;
+			cout << endl;
 
 			do
 			{
@@ -314,7 +316,6 @@ int menu(int argc, char **argv)
 				strs << (M_PI * RAYON_TERRE);
 				rayon = strs.str();
 				strs.clear();
-				//rayon = (2.1 * rayon_Terre);
 				cout << "Aire totale selectionnee" << endl;
 				break;
 
@@ -337,6 +338,7 @@ int menu(int argc, char **argv)
 			cout << "[1]A une date donnee plus ou moins une heure : date" << endl;
 			cout << "[2]Sur une plage de temps donnee delimitee par deux dates : date1 date2" << endl;
 			cout << "[*]Sur l integralite des mesures  * " << endl;
+			cout << endl;
 
 			flag = false;
 
@@ -391,7 +393,6 @@ int menu(int argc, char **argv)
 				date1finale = stringToDateDetailed(date1);
 				cout << endl;
 				break;
-				// date1 date2
 			case 2:
 
 				cout << "Rentrez deux dates au format : JJ/MM/AAAA" << endl;
@@ -409,13 +410,13 @@ int menu(int argc, char **argv)
 				date2finale.tm_hour = 23;
 				date2finale.tm_min = 59;
 
+#ifdef MAP
 				afficherDate(stringToDateDetailed(date1));
-
+#endif
 				cout << endl;
 				break;
 			}
 
-			//testTerritoire = Territoire(new Point(stof(longitude), stof(latitude)), stoi(rayon));
 			Point p(stof(longitude), stof(latitude));
 			Territoire territoire(p, stoi(rayon));
 			function<float(Capteur &)> fiabilite = bind(Service::fiabilite, placeholders::_1, cref(territoire));
@@ -433,7 +434,7 @@ int menu(int argc, char **argv)
 						cout << i.first << "," << i.second << endl;
 					else
 						cout << i.first << ","
-								 << "Donnees manquantes " << endl;
+						<< "Donnees manquantes " << endl;
 				}
 			}
 			else
@@ -441,6 +442,7 @@ int menu(int argc, char **argv)
 				cout << "[Warning] Mesure(s) Manquante(s) " << endl;
 				cout << "Indice ATMO "
 						 << "indefini" << endl;
+				cout << endl;
 			}
 			cout << endl;
 		}
@@ -491,7 +493,6 @@ int menu(int argc, char **argv)
 			cout << endl;
 
 #ifdef MAP
-			//list <pair < string, string > >
 			afficherDate(stringToDateDetailed(date1));
 #endif
 
@@ -552,7 +553,7 @@ int menu(int argc, char **argv)
 				{
 					cout << i << endl;
 				}
-
+				cout << endl;
 				delete defaillants;
 			}
 			catch (const char *e)
