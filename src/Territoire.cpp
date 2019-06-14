@@ -24,19 +24,18 @@ using namespace std;
 
 //----------------------------------------------------- Public methods
 Point Territoire :: getCentre ( ) const
-// Algorithm : 
 {
 	return *centre;
-}//----- End of getCentre 
+
+} //----- End of getCentre 
 
 int Territoire :: getRayon ( ) const
-// Algorithm : 
 {
 	return rayon;
-}//----- End of getRayon 
+
+} //----- End of getRayon 
 
 bool Territoire :: contient ( const Point * p ) const
-// Algorithm : 
 {
 	if (p == nullptr)
 		throw "Illegal Argument Exception";
@@ -49,11 +48,10 @@ bool Territoire :: contient ( const Point * p ) const
 		return false;
 	}
 
-}//----- End of contient 
+} //----- End of contient 
 
  //-------------------------------------------- Constructor - destructor
 Territoire :: Territoire ( const Point& c, int r )
-// Algorithm : 
 {
 	#ifdef MAP
 		cout << "Appel au constructeur de <Territoire>" << endl;
@@ -64,17 +62,18 @@ Territoire :: Territoire ( const Point& c, int r )
 	this->centre = new Point(c.getLongitude(), c.getLatitude());
 	//c = new Point(c->getLongitude(), c->getLatitude());
 	this->rayon = r;
-}//----- End of Territoire 
+
+} //----- End of Territoire 
 
 Territoire :: ~Territoire ( )
-// Algorithm : 
 {
 	#ifdef MAP
 		cout << "Appel au destructeur de <Territoire>" << endl;
 	#endif
 
 	delete centre;
-}//----- End of ~Territoire 
+
+} //----- End of ~Territoire 
 
 
  //------------------------------------------------------------------ PRIVE

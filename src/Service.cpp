@@ -81,11 +81,6 @@ list<string> *Service ::surveillerComportementCapteurs(list<string> &capteursID,
 } //----- End of surveillerComportementCapteurs
 
 list<pair<string, string>> *Service ::obtenirCapteursSimilaires(struct tm & date, int nbMesures)
-// HYPOTHESES APPLIQUEES DANS L'ALGORITHME
-// hypothese 0 : les concentrations des particules mesurees a un instant t sont regroupees les unes a la suite des autres
-// hypothese 1 : on considere que deux capteurs ont pris leurs mesures au meme moment si la difference entre leurs mesures est de +- 1 minute
-// hypothese 2 : un capteur a un instant t doit a des valeurs non null pour les 4 particules de l'air
-// hypothese 3 : en considerant l'hypothese 1 valide, on suppose que tous les capteurs prennent leurs mesures en meme temps
 {
 
 	fileReader->debutMesure();
@@ -110,7 +105,6 @@ list<pair<string, string>> *Service ::obtenirCapteursSimilaires(struct tm & date
 	// Initialisation avec des -1 
 	for (unordered_map<std::string, Capteur *>::iterator it = map_capteurs.begin(); it != map_capteurs.end(); it++)
 	{
-
 		unordered_map<string, vector<float>> map_temp;
 		vector<float> vect;
 		for (int i = 0; i < nbMesures; i++)
@@ -134,7 +128,7 @@ list<pair<string, string>> *Service ::obtenirCapteursSimilaires(struct tm & date
 			break;
 
 		// Etape de selection du capteur
-		// Si dans la map des capteurs selectionnes par les fonctions de filtrage spaciales
+		// Si dans la map des capteurs selectionnes par les fonctions de filtrage spatiales
 		// le capteur de la mesure est present, c'est qu'il faut anaylser ce capteur
 
 		unordered_map<std::string, Capteur *>::iterator trouveCapteur = map_capteurs.find(m->getSensorID());
@@ -224,11 +218,6 @@ list<pair<string, string>> *Service ::obtenirCapteursSimilaires(struct tm & date
 	return capteurs_similaires;
 
 }//----- End of obtenirCapteursSimilaires
-
-bool Service::plusOuMoins(float v1, float v2, float ecart)
-{
-	return (abs(v1 - v2) <= ecart);
-}//----- End of plusOuMoins
 
 tuple<int, list<pair<string, float>>, float> Service::calculerQualite(string &capteurId, function<bool(Mesure &)> predicateMesure, function<float(Capteur &)> fiabilite)
 {
@@ -366,27 +355,8 @@ tuple<int, list<pair<string, float>>, float> Service::calculerQualite(string &ca
 
 } //----- End of calculerQualite
 
-//-------------------------------------------- Constructor - destructor
-Service ::Service(const std::string &nomFichierCapteurs, const string &nomFichierAttributs, const std::list<std::string> &nomFichiersMesures)
-// Algorithm :
-{
-#ifdef MAP
-	cout << "Appel au constructeur de <Service>" << endl;
-#endif
-	fileReader = new FileReader(nomFichierCapteurs, nomFichierAttributs, nomFichiersMesures);
 
-} //----- End of Service
-
-Service::~Service()
-// Algorithm :
-{
-#ifdef MAP
-	cout << "Appel au destructeur de <Service>" << endl;
-#endif
-	delete fileReader;
-} //----- End of ~Service
-
-int Service :: calculIndiceATMO (string substance, float valeur)
+int Service::calculIndiceATMO(string substance, float valeur)
 {
 	int indiceATMO = -1;
 	if (substance.compare("O3") == 0)
@@ -562,21 +532,21 @@ int Service :: calculIndiceATMO (string substance, float valeur)
 		}
 	}
 	return indiceATMO;
-}//----- End of calculIndiceATMO
 
-//------------------------------------------------------------------ PRIVE
+} //----- End of calculIndiceATMO
 
-//----------------------------------------------------- Protected methods
-
-/* Algorithm :
- * Si capteurId == null,
- * On voit si fiabilite est 0.
- * Sinon, on voit si le capteurId est correcte.
- */
-
+// Algorithm :
+// Si capteurId == null,
+	// On voit si fiabilite est 0.
+	// Si oui, on retourne true
+// Sinon, on voit si le capteurId est l'id d'un capteur existant
+// Si c'est le cas, on retourne true
+//
 function<bool(const Capteur &, const Territoire &, const string &)> Service::filtrageCapteur = [](const Capteur &capteur, const Territoire &territoire, const string &capteurId) -> bool {
+	
 	return (!capteurId.empty() && capteur.getSensorID().compare(capteurId) == 0) || (capteurId.empty() && fiabilite(capteur, territoire) > 0);
-};
+
+}; //----- End of filtrageCapteur
 
 function<float(const Capteur &, const Territoire &)> Service::fiabilite = [](const Capteur &capteur, const Territoire &territoire) -> float {
 	// On calule l'indice de fiabilite
@@ -597,7 +567,8 @@ function<float(const Capteur &, const Territoire &)> Service::fiabilite = [](con
 	if (fiabilite < 0)
 		fiabilite = 0;
 	return fiabilite;
-};
+
+}; //----- End of fiabilite
 
 // Algorithm :
 // Si dateInf != null && dateSup == null (a partir de l'instant t)
@@ -655,7 +626,8 @@ function<bool(Mesure &, struct tm &, struct tm &)> Service::filtrageMesure = [](
 			mesureAPrendre = true;
 	}
 	return mesureAPrendre;
-};
+
+}; //----- End of filtrageMesure
 
 bool Service::dateNull(struct tm &date)
 {
@@ -663,4 +635,39 @@ bool Service::dateNull(struct tm &date)
 		return true;
 	else
 		return false;
-}
+} //----- End of dateNull
+
+bool Service::plusOuMoins(float v1, float v2, float ecart)
+{
+	return (abs(v1 - v2) <= ecart);
+
+} //----- End of plusOuMoins
+
+
+
+//-------------------------------------------- Constructor - destructor
+Service ::Service(const std::string &nomFichierCapteurs, const string &nomFichierAttributs, const std::list<std::string> &nomFichiersMesures)
+{
+#ifdef MAP
+	cout << "Appel au constructeur de <Service>" << endl;
+#endif
+
+	fileReader = new FileReader(nomFichierCapteurs, nomFichierAttributs, nomFichiersMesures);
+
+} //----- End of Service
+
+Service::~Service()
+{
+#ifdef MAP
+	cout << "Appel au destructeur de <Service>" << endl;
+#endif
+
+	delete fileReader;
+
+} //----- End of ~Service
+
+
+//------------------------------------------------------------------ PRIVE
+
+//----------------------------------------------------- Protected methods
+

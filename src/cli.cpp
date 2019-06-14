@@ -17,7 +17,7 @@
 #include <cmath>
 #define _USE_MATH_DEFINES
 using namespace std;
-//using namespace placeholders;
+
 //------------------------------------------------------ Personnal include
 #include "Service.h"
 #include "cli.h"
@@ -29,11 +29,11 @@ using namespace std;
 
 bool is_number(string s)
 {
-
 	regex e("[-\\+]?([0-9]*\\.[0-9]+|[0-9]+)");
 
 	return regex_match(s, e);
-}
+
+} //----- End of is_number
 
 bool is_date(string s)
 {
@@ -41,18 +41,6 @@ bool is_date(string s)
 	int jour, mois, annee;
 	regex e("([0-3][0-9])/([0-1][0-9])/([0-9][0-9][0-9][0-9])");
 	smatch matches;
-	/*
-	cout << "rapport REGEX " << endl;
-	if (regex_search(s, matches, e)) {
-		cout << "Match found\n";
-
-		for (size_t i = 0; i < matches.size(); ++i) {
-			cout << i << ": '" << matches[i].str() << "'\n";
-		}
-	}
-	else {
-		cout << "Match not found\n";
-	}*/
 
 	regex_search(s, matches, e);
 	if (regex_match(s, e))
@@ -67,7 +55,8 @@ bool is_date(string s)
 	{
 		return false;
 	}
-}
+
+} //----- End of is_date
 
 bool is_heure(string s)
 {
@@ -86,7 +75,8 @@ bool is_heure(string s)
 	{
 		return false;
 	}
-}
+
+}  //----- End of is_heure
 
 bool check_dates(string sA, string sB)
 {
@@ -122,7 +112,8 @@ bool check_dates(string sA, string sB)
 		return false;
 	}
 	return false;
-}
+
+} //----- End of check_dates
 
 struct tm stringToDate(string date)
 {
@@ -141,13 +132,14 @@ struct tm stringToDate(string date)
 		result.tm_min = 0;
 	}
 	return result;
-}
+
+} //----- End of stringToDate
 
 void afficherDate(struct tm date)
 {
-
 	cout << date.tm_mday << "\\" << date.tm_mon << "\\" << date.tm_year << " " << date.tm_hour << ":" << date.tm_min << endl;
-}
+
+} //----- End of afficherDate
 
 struct tm stringToDateDetailed(string date)
 {
@@ -165,7 +157,7 @@ struct tm stringToDateDetailed(string date)
 		result.tm_min = stoi(matches[5].str());
 	}
 	return result;
-}
+} //----- End of stringToDateDetailed
 
 int menu(int argc, char **argv)
 {
@@ -285,8 +277,48 @@ int menu(int argc, char **argv)
 				} while (flag);
 				break;
 
+<<<<<<< HEAD
 				//Territoire
 			case 2:
+=======
+						if (flag)
+						{
+							cout << "Donnees invalides" << endl;
+						}
+						cin >> rayon;
+						flag = (!is_number(rayon) || stoi(rayon) < 0);
+					} while (flag);
+					break;
+
+					//Aire totale
+				case 3:
+
+					strs << (M_PI * RAYON_TERRE);
+					rayon = strs.str();
+					strs.clear();
+					cout << "Aire totale selectionnee" << endl;
+					break;
+
+					//Capteur
+				case 4:
+					cout << "Rentrez l'id d'un capteur" << endl;
+					flag = false;
+					rayon = "6379";
+					do
+					{
+						if (flag)
+							cout << "Rentrez un id non vide" << endl;
+						cin >> captorId;
+						flag = (captorId.empty());
+					} while (flag);
+					break;
+				}
+				cout << endl;
+				cout << "Indiquer la periode temporelle" << endl;
+				cout << "[1]A une date donnee plus ou moins une heure : date" << endl;
+				cout << "[2]Sur une plage de temps donnee delimitee par deux dates : date1 date2" << endl;
+				cout << "[*]Sur l integralite des mesures  * " << endl;
+>>>>>>> d59b815e6f00f09dbd5b5599e2679e1541e8377f
 
 				cout << "Rentrez une longitude et une latitude" << endl;
 				flag = false;
@@ -417,7 +449,7 @@ int menu(int argc, char **argv)
 				date2finale.tm_hour = 23;
 				date2finale.tm_min = 59;
 
-				date1finale = stringToDate(date1);
+				afficherDate(stringToDateDetailed(date1));
 
 				cout << endl;
 				break;
@@ -576,4 +608,5 @@ int menu(int argc, char **argv)
 	delete service;
 
 	return 0;
-} // End of menu
+
+} //----- End of menu

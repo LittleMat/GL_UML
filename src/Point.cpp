@@ -28,12 +28,14 @@ using namespace std;
 float Point :: getLongitude ( ) const
 {
 	return longitude;
-}//----- End of getLongitude 
+
+} //----- End of getLongitude 
 
 float Point :: getLatitude ( ) const
 {
 	return latitude;
-}//----- End of getLatitude
+
+} //----- End of getLatitude
 
 float Point :: distance( const Point * p ) const
 {
@@ -50,22 +52,11 @@ float Point :: distance( const Point * p ) const
 
 	return (float)distance;
 
-}//----- End of distance 
+} //----- End of distance 
 
 //-------------------------------------------- Constructor - destructor
-/*Point :: Point ( )
-// Algorithm : 
-{
-	#ifdef MAP
-		cout << "Appel au constructeur par d�faut de <Point>" << endl;
-	#endif
-
-	longitude = 0.0;
-	latitude = 0.0;
-}//----- End of Point */
 
 Point :: Point ( float longt, float lat )
-// Algorithm : 
 {
 	#ifdef MAP
 			cout << "Appel au constructeur de <Point>" << endl;
@@ -74,25 +65,26 @@ Point :: Point ( float longt, float lat )
 		throw "Illegal Argument Exception";
 	longitude = longt;
 	latitude = lat;
-}//----- End of Point 
+
+} //----- End of Point 
 
 Point::Point( )
-// Algorithm : 
 {
-#ifdef MAP
-	cout << "Appel au constructeur de <Point>" << endl;
-#endif
+	#ifdef MAP
+		cout << "Appel au constructeur de <Point>" << endl;
+	#endif
 	longitude = 0.0;
 	latitude = 0.0;
-}//----- End of Point 
+
+} //----- End of Point 
 
 Point :: ~Point ( )
-// Algorithm : 
 {
 	#ifdef MAP
 		cout << "Appel au destructeur de <Point>" << endl;
 	#endif
-}//----- End of ~Point 
+
+} //----- End of ~Point 
 
 
 //------------------------------------------------------------------ PRIVE

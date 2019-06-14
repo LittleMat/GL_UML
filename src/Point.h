@@ -17,39 +17,45 @@ using namespace std;
 const static double RAYON_TERRE = 6378;
 //------------------------------------------------------------------------
 // Goal of the <Point> class
-// Représente un point aux coordonnées latitude longitude
+// Un objet <Point> représente un point aux coordonnées latitude longitude
 //------------------------------------------------------------------------
 
 
 class Point
 {
-	//----------------------------------------------------------------- PUBLIC
+//----------------------------------------------------------------- PUBLIC
 
 public:
 
-	//----------------------------------------------------- Public methods
+//----------------------------------------------------- Public methods
 
-	//Retourne la longitude
+	/*
+	* Retourne la longitude
+	*/
 	float getLongitude ( ) const;
 
-	//Retourne la latitude
+	/*
+	* Retourne la latitude
+	*/
 	float getLatitude ( ) const;
 	
-	//Retourne la distance
+	/*
+	* Retourne la distance
+	*/
 	float distance ( const Point * p ) const;
 
-	//-------------------------------------------- Constructor - destructor
+//-------------------------------------------- Constructor - destructor
 	Point ( float longt, float lat );
 
 	Point();
 
-	//Point ( );
-
 	~Point ( );
 	
+//----------------------------------------------------------------- PROTECTED
 
 protected:
-	//----------------------------------------------------- Protected attributes
+
+//----------------------------------------------------- Protected attributes
 	float longitude;
 	float latitude;
 

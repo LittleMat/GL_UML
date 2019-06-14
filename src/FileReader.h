@@ -11,6 +11,7 @@
 #ifndef FILEREADER_H
 #define FILEREADER_H
 
+//--------------------------------------------------- Interfaces used
 #include <list>
 #include <sstream>
 #include <string>
@@ -60,29 +61,18 @@ public :
 	 */
 	Mesure * prochaineMesure (function<bool(Mesure&)> predicateMesure ); 
 
-
-	/*
-	const list < std::string > getNomFichiersMesures ( ) const;
-	*/
 //-------------------------------------------- Constructor - destructor
 	
 	//nomFichierCapteurs : nom du fichier contenant les capteurs
 	//nomFichierAttributs : nom du fichiers contenant les attributs
-	//nomFichiersMesures : list des noms de fichiers de mesure
-
+	//nomFichiersMesures : liste des noms de fichiers de mesure
 	FileReader ( const std :: string & nomFichierCapteurs, const string & nomFichierAttributs, const std :: list < std :: string > & nomFichiersMesures );
-
-	//FileReader ( );
 
 	~FileReader ( );
 
-protected :
-	//Renvoie vrai s'il reste des fichiers de mesure à lire
-	bool fichierLisible ( );
+//----------------------------------------------------------------- PROTECTED
 
-	
-	//getLine modifié pour lire de l'utf-16 (spécifique à nos fichiers en entrée, filtre les char dont le code héxadécimal est 0 ou d)
-	void getLineModifie ( ifstream & fichierMesureEnCours, string & line );
+protected :
 	
 //----------------------------------------------------- Protected attributes
 	std :: string nomFichierCapteurs;
@@ -103,6 +93,17 @@ protected :
 	static string enteteFicherCapteurs;
 	static string enteteFichierAttributs;
 	static string enteteFichierMesures;
+
+//----------------------------------------------------- Protected methods
+	/*
+	* Renvoie vrai s'il reste des fichiers de mesure à lire
+	*/
+	bool fichierLisible();
+
+	/*
+	* getLine modifié pour lire de l'utf-16 (spécifique à nos fichiers en entrée, filtre les char dont le code héxadécimal est 0 ou d)
+	*/
+	void getLineModifie(ifstream & fichierMesureEnCours, string & line);
 };
 
 #endif // FILEREADER_H
