@@ -1,5 +1,6 @@
 #include <limits>
 #include <cmath>
+#include <tuple>
 #define _USE_MATH_DEFINES
 using namespace std;
 #include "gtest/gtest.h"
@@ -92,26 +93,27 @@ TEST(CapteurUnitTest, Constructor)
 
 TEST(TerritoireUnitTest, ConstructorIllegalArgument)
 {
-    Point *p = new Point(0, 0);
+    Point p(0, 0);
     EXPECT_ANY_THROW(Territoire t0(p, -10));
-    EXPECT_ANY_THROW(Territoire t1(nullptr, 10));
-    delete p;
 }
 TEST(TerritoireUnitTest, Constructor)
 {
-    Territoire t0(new Point(0.14, 0.59), 125);
+    Point p(0.14, 0.59);
+    Territoire t0(p, 125);
     EXPECT_FLOAT_EQ(t0.getRayon(), 125);
-    EXPECT_FLOAT_EQ(t0.getCentre()->getLongitude(), 0.14);
-    EXPECT_FLOAT_EQ(t0.getCentre()->getLatitude(), 0.59);
+    EXPECT_FLOAT_EQ(t0.getCentre().getLongitude(), 0.14);
+    EXPECT_FLOAT_EQ(t0.getCentre().getLatitude(), 0.59);
 }
 TEST(TerritoireUnitTest, ContientIllegalArgument)
 {
-    Territoire t0(new Point(0, 0), 10);
+    Point p(0, 0);
+    Territoire t0(p, 10);
     EXPECT_ANY_THROW(t0.contient(nullptr));
 }
 TEST(TerritoireUnitTest, Contient)
 {
-    Territoire t0(new Point(0, 0), 1000);
+    Point p(0, 0);
+    Territoire t0(p, 1000);
     Point p0(0, 0);
     EXPECT_TRUE(t0.contient(&p0));
     Point p1(0, 90);
@@ -226,15 +228,12 @@ TEST(FileReaderUnitTest, LireCapteur)
     list<string> listS;
     listS.push_back("resources/Data10.csv");
     FileReader reader("resources/Sensor10.csv", "resources/AttributeType.csv", listS);
-    paramFiltrage passAll;
-    passAll.dateInf = tm();
-    passAll.dateSup = tm();
-    passAll.territoire = new Territoire(new Point(0, 0), M_PI * RAYON_TERRE);
+    function<bool(Capteur &)> passAll = [](Capteur &capteur) -> bool { return true; };
     unordered_map<string, Capteur *> capteurs;
 
-    EXPECT_ANY_THROW(capteurs = reader.lireCapteurs(passAll, NULL));
+    EXPECT_ANY_THROW(capteurs = reader.lireCapteurs(NULL));
 
-    capteurs = reader.lireCapteurs(passAll, Service::filtrageCapteur);
+    capteurs = reader.lireCapteurs(passAll);
     EXPECT_EQ(10, capteurs.size());
     Capteur *capteur = nullptr;
     ASSERT_NO_THROW(capteur = capteurs.at("Sensor0"));
@@ -253,18 +252,16 @@ TEST(FileReaderUnitTest, ProchaineMesure)
     list<string> listS;
     listS.push_back("resources/Data10.csv");
     FileReader reader("resources/Sensor10.csv", "resources/AttributeType.csv", listS);
-    paramFiltrage passAll;
-    passAll.dateInf = tm();
-    passAll.dateSup = tm();
-    passAll.territoire = new Territoire(new Point(0, 0), M_PI * RAYON_TERRE);
+    function<bool(Capteur &)> passAllCapteur = [](Capteur &capteur) -> bool { return true; };
+    function<bool(Mesure &)> passAllMesure = [](Mesure &mesure) -> bool { return true; };
     Mesure *mesure = nullptr;
 
-    EXPECT_ANY_THROW(mesure = reader.prochaineMesure(passAll, nullptr));
+    EXPECT_ANY_THROW(mesure = reader.prochaineMesure(NULL));
 
     reader.debutMesure();
-    reader.lireCapteurs(passAll, Service::filtrageCapteur);
+    reader.lireCapteurs(passAllCapteur);
     reader.lireAttributs();
-    mesure = reader.prochaineMesure(passAll, Service::filtrageMesure);
+    mesure = reader.prochaineMesure(passAllMesure);
     ASSERT_TRUE(mesure != nullptr);
     EXPECT_EQ(2017, 1900 + mesure->getTimestamp().tm_year);
     EXPECT_EQ("Sensor0", mesure->getSensorID());
@@ -272,11 +269,11 @@ TEST(FileReaderUnitTest, ProchaineMesure)
     delete mesure;
     for (int i = 0; i < 8; i++)
     {
-        mesure = reader.prochaineMesure(passAll, Service::filtrageMesure);
+        mesure = reader.prochaineMesure(passAllMesure);
         ASSERT_TRUE(mesure != nullptr);
         delete mesure;
     }
-    mesure = reader.prochaineMesure(passAll, Service::filtrageMesure);
+    mesure = reader.prochaineMesure(passAllMesure);
     EXPECT_EQ(nullptr, mesure);
 }
 // Test if two data files are used
@@ -286,22 +283,20 @@ TEST(FileReaderUnitTest, ProchaineMesure2)
     listS.push_back("resources/Data10.csv");
     listS.push_back("resources/Data20.csv");
     FileReader reader("resources/Sensor10.csv", "resources/AttributeType.csv", listS);
-    paramFiltrage passAll;
-    passAll.dateInf = tm();
-    passAll.dateSup = tm();
-    passAll.territoire = new Territoire(new Point(0, 0), M_PI * RAYON_TERRE);
+    function<bool(Capteur &)> passAllCapteur = [](Capteur &capteur) -> bool { return true; };
+    function<bool(Mesure &)> passAllMesure = [](Mesure &mesure) -> bool { return true; };
     Mesure *mesure = nullptr;
     FileReader reader2("resources/Sensor10.csv", "resources/AttributeType.csv", listS);
     reader.debutMesure();
-    reader.lireCapteurs(passAll, Service::filtrageCapteur);
+    reader.lireCapteurs(passAllCapteur);
     reader.lireAttributs();
     for (int i = 0; i < 9; i++)
     {
-        mesure = reader.prochaineMesure(passAll, Service::filtrageMesure);
+        mesure = reader.prochaineMesure(passAllMesure);
         ASSERT_TRUE(mesure != nullptr);
         delete mesure;
     }
-    mesure = reader.prochaineMesure(passAll, Service::filtrageMesure);
+    mesure = reader.prochaineMesure(passAllMesure);
     ASSERT_TRUE(mesure != nullptr);
     EXPECT_EQ(2017, 1900 + mesure->getTimestamp().tm_year);
     EXPECT_EQ("Sensor2", mesure->getSensorID());
@@ -346,9 +341,9 @@ TEST(ServiceUnitTest, FiltrageCapteur)
     Capteur capteurOrigin("sensorId", new Point(0, 0), "description");
     Capteur capteurParis("sensorId", new Point(2.21, 48.51), "descrption");
 
-    Territoire empty(new Point(0, 0), M_PI * RAYON_TERRE); // All surface
-    Territoire point(new Point(2.21, 48.51), 0); // Radius 10km
-    Territoire circle(new Point(2, 48), 100);    // Radius * 1.1
+    Territoire empty(Point(0, 0), M_PI * RAYON_TERRE); // All surface
+    Territoire point(Point(2.21, 48.51), 0);           // Radius 10km
+    Territoire circle(Point(2, 48), 100);              // Radius * 1.1
 
     EXPECT_TRUE(Service::filtrageCapteur(capteurOrigin, empty, ""));
     EXPECT_FALSE(Service::filtrageCapteur(capteurOrigin, point, ""));
@@ -384,6 +379,25 @@ TEST(ServiceUnitTest, PlusOuMoins)
     EXPECT_FALSE(Service::plusOuMoins(10, -10, 5));
     EXPECT_FALSE(Service::plusOuMoins(-FLT_MAX, FLT_MAX, 100));
     EXPECT_FALSE(Service::plusOuMoins(FLT_MAX, -FLT_MAX, 100));
+}
+TEST(ServiceUnitTest, Fiabilite)
+{
+    Capteur capteurOrigin("sensorId", new Point(0, 0), "description");
+    Capteur capteurParis("sensorId", new Point(2.21, 48.51), "descrption");
+    Capteur capteurLondon("sensorId", new Point(-0.2416795, 51.5285582), "");
+
+    Territoire empty(Point(0, 0), M_PI * RAYON_TERRE); // All surface
+    Territoire point(Point(2.21, 48.51), 0);           // Radius 10km
+    Territoire circle(Point(2, 48), 56);              // Radius * 1.1
+    Territoire circle2(Point(0.983816, 50.248353), 160);
+
+    EXPECT_FLOAT_EQ(1.0, Service::fiabilite(capteurOrigin, empty));
+    EXPECT_FLOAT_EQ(0, Service::fiabilite(capteurOrigin, point));
+    EXPECT_FLOAT_EQ(0, Service::fiabilite(capteurOrigin, circle));
+    EXPECT_FLOAT_EQ(1.0, Service::fiabilite(capteurParis, empty));
+    EXPECT_FLOAT_EQ(1.0, Service::fiabilite(capteurParis, point));
+    EXPECT_FLOAT_EQ(0.49967861, Service::fiabilite(capteurParis, circle));
+    EXPECT_FLOAT_EQ(0.6069622, Service::fiabilite(capteurLondon, circle2));
 }
 TEST(ServiceUnitTest, ConstructorIllegalArgument)
 {
@@ -436,61 +450,25 @@ TEST(ServiceUnitTest, Constructor)
     listS.push_back("resources/ServiceTestData.csv");
     EXPECT_NO_THROW(Service service("resources/Sensor10.csv", "resources/AttributeType.csv", listS));
 }
-TEST(ServiceUnitTest, SurveillerComportementCapteur)
-{
-    list<string> listS;
-    listS.push_back("resources/ServiceTestData.csv");
-    Service service("resources/Sensor10.csv", "resources/AttributeType.csv", listS);
-
-    paramFiltrage passAll;
-    passAll.dateInf = tm();
-    passAll.dateSup = tm();
-    passAll.territoire = new Territoire(new Point(0, 0), M_PI * RAYON_TERRE);
-    EXPECT_TRUE(service.surveillerComportementCapteur("Sensor0", passAll));
-    EXPECT_TRUE(service.surveillerComportementCapteur("Sensor1", passAll));
-    EXPECT_FALSE(service.surveillerComportementCapteur("Sensor2", passAll));
-    EXPECT_FALSE(service.surveillerComportementCapteur("Sensor3", passAll));
-}
 TEST(ServiceUnitTest, SurveillerComportementCapteurs)
 {
     list<string> listS;
     listS.push_back("resources/ServiceTestData.csv");
     Service service("resources/Sensor10.csv", "resources/AttributeType.csv", listS);
-    paramFiltrage passAll;
-    passAll.dateInf = tm();
-    passAll.dateSup = tm();
-    passAll.territoire = new Territoire(new Point(0, 0), M_PI * RAYON_TERRE);
+    function<bool(Mesure &)> passAllMesure = [](Mesure &mesure) -> bool { return true; };
     list<string> capteurs;
-    ASSERT_ANY_THROW(service.surveillerComportementCapteurs(capteurs));
+    ASSERT_ANY_THROW(service.surveillerComportementCapteurs(capteurs, passAllMesure));
     capteurs.push_back("Sensor0");
     capteurs.push_back("Sensor1");
     capteurs.push_back("Sensor2");
     capteurs.push_back("Sensor3");
     capteurs.push_back("Sensor4");
-    list<string> *listCapteur = service.surveillerComportementCapteurs(capteurs);
-    capteurs.push_back("Sensor0");
-    capteurs.push_back("Sensor1");
-    capteurs.push_back("Sensor2");
-    capteurs.push_back("Sensor3");
-    capteurs.push_back("Sensor4");
+    ASSERT_ANY_THROW(service.surveillerComportementCapteurs(capteurs, NULL));
+
+    list<string> *listCapteur = service.surveillerComportementCapteurs(capteurs, passAllMesure);
     EXPECT_TRUE(find(listCapteur->begin(), listCapteur->end(), "Sensor0") == listCapteur->end());
-    capteurs.push_back("Sensor0");
-    capteurs.push_back("Sensor1");
-    capteurs.push_back("Sensor2");
-    capteurs.push_back("Sensor3");
-    capteurs.push_back("Sensor4");
     EXPECT_TRUE(find(listCapteur->begin(), listCapteur->end(), "Sensor1") == listCapteur->end());
-    capteurs.push_back("Sensor0");
-    capteurs.push_back("Sensor1");
-    capteurs.push_back("Sensor2");
-    capteurs.push_back("Sensor3");
-    capteurs.push_back("Sensor4");
     EXPECT_TRUE(find(listCapteur->begin(), listCapteur->end(), "Sensor2") != listCapteur->end());
-    capteurs.push_back("Sensor0");
-    capteurs.push_back("Sensor1");
-    capteurs.push_back("Sensor2");
-    capteurs.push_back("Sensor3");
-    capteurs.push_back("Sensor4");
     EXPECT_TRUE(find(listCapteur->begin(), listCapteur->end(), "Sensor3") != listCapteur->end());
     delete listCapteur;
 }
@@ -502,9 +480,12 @@ TEST(ServiceUnitTest, ObtenirCapteursSimilaires)
     Service service("resources/Sensor10.csv", "resources/AttributeType.csv", listS);
     struct tm time = tm();
     time.tm_year = 117;
-    time.tm_yday = 1;
+    time.tm_mday = 1;
     time.tm_mon = 0;
-    list<pair<string, string>> *similar = service.obtenirCapteursSimilaires(time, 2);
+    time.tm_hour = 0;
+    time.tm_min = 0;
+    list<pair<string, string>> *similar = service.obtenirCapteursSimilaires(time, 1);
+    cout << similar->size() << endl;
     ASSERT_TRUE(similar->size() == 2);
     if (similar->front().first == "Sensor0")
     {
@@ -525,12 +506,27 @@ TEST(ServiceUnitTest, ObtenirCapteursSimilaires)
     }
 }
 */
-/*
-    TEST(ServiceUnitTest, CalculerQualite) {
-        list<string> listS;
-        listS.push_back("resources/ServiceTestData.csv");
-        FileReader reader("resources/Sensor10.csv", "resources/AttributeType.csv", listS);
-        Service service(&reader);
-    }
-*/
+TEST(ServiceUnitTest, CalculerQualite)
+{
+    list<string> listS;
+    listS.push_back("resources/ServiceTestData.csv");
+    Service service("resources/Sensor10.csv", "resources/AttributeType.csv", listS);
+    function<float(Capteur &)> passCapteur = [](Capteur &capteur) -> float { return capteur.getSensorID() == "Sensor0" || capteur.getSensorID() == "Sensor1" ? 0.9 : 0; };
+    function<bool(Mesure &)> passMesure = [](Mesure &mesure) -> bool { return mesure.getTimestamp().tm_hour == 0 && mesure.getTimestamp().tm_min <= 30; };
+    string empty;
+    tuple < int , list < pair < string , float > > , float > qualite =  service.calculerQualite ( empty, passMesure, passCapteur );
+    EXPECT_EQ(3, get<0>(qualite));
+    ASSERT_EQ("O3", get<1>(qualite).front().first);
+    EXPECT_FLOAT_EQ(34.33498085,get<1>(qualite).front().second);
+    get<1>(qualite).pop_front();
+    ASSERT_EQ("NO2", get<1>(qualite).front().first);
+    EXPECT_FLOAT_EQ(70.8543904,get<1>(qualite).front().second);
+    get<1>(qualite).pop_front();
+    ASSERT_EQ("SO2", get<1>(qualite).front().first);
+    EXPECT_FLOAT_EQ(32.8982247,get<1>(qualite).front().second);
+    get<1>(qualite).pop_front();
+    ASSERT_EQ("PM10", get<1>(qualite).front().first);
+    EXPECT_FLOAT_EQ(3.276998,get<1>(qualite).front().second);
+    EXPECT_FLOAT_EQ(90, get<2>(qualite));
+}
 } // namespace
