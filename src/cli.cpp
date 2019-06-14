@@ -210,6 +210,7 @@ int menu(int argc, char **argv)
 			cout << "[2] Obtenir capteurs similaires" << endl;
 			cout << "[3] Verifier comportement capteurs" << endl;
 			cout << "[4] Quitter application" << endl;
+			cout << endl;
 			do
 			{
 				cin >> lecture;
@@ -235,7 +236,7 @@ int menu(int argc, char **argv)
 				cout << "[3] Aire totale" << endl;
 				cout << "[4] Capteur" << endl;
 				cout << "[5] Retour" << endl;
-
+				cout << endl;
 				do
 				{
 					cin >> type_zone;
@@ -329,7 +330,7 @@ int menu(int argc, char **argv)
 				cout << "[1]A une date donnee plus ou moins une heure : date" << endl;
 				cout << "[2]Sur une plage de temps donnee delimitee par deux dates : date1 date2" << endl;
 				cout << "[*]Sur l integralite des mesures  * " << endl;
-
+				cout << endl;
 				flag = false;
 
 				do
@@ -383,7 +384,6 @@ int menu(int argc, char **argv)
 					date1finale = stringToDateDetailed(date1);
 					cout << endl;
 					break;
-					// date1 date2
 				case 2:
 
 					cout << "Rentrez deux dates au format : JJ/MM/AAAA" << endl;
@@ -407,7 +407,6 @@ int menu(int argc, char **argv)
 					break;
 				}
 
-				//testTerritoire = Territoire(new Point(stof(longitude), stof(latitude)), stoi(rayon));
 				Point p(stof(longitude), stof(latitude));
 				Territoire territoire(p, stoi(rayon));
 				function<float(Capteur &)> fiabilite = bind(Service::fiabilite, placeholders::_1, cref(territoire));
@@ -416,6 +415,7 @@ int menu(int argc, char **argv)
 
 				if (get<0>(resultQualite) > 0)
 				{
+					cout << endl;
 					cout << "Indice ATMO " << get<0>(resultQualite) << endl;
 					cout << "Indice fiabilite " << get<2>(resultQualite) << "%" << endl;
 					for (auto const &i : (get<1>(resultQualite)))
@@ -455,6 +455,7 @@ int menu(int argc, char **argv)
 				} while (flag);
 
 				cout << "Rentrez une date de depart au format : JJ/MM/AAAA HH:MM" << endl;
+				cout << endl;
 				flag = false;
 
 				do
@@ -496,6 +497,7 @@ int menu(int argc, char **argv)
 					if (i.first == captorId)
 						cout << " - " << i.second << endl;
 				}
+				cout << endl;
 				delete similaires;
 				break;
 			}
@@ -539,8 +541,7 @@ int menu(int argc, char **argv)
 					{
 						cout << i << endl;
 					}
-
-					
+					cout << endl;
 					delete defaillants;
 				}
 				catch (const char* e)
