@@ -169,6 +169,11 @@ struct tm stringToDateDetailed(string date)
 
 int menu(int argc, char **argv)
 {
+	if (argc <= 3)
+	{
+		cout << "Nombre d'arguments insuffisant" << endl;
+		return 0;
+	}
 	list<string> args;
 	for (int i = 3; i < argc; i++)
 	{
@@ -565,7 +570,6 @@ int menu(int argc, char **argv)
 	catch (char* e) {
 		cout << e << endl;
 	}
-	cin >> argv[0];
 	
 	
 	return 0;
