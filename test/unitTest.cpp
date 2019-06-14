@@ -472,7 +472,6 @@ TEST(ServiceUnitTest, SurveillerComportementCapteurs)
     EXPECT_TRUE(find(listCapteur->begin(), listCapteur->end(), "Sensor3") != listCapteur->end());
     delete listCapteur;
 }
-/*
 TEST(ServiceUnitTest, ObtenirCapteursSimilaires)
 {
     list<string> listS;
@@ -483,7 +482,7 @@ TEST(ServiceUnitTest, ObtenirCapteursSimilaires)
     time.tm_mday = 1;
     time.tm_mon = 0;
     time.tm_hour = 0;
-    time.tm_min = 0;
+    time.tm_min = 1;
     list<pair<string, string>> *similar = service.obtenirCapteursSimilaires(time, 1);
     cout << similar->size() << endl;
     ASSERT_TRUE(similar->size() == 2);
@@ -505,7 +504,6 @@ TEST(ServiceUnitTest, ObtenirCapteursSimilaires)
         EXPECT_EQ("Sensor0", similar->front().second);
     }
 }
-*/
 TEST(ServiceUnitTest, CalculerQualite)
 {
     list<string> listS;
