@@ -478,7 +478,7 @@ int menu(int argc, char **argv)
 			date1 = date1.append(" ").append(heure);
 			cout << "date selectionnee : " << date1 << endl;
 
-			cout << "Rentrez le nombre de mesures pour la comparaison" << endl;
+			cout << "Rentrez le nombre de groupe de mesures par capteur pour la comparaison" << endl;
 			flag = false;
 			do
 			{
