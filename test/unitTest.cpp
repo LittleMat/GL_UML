@@ -503,6 +503,7 @@ TEST(ServiceUnitTest, ObtenirCapteursSimilaires)
     {
         EXPECT_EQ("Sensor0", similar->front().second);
     }
+    delete similar;
 }
 TEST(ServiceUnitTest, CalculerQualite)
 {

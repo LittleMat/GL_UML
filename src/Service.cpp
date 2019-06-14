@@ -127,7 +127,10 @@ list<pair<string, string>> *Service :: obtenirCapteursSimilaires(struct tm & dat
 		// Etape de selection du capteur
 		// Si dans la map des capteurs selectionnes par les fonctions de filtrage spatiales
 		// le capteur de la mesure est present, c'est qu'il faut anaylser ce capteur
-		if (m->getValue() < 0)	continue;
+		if (m->getValue() < 0) {
+			delete m;
+			continue;
+		}	
 		unordered_map<std::string, Capteur *>::iterator trouveCapteur = map_capteurs.find(m->getSensorID());
 		if (trouveCapteur != map_capteurs.end())
 		{
@@ -139,7 +142,10 @@ list<pair<string, string>> *Service :: obtenirCapteursSimilaires(struct tm & dat
 				if (iterateur_attributId != iterateur_sensorID->second.end()) {
 					capteurs_mesures[m->getSensorID()][m->getAttributID()].push_back(m->getValue());
 					if (capteurs_mesures.at(m->getSensorID()).at(m->getAttributID()).size() > (unsigned int)nbMesures)
+					{
+						delete m;
 						break;
+					}
 				}
 			}
 		}
