@@ -277,48 +277,8 @@ int menu(int argc, char **argv)
 				} while (flag);
 				break;
 
-<<<<<<< HEAD
 				//Territoire
 			case 2:
-=======
-						if (flag)
-						{
-							cout << "Donnees invalides" << endl;
-						}
-						cin >> rayon;
-						flag = (!is_number(rayon) || stoi(rayon) < 0);
-					} while (flag);
-					break;
-
-					//Aire totale
-				case 3:
-
-					strs << (M_PI * RAYON_TERRE);
-					rayon = strs.str();
-					strs.clear();
-					cout << "Aire totale selectionnee" << endl;
-					break;
-
-					//Capteur
-				case 4:
-					cout << "Rentrez l'id d'un capteur" << endl;
-					flag = false;
-					rayon = "6379";
-					do
-					{
-						if (flag)
-							cout << "Rentrez un id non vide" << endl;
-						cin >> captorId;
-						flag = (captorId.empty());
-					} while (flag);
-					break;
-				}
-				cout << endl;
-				cout << "Indiquer la periode temporelle" << endl;
-				cout << "[1]A une date donnee plus ou moins une heure : date" << endl;
-				cout << "[2]Sur une plage de temps donnee delimitee par deux dates : date1 date2" << endl;
-				cout << "[*]Sur l integralite des mesures  * " << endl;
->>>>>>> d59b815e6f00f09dbd5b5599e2679e1541e8377f
 
 				cout << "Rentrez une longitude et une latitude" << endl;
 				flag = false;
