@@ -226,6 +226,43 @@ TEST(FunctionTest, SurveillerComportementCapteurs2)
 }
 TEST(FunctionTest, ObtenirCapteursSimilaires)
 {
+    // Redirect cin cout
+    istringstream sin("2\nSensor0\n01/01/2017 00:00\n1\n4\n");
+    ostringstream sout;
+    streambuf *cinBuf = cin.rdbuf(sin.rdbuf());
+    streambuf *coutBuf = cout.rdbuf(sout.rdbuf());
+
+    // Parameters for the program
+    char **parameters = (char **)malloc(4 * sizeof(char *));
+    parameters[0] = (char *)"./exec";
+    parameters[1] = (char *)"resources/Sensor10.csv";
+    parameters[2] = (char *)"resources/AttributeType.csv";
+    parameters[3] = (char *)"resources/ServiceTestData.csv";
+
+    EXPECT_NO_THROW(menu(4, parameters));
+
+    // Result
+    EXPECT_EQ(string("Menu Principal\n") 
+            + string("[1] Obtenir la qualite moyenne de l air\n") 
+            + string("[2] Obtenir capteurs similaires\n") 
+            + string("[3] Verifier comportement capteurs\n") 
+            + string("[4] Quitter application\n\n") 
+            + string("Rentrez l'id du capteur de reference\n")
+            + string("Rentrez une date de depart au format : JJ/MM/AAAA HH:MM\n")
+            + string("date selectionnee : 01/01/2017 00:00\n")
+            + string("Rentrez le nombre de mesures pour la comparaison\n")
+            + string("nombre de mesures demandees : 1\n\n")
+            + string("capteurs similaires a Sensor0:\n")
+            + string(" - Sensor1\n")
+            + string("\nMenu Principal\n") 
+            + string("[1] Obtenir la qualite moyenne de l air\n") 
+            + string("[2] Obtenir capteurs similaires\n") 
+            + string("[3] Verifier comportement capteurs\n") 
+            + string("[4] Quitter application\n\n"), sout.str());
+
+    free(parameters);
+    cin.rdbuf(cinBuf);
+    cout.rdbuf(coutBuf);
 }
 TEST(FunctionTest, CalculerQualite)
 {

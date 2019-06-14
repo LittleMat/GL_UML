@@ -82,7 +82,8 @@ list<string> *Service ::surveillerComportementCapteurs(list<string> &capteursID,
 
 list<pair<string, string>> *Service :: obtenirCapteursSimilaires(struct tm & date, int nbMesures)
 {
-
+	if (nbMesures <= 0)
+		throw "Illegal Argument Exception";
 	fileReader->debutMesure();
 
 	//On recupere tous les capteurs
@@ -99,7 +100,7 @@ list<pair<string, string>> *Service :: obtenirCapteursSimilaires(struct tm & dat
 	// unordered_map<idCapteur, unordered_map <idAttribut,vector<Mesure>>> 
 	unordered_map<string, unordered_map<string, vector<float>>> capteurs_mesures;
 
-	function<bool(Mesure&)> predicateMesure = bind(Service::filtrageMesure, _1, tm(), date);
+	function<bool(Mesure&)> predicateMesure = bind(Service::filtrageMesure, _1, date, tm());
 
 	// On classe les donnees pour faciliter le traitement
 	// Initialisation avec des -1 
@@ -107,10 +108,6 @@ list<pair<string, string>> *Service :: obtenirCapteursSimilaires(struct tm & dat
 	{
 		unordered_map<string, vector<float>> map_temp;
 		vector<float> vect;
-		for (int i = 0; i < nbMesures; i++)
-		{
-			vect.push_back(-1);
-		}
 		map_temp.insert(make_pair("O3", vect));
 		map_temp.insert(make_pair("NO2", vect));
 		map_temp.insert(make_pair("SO2", vect));
@@ -120,7 +117,7 @@ list<pair<string, string>> *Service :: obtenirCapteursSimilaires(struct tm & dat
 	}
 
 	//Remplissage avec les mesures lues
-	for (int i = 0; i < nbMesures; i++)
+	for (int i = 0; i < INT32_MAX; i++)
 	{
 		Mesure *m = fileReader->prochaineMesure(predicateMesure);
 
@@ -130,7 +127,7 @@ list<pair<string, string>> *Service :: obtenirCapteursSimilaires(struct tm & dat
 		// Etape de selection du capteur
 		// Si dans la map des capteurs selectionnes par les fonctions de filtrage spatiales
 		// le capteur de la mesure est present, c'est qu'il faut anaylser ce capteur
-
+		if (m->getValue() < 0)	continue;
 		unordered_map<std::string, Capteur *>::iterator trouveCapteur = map_capteurs.find(m->getSensorID());
 		if (trouveCapteur != map_capteurs.end())
 		{
@@ -139,34 +136,15 @@ list<pair<string, string>> *Service :: obtenirCapteursSimilaires(struct tm & dat
 			if (iterateur_sensorID != capteurs_mesures.end())
 			{
 				unordered_map<string, vector<float>>::iterator iterateur_attributId = iterateur_sensorID->second.find(m->getAttributID());
-
-				for (int ii = 0; ii < nbMesures; ii++)
-				{
-					if (iterateur_attributId->second[ii] == -1)
-					{
-						iterateur_attributId->second[ii] = m->getValue();
+				if (iterateur_attributId != iterateur_sensorID->second.end()) {
+					capteurs_mesures[m->getSensorID()][m->getAttributID()].push_back(m->getValue());
+					if (capteurs_mesures.at(m->getSensorID()).at(m->getAttributID()).size() > (unsigned int)nbMesures)
 						break;
-					}
 				}
 			}
 		}
 
 		delete m;
-	}
-
-	// Remplissage des zones vides (== -1) 
-	for (unordered_map<string, unordered_map<string, vector<float>>>::iterator it = capteurs_mesures.begin(); it != capteurs_mesures.end(); it++)
-	{
-		for (unordered_map<string, vector<float>>::iterator it_2 = it->second.begin(); it_2 != it->second.end(); it_2++)
-		{
-			for (int ii = 0; ii < nbMesures; ii++)
-			{
-				if (it_2->second[ii] == -1)
-				{
-					it_2->second[ii] = 0;
-				}
-			}
-		}
 	}
 
 	// Traitement
@@ -187,6 +165,11 @@ list<pair<string, string>> *Service :: obtenirCapteursSimilaires(struct tm & dat
 				unordered_map<string, vector<float>>::iterator it_c2_NO2 = it_capteur2->second.find("NO2");
 				unordered_map<string, vector<float>>::iterator it_c2_SO2 = it_capteur2->second.find("SO2");
 				unordered_map<string, vector<float>>::iterator it_c2_PM10 = it_capteur2->second.find("PM10");
+				if (it_c1_O3->second.size() < (unsigned int)nbMesures || it_c2_O3->second.size() < (unsigned int)nbMesures
+							|| it_c1_NO2->second.size() < (unsigned int)nbMesures|| it_c2_NO2->second.size() < (unsigned int)nbMesures
+							|| it_c1_SO2->second.size() < (unsigned int)nbMesures || it_c2_SO2->second.size() < (unsigned int)nbMesures
+							|| it_c1_PM10->second.size() < (unsigned int)nbMesures || it_c2_PM10->second.size() < (unsigned int)nbMesures)
+					continue;
 
 				bool similaire = true;
 
