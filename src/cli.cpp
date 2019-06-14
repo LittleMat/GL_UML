@@ -17,7 +17,7 @@
 #include <cmath>
 #define _USE_MATH_DEFINES
 using namespace std;
-//using namespace placeholders;
+
 //------------------------------------------------------ Personnal include
 #include "Service.h"
 #include "cli.h"
@@ -29,11 +29,11 @@ using namespace std;
 
 bool is_number(string s)
 {
-
 	regex e("[-\\+]?([0-9]*\\.[0-9]+|[0-9]+)");
 
 	return regex_match(s, e);
-}
+
+} //----- End of is_number
 
 bool is_date(string s)
 {
@@ -41,18 +41,6 @@ bool is_date(string s)
 	int jour, mois, annee;
 	regex e("([0-3][0-9])/([0-1][0-9])/([0-9][0-9][0-9][0-9])");
 	smatch matches;
-	/*
-	cout << "rapport REGEX " << endl;
-	if (regex_search(s, matches, e)) {
-		cout << "Match found\n";
-
-		for (size_t i = 0; i < matches.size(); ++i) {
-			cout << i << ": '" << matches[i].str() << "'\n";
-		}
-	}
-	else {
-		cout << "Match not found\n";
-	}*/
 
 	regex_search(s, matches, e);
 	if (regex_match(s, e))
@@ -67,7 +55,8 @@ bool is_date(string s)
 	{
 		return false;
 	}
-}
+
+} //----- End of is_date
 
 bool is_heure(string s)
 {
@@ -86,7 +75,8 @@ bool is_heure(string s)
 	{
 		return false;
 	}
-}
+
+}  //----- End of is_heure
 
 bool check_dates(string sA, string sB)
 {
@@ -122,7 +112,8 @@ bool check_dates(string sA, string sB)
 		return false;
 	}
 	return false;
-}
+
+} //----- End of check_dates
 
 struct tm stringToDate(string date)
 {
@@ -141,13 +132,14 @@ struct tm stringToDate(string date)
 		result.tm_min = 0;
 	}
 	return result;
-}
+
+} //----- End of stringToDate
 
 void afficherDate(struct tm date)
 {
-
 	cout << date.tm_mday << "\\" << date.tm_mon << "\\" << date.tm_year << " " << date.tm_hour << ":" << date.tm_min << endl;
-}
+
+} //----- End of afficherDate
 
 struct tm stringToDateDetailed(string date)
 {
@@ -165,7 +157,7 @@ struct tm stringToDateDetailed(string date)
 		result.tm_min = stoi(matches[5].str());
 	}
 	return result;
-}
+} //----- End of stringToDateDetailed
 
 int menu(int argc, char **argv)
 {
@@ -315,7 +307,6 @@ int menu(int argc, char **argv)
 					strs << (M_PI * RAYON_TERRE);
 					rayon = strs.str();
 					strs.clear();
-					//rayon = (2.1 * rayon_Terre);
 					cout << "Aire totale selectionnee" << endl;
 					break;
 
@@ -491,7 +482,6 @@ int menu(int argc, char **argv)
 				cout << "nombre de mesures demandees : " << nb_mesures << endl;
 				cout << endl;
 
-				//list <pair < string, string > >
 				afficherDate(stringToDateDetailed(date1));
 
 				list<pair<string, string>> *similaires;
@@ -573,4 +563,5 @@ int menu(int argc, char **argv)
 	
 	
 	return 0;
-} // End of menu
+
+} //----- End of menu

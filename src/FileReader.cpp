@@ -36,7 +36,7 @@ unordered_map<string, Capteur *> FileReader ::lireCapteurs( function<bool(Capteu
 	}
 	ifstream infile(this->nomFichierCapteurs);
 
-	//Si la map n'est pas vide, on la vide et on détruit tous les éléments contenu dans celle ci
+	//Si la map n'est pas vide, on la vide et on détruit tous les éléments contenus dans celle ci
 	if (this->map_capteurs.size() != 0)
 	{
 		for (auto it : this->map_capteurs)
@@ -78,7 +78,8 @@ unordered_map<string, Capteur *> FileReader ::lireCapteurs( function<bool(Capteu
 	}
 
 	return this->map_capteurs;
-}
+
+} //----- End of lireCapteurs
 
 unordered_map<string, Attribut *> FileReader ::lireAttributs()
 {
@@ -116,7 +117,8 @@ unordered_map<string, Attribut *> FileReader ::lireAttributs()
 	}
 
 	return this->map_attributs;
-}
+
+} //----- End of lireAttributs
 
 //Revient au début des mesures
 void FileReader ::debutMesure()
@@ -125,7 +127,8 @@ void FileReader ::debutMesure()
 	fichierMesureEnCours.clear();
 	fichierMesureEnCours.close();
 	fichierMesureEnCours.open(nomFichiersMesures[idFichierMesures]);
-}
+
+} //----- End of debutMesure
 
 bool FileReader ::fichierLisible()
 {
@@ -149,7 +152,8 @@ bool FileReader ::fichierLisible()
 	}
 
 	return res;
-}
+
+} //----- End of fichierLisible
 
 void FileReader ::getLineModifie(ifstream &fichierMesureEnCours, string &line)
 {
@@ -164,7 +168,8 @@ void FileReader ::getLineModifie(ifstream &fichierMesureEnCours, string &line)
 			line += *it;
 		}
 	}
-}
+
+} //----- End of getLineModifie
 
 Mesure *FileReader ::prochaineMesure(function<bool(Mesure&)> predicateMesure)
 {
@@ -246,14 +251,15 @@ Mesure *FileReader ::prochaineMesure(function<bool(Mesure&)> predicateMesure)
 	}
 
 	return m;
-}
+
+} //----- End of prochaineMesure
 
 //-------------------------------------------- Constructors - destructor
 
 FileReader ::FileReader(const string &nomFichierCapteurs, const string &nomFichierAttributs, const list<string> &nomFichiersMesures)
 {
 #ifdef MAP
-	cerr << "Constructor of <FileReader>" << endl;
+	cout << "Appel au constructeur de <FileReader>" << endl;
 #endif
 
 	this->nomFichierCapteurs = nomFichierCapteurs;
@@ -321,10 +327,14 @@ FileReader ::FileReader(const string &nomFichierCapteurs, const string &nomFichi
 		cerr << "List nomFichiersMesures vide" << endl;
 	}
 #endif
-} // End of constructor
+
+} //----- End of FileReader
 
 FileReader ::~FileReader()
 {
+	#ifdef MAP
+		cout << "Appel au destructeur de <FileReader>" << endl;
+	#endif
 
 	//Ferme le dernier fichier de mesure
 	fichierMesureEnCours.clear();
@@ -348,4 +358,5 @@ FileReader ::~FileReader()
 		}
 		map_attributs.clear();
 	}
-} // End of destructor
+
+} //----- End of ~FileReader

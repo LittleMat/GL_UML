@@ -6,12 +6,23 @@
     e-mail               : guilhem.cerba@insa-lyon.fr, zihang.ye@insa-lyon.fr, linda.ye@insa-lyon.fr , mathieu.montgomery@insa-lyon.fr, tianyu.zhang@insa-lyon.fr
 *************************************************************************/
 
+//---------- Interface of <cli> (file cli.h) ----------------
+
 #ifndef CLI_H
 #define CLI_H
 
+//--------------------------------------------------- Interfaces used
 #include <iostream>
 #include <string>
 #include "Service.h"
+//------------------------------------------------------------------------
+// Goal of the <cli> class
+// La classe cli gère les interactions avec l'utilisateur et appelle 
+// les services répondant à ses demandes.
+//------------------------------------------------------------------------
+
+
+//----------------------------------------------------------------- PUBLIC
 
 /*
  * main function

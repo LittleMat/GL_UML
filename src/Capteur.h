@@ -10,12 +10,13 @@
 #ifndef CAPTEUR_H
 #define CAPTEUR_H
 
+//--------------------------------------------------- Interfaces used
 #include <string>
 #include "Point.h"
 
 //------------------------------------------------------------------------
 // Goal of the <Capteur> class
-// Représente un capteur, avec un id, une position et une description
+// Un objet Capteur eprésente un capteur, avec un id, une position et une description
 //------------------------------------------------------------------------
 
 
@@ -27,27 +28,27 @@ public :
 
 //----------------------------------------------------- Public methods
 
+	/*
+	* Retourne l'id du capteur
+	*/
+	const std::string getSensorID() const;
+
+	/*
+	* Retourne la position du capteur
+	*/
+	const Point * getPosition() const;
+
+	/*
+	* Retourne la description du capteur
+	*/
+	const std::string getDescription() const;
+
 //-------------------------------------------- Constructor - destructor
 
-	//Retourne l'id du capteur
-	const std :: string getSensorID ( ) const;
-
-	//Retourne sa position
-	const Point * getPosition ( ) const;
-
-	//Retourne sa description
-	const std :: string getDescription ( ) const;
-	
-	/*
-	 *	
-	 */
 	Capteur ( const std :: string sensorID, Point * position, const std :: string description );
 	
 	Capteur ( );
 
-	/*s
-	 *	
-	 */
 	~Capteur ( );
 
 protected :

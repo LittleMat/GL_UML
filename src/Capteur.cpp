@@ -22,27 +22,30 @@ using namespace std;
 //----------------------------------------------------------------- PUBLIC
 
 //----------------------------------------------------- Public methodes
-	const string Capteur :: getSensorID ( ) const
-	{
-		return sensorID;
-	}
+const string Capteur :: getSensorID ( ) const
+{
+	return sensorID;
 
-	const Point * Capteur :: getPosition ( ) const
-	{
-		return position;
-	}
+} //----- End of getSensorID
 
-	const string Capteur :: getDescription ( ) const
-	{
-		return description;
-	}
+const Point * Capteur :: getPosition ( ) const
+{
+	return position;
+
+} //----- End of getPosition
+
+const string Capteur :: getDescription ( ) const
+{
+	return description;
+
+} //----- End of getDescription
 
 //-------------------------------------------- Constructors - destructor
 
 Capteur :: Capteur ( const string sensorID, Point * position, const string description )
 {
 	#ifdef MAP
-	    cerr << "Constructor of <Capteur>" << endl;
+		cout << "Appel au constructeur de <Capteur>" << endl;
 	#endif
 	
 	if (sensorID.empty() || position == nullptr)
@@ -51,18 +54,25 @@ Capteur :: Capteur ( const string sensorID, Point * position, const string descr
 	this -> sensorID = sensorID;
 	this -> position = position;
 	this -> description = description;
-	//Liste de point??
 	
-}//End of constructor
+} //----- End of Capteur
 
 Capteur::Capteur ( )
 {
+	#ifdef MAP
+		cout << "Appel au constructeur par défaut de <Capteur>" << endl;
+	#endif
 	this -> sensorID = string ( );
 	this -> position = nullptr;
 	this -> description = string ( );
-}
+
+} //----- End of Capteur
 
 Capteur :: ~Capteur ( )
 {
+	#ifdef MAP
+		cout << "Appel au destructeur de <Capteur>" << endl;
+	#endif
 	delete position;
-}// End of destructor 
+
+} //----- End of ~Capteur

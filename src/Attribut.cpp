@@ -25,45 +25,51 @@ using namespace std;
 string Attribut :: getAttributID ( ) const
 {
 	return this -> attributID;
-}
+
+} //----- End of getAttributID
 
 string Attribut :: getUnit ( ) const
 {
 	return this -> unit;
-}
+
+} //----- End of getUnit
 
 string Attribut :: getDescription ( ) const
 {
 	return this -> description;
-}
+
+} //----- End of getDescription
 
 //-------------------------------------------- Constructors - destructor
 Attribut :: Attribut ( )
 {
 	#ifdef MAP
-		cerr << "Constructor of <Attribut>" << endl;
+		cout << "Appel au constructeur par défaut de <Attribut>" << endl;
 	#endif
 
 	this -> attributID = "";
 	this -> unit = "";
 	this -> description = "";
 
-
-}//End of constructor
+} //----- End of Attribut
 
 Attribut :: Attribut ( string attributID, string unit, string description )
 {
 	#ifdef MAP
-	    cerr << "Constructor of <Attribut>" << endl;
+		cout << "Appel au constructeur de <Attribut>" << endl;
 	#endif
 	if (attributID.empty() || unit.empty())
 		throw "Illegal Argument Exception";
 	this -> attributID = attributID;
 	this -> unit = unit;
 	this -> description = description;
-}//End of constructor
+
+} //----- End of Attribut
 
 Attribut :: ~Attribut ( )
 {
+	#ifdef MAP
+		cout << "Appel au destructeur de <Attribut>" << endl;
+	#endif
 
-}// End of destructor 
+} //----- End of ~Attribut
