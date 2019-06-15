@@ -23,20 +23,19 @@ using namespace std;
 //----------------------------------------------------------------- PUBLIC
 
 //----------------------------------------------------- Public methods
-Point * Territoire :: getCentre ( ) const
-// Algorithm : 
+Point Territoire :: getCentre ( ) const
 {
-	return centre;
-}//----- End of getCentre 
+	return *centre;
+
+} //----- End of getCentre 
 
 int Territoire :: getRayon ( ) const
-// Algorithm : 
 {
 	return rayon;
-}//----- End of getRayon 
+
+} //----- End of getRayon 
 
 bool Territoire :: contient ( const Point * p ) const
-// Algorithm : 
 {
 	if (p == nullptr)
 		throw "Illegal Argument Exception";
@@ -49,44 +48,32 @@ bool Territoire :: contient ( const Point * p ) const
 		return false;
 	}
 
-}//----- End of contient 
+} //----- End of contient 
 
  //-------------------------------------------- Constructor - destructor
-Territoire :: Territoire ( Point * c, int r )
-// Algorithm : 
+Territoire :: Territoire ( const Point& c, int r )
 {
 	#ifdef MAP
 		cout << "Appel au constructeur de <Territoire>" << endl;
 	#endif
 
-	if (c == nullptr || r < 0)
+	if (r < 0)
 		throw "Illegal Argument Exception";
-	centre = c;
+	this->centre = new Point(c.getLongitude(), c.getLatitude());
 	//c = new Point(c->getLongitude(), c->getLatitude());
-	rayon = r;
-}//----- End of Territoire 
+	this->rayon = r;
 
-Territoire :: Territoire ( )
-// Algorithm : 
-{
-	#ifdef MAP
-		cout << "Appel au constructeur par d�faut de <Territoire>" << endl;
-	#endif
-
-	rayon = 0;
-	centre = new Point (0, 0);
-}
-
+} //----- End of Territoire 
 
 Territoire :: ~Territoire ( )
-// Algorithm : 
 {
 	#ifdef MAP
 		cout << "Appel au destructeur de <Territoire>" << endl;
 	#endif
 
 	delete centre;
-}//----- End of ~Territoire 
+
+} //----- End of ~Territoire 
 
 
  //------------------------------------------------------------------ PRIVE

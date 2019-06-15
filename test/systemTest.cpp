@@ -13,20 +13,6 @@ using namespace std;
 
 namespace
 {
-TEST(SampleTest, Sample)
-{
-    // Redirect cin cout
-    istringstream sin("Hello World\n");
-    ostringstream sout;
-    streambuf *cinBuf = cin.rdbuf(sin.rdbuf());
-    streambuf *coutBuf = cout.rdbuf(sout.rdbuf());
-    string buffer;
-    getline(cin, buffer);
-    cout << buffer;
-    EXPECT_EQ("Hello World", sout.str());
-    cin.rdbuf(cinBuf);
-    cout.rdbuf(coutBuf);
-}
 TEST(ErrorTest, EmptyParameters)
 {
     // Redirect cin cout
@@ -35,42 +21,34 @@ TEST(ErrorTest, EmptyParameters)
     streambuf *cinBuf = cin.rdbuf(sin.rdbuf());
     streambuf *coutBuf = cout.rdbuf(sout.rdbuf());
     char **parameters = (char **)malloc(4 * sizeof(char *));
-    char programName[] = "./exec";
-    char fileCapteur[] = "resources/Sensor10.csv";
-    char fileAttribute[] = "resources/AttributeType.csv";
-    char fileData[] = "resources/Data10.csv";
+    char *programName = (char *)"./exec";
+    char *fileCapteur = (char *)"resources/Sensor10.csv";
+    char *fileAttribute = (char *)"resources/AttributeType.csv";
 
     parameters[0] = programName;
-    EXPECT_NO_THROW(menu(1, parameters));
+    ASSERT_NO_THROW(menu(1, parameters));
 
-    //TODO: Add expected result
+    EXPECT_EQ("Nombre d'arguments insuffisant\n", sout.str());
 
     cout.rdbuf(coutBuf);
-    sout.flush();
+    sout.clear();
+    sout.str("");
     cout.rdbuf(sout.rdbuf());
 
     parameters[1] = fileCapteur;
-    EXPECT_NO_THROW(menu(2, parameters));
+    ASSERT_NO_THROW(menu(2, parameters));
 
-    //TODO: Add expected result
+    EXPECT_EQ("Nombre d'arguments insuffisant\n", sout.str());
 
     cout.rdbuf(coutBuf);
-    sout.flush();
+    sout.clear();
+    sout.str("");
     cout.rdbuf(sout.rdbuf());
 
     parameters[2] = fileAttribute;
-    EXPECT_NO_THROW(menu(3, parameters));
+    ASSERT_NO_THROW(menu(3, parameters));
 
-    //TODO: Add expected result
-
-    cout.rdbuf(coutBuf);
-    sout.flush();
-    cout.rdbuf(sout.rdbuf());
-
-    parameters[3] = fileData;
-    sin.str("4");
-    EXPECT_NO_THROW(menu(4, parameters));
-    EXPECT_EQ("", sout.str());
+    EXPECT_EQ("Nombre d'arguments insuffisant\n", sout.str());
 
     free(parameters);
     cin.rdbuf(cinBuf);
@@ -84,10 +62,10 @@ TEST(ErrorTest, InvalidParameters)
     streambuf *cinBuf = cin.rdbuf(sin.rdbuf());
     streambuf *coutBuf = cout.rdbuf(sout.rdbuf());
     char **parameters = (char **)malloc(4 * sizeof(char *));
-    char programName[] = "./exec";
-    char fileCapteur[] = "meaningless";
-    char fileAttribute[] = "meaningless";
-    char fileData[] = "meaningless";
+    char *programName = (char *)"./exec";
+    char *fileCapteur = (char *)"meaningless";
+    char *fileAttribute = (char *)"meaningless";
+    char *fileData = (char *)"meaningless";
     parameters[0] = programName;
     parameters[1] = fileCapteur;
     parameters[2] = fileAttribute;
@@ -108,36 +86,34 @@ TEST(ErrorTest, WrongParameters)
     streambuf *cinBuf = cin.rdbuf(sin.rdbuf());
     streambuf *coutBuf = cout.rdbuf(sout.rdbuf());
     char **parameters = (char **)malloc(4 * sizeof(char *));
-    char programName[] = "./exec";
-    char* fileCapteur = "resources/Sensor10.csv";
-    char* fileAttribute = "resources/AttributeType.csv";
-    char* fileData = "resources/Data10.csv";
-    parameters[0] = programName;
-    parameters[1] = fileCapteur;
-    parameters[2] = fileAttribute;
-    parameters[3] = fileData;
+    parameters[0] = (char *)"./exec";
+    parameters[1] = (char *)"resources/Sensor10.csv";
+    parameters[2] = (char *)"resources/AttributeType.csv";
+    parameters[3] = (char *)"resources/Data10.csv";
 
-    fileCapteur = "InvalidCSV.csv";
+    parameters[1] = (char *)"InvalidCSV.csv";
     EXPECT_NO_THROW(menu(4, parameters));
 
     //TODO: Add expected result
 
     cout.rdbuf(coutBuf);
-    sout.flush();
+    sout.clear();
+    sout.str("");
     cout.rdbuf(sout.rdbuf());
 
-    fileCapteur = "resources/Sensor10.csv";
-    fileAttribute = "resources/InvalidCSV.csv";
+    parameters[1] = (char *)"resources/Sensor10.csv";
+    parameters[2] = (char *)"resources/InvalidCSV.csv";
     EXPECT_NO_THROW(menu(4, parameters));
 
     //TODO: Add expected result
 
     cout.rdbuf(coutBuf);
-    sout.flush();
+    sout.clear();
+    sout.str("");
     cout.rdbuf(sout.rdbuf());
 
-    fileAttribute = "resources/AttributeType.csv";
-    fileData = "resources/InvalidCSV.csv";
+    parameters[2] = (char *)"resources/AttributeType.csv";
+    parameters[3] = (char *)"resources/InvalidCSV.csv";
     EXPECT_NO_THROW(menu(4, parameters));
 
     //TODO: Add expected result
@@ -153,45 +129,193 @@ TEST(FunctionTest, Exit)
     ostringstream sout;
     streambuf *cinBuf = cin.rdbuf(sin.rdbuf());
     streambuf *coutBuf = cout.rdbuf(sout.rdbuf());
-    
+
     // Parameters for the program
     char **parameters = (char **)malloc(4 * sizeof(char *));
-    char programName[] = "./exec";
-    char* fileCapteur = "resources/Sensor10.csv";
-    char* fileAttribute = "resources/AttributeType.csv";
-    char* fileData = "resources/Data10.csv";
-    parameters[0] = programName;
-    parameters[1] = fileCapteur;
-    parameters[2] = fileAttribute;
-    parameters[3] = fileData;
+    parameters[0] = (char *)"./exec";
+    parameters[1] = (char *)"resources/Sensor10.csv";
+    parameters[2] = (char *)"resources/AttributeType.csv";
+    parameters[3] = (char *)"resources/Data10.csv";
 
     EXPECT_NO_THROW(menu(4, parameters));
-    
+
     // Result
-    EXPECT_EQ(string("Menu Principal\n")
-        + string("[1] Obtenir la qualite moyenne de l air\n")
-        + string("[2] Obtenir capteurs similaires\n")
-        + string("[3] Verifier comportement capteurs\n")
-        + string("[4] Quitter application\n"), sout.str());
+    EXPECT_EQ(string("Menu Principal\n") 
+            + string("[1] Obtenir la qualite moyenne de l air\n") 
+            + string("[2] Obtenir capteurs similaires\n") 
+            + string("[3] Verifier comportement capteurs\n") 
+            + string("[4] Quitter application\n\n\n"), sout.str());
 
     free(parameters);
     cin.rdbuf(cinBuf);
     cout.rdbuf(coutBuf);
 }
-TEST(FunctionTest, SurveillerComportementCapteur)
-{
-
-}
 TEST(FunctionTest, SurveillerComportementCapteurs)
 {
+    // Redirect cin cout
+    istringstream sin("3\n*\n4\n");
+    ostringstream sout;
+    streambuf *cinBuf = cin.rdbuf(sin.rdbuf());
+    streambuf *coutBuf = cout.rdbuf(sout.rdbuf());
 
+    // Parameters for the program
+    char **parameters = (char **)malloc(4 * sizeof(char *));
+    parameters[0] = (char *)"./exec";
+    parameters[1] = (char *)"resources/Sensor10.csv";
+    parameters[2] = (char *)"resources/AttributeType.csv";
+    parameters[3] = (char *)"resources/ServiceTestData.csv";
+
+    EXPECT_NO_THROW(menu(4, parameters));
+
+    // Result
+    EXPECT_EQ(string("Menu Principal\n") 
+            + string("[1] Obtenir la qualite moyenne de l air\n") 
+            + string("[2] Obtenir capteurs similaires\n") 
+            + string("[3] Verifier comportement capteurs\n") 
+            + string("[4] Quitter application\n\n\n") 
+            + string("Listez les id des capteurs que vous voulez surveiller\n") 
+            + string("Rentrez -1 pour arreter la saisie\n") 
+            + string("Le caractere * designe l integralite des capteurs\n") 
+            + string("Liste capteurs defaillants : \n") 
+            + string("Sensor2\n") 
+            + string("Sensor3\n\n\n") 
+            + string("Menu Principal\n") 
+            + string("[1] Obtenir la qualite moyenne de l air\n") 
+            + string("[2] Obtenir capteurs similaires\n")
+            + string("[3] Verifier comportement capteurs\n") 
+            + string("[4] Quitter application\n\n\n")
+            , sout.str());
+
+    free(parameters);
+    cin.rdbuf(cinBuf);
+    cout.rdbuf(coutBuf);
+}
+TEST(FunctionTest, SurveillerComportementCapteurs2)
+{
+    // Redirect cin cout
+    istringstream sin("3\nSensor3\nSensor4\n-1\n4\n");
+    ostringstream sout;
+    streambuf *cinBuf = cin.rdbuf(sin.rdbuf());
+    streambuf *coutBuf = cout.rdbuf(sout.rdbuf());
+
+    // Parameters for the program
+    char **parameters = (char **)malloc(4 * sizeof(char *));
+    parameters[0] = (char *)"./exec";
+    parameters[1] = (char *)"resources/Sensor10.csv";
+    parameters[2] = (char *)"resources/AttributeType.csv";
+    parameters[3] = (char *)"resources/ServiceTestData.csv";
+
+    EXPECT_NO_THROW(menu(4, parameters));
+
+    // Result
+    EXPECT_EQ(string("Menu Principal\n") 
+            + string("[1] Obtenir la qualite moyenne de l air\n") 
+            + string("[2] Obtenir capteurs similaires\n") 
+            + string("[3] Verifier comportement capteurs\n") 
+            + string("[4] Quitter application\n\n\n") 
+            + string("Listez les id des capteurs que vous voulez surveiller\n") 
+            + string("Rentrez -1 pour arreter la saisie\n") 
+            + string("Le caractere * designe l integralite des capteurs\n") 
+            + string("Liste capteurs defaillants : \n") 
+            + string("Sensor3\n\n\n") 
+            + string("Menu Principal\n") 
+            + string("[1] Obtenir la qualite moyenne de l air\n") 
+            + string("[2] Obtenir capteurs similaires\n") 
+            + string("[3] Verifier comportement capteurs\n") 
+            + string("[4] Quitter application\n\n\n"), sout.str());
+
+    free(parameters);
+    cin.rdbuf(cinBuf);
+    cout.rdbuf(coutBuf);
 }
 TEST(FunctionTest, ObtenirCapteursSimilaires)
 {
+    // Redirect cin cout
+    istringstream sin("2\nSensor0\n01/01/2017 00:00\n1\n4\n");
+    ostringstream sout;
+    streambuf *cinBuf = cin.rdbuf(sin.rdbuf());
+    streambuf *coutBuf = cout.rdbuf(sout.rdbuf());
 
+    // Parameters for the program
+    char **parameters = (char **)malloc(4 * sizeof(char *));
+    parameters[0] = (char *)"./exec";
+    parameters[1] = (char *)"resources/Sensor10.csv";
+    parameters[2] = (char *)"resources/AttributeType.csv";
+    parameters[3] = (char *)"resources/ServiceTestData.csv";
+
+    EXPECT_NO_THROW(menu(4, parameters));
+
+    // Result
+    EXPECT_EQ(string("Menu Principal\n") 
+            + string("[1] Obtenir la qualite moyenne de l air\n") 
+            + string("[2] Obtenir capteurs similaires\n") 
+            + string("[3] Verifier comportement capteurs\n") 
+            + string("[4] Quitter application\n\n\n") 
+            + string("Rentrez l'id du capteur de reference\n")
+            + string("Rentrez une date de depart au format : JJ/MM/AAAA HH:MM\n")
+            + string("date selectionnee : 01/01/2017 00:00\n")
+            + string("Rentrez le nombre de groupe de mesures par capteur pour la comparaison\n")
+            + string("nombre de mesures demandees : 1\n\n")
+            + string("capteurs similaires a Sensor0:\n")
+            + string(" - Sensor1")
+            + string("\n\nMenu Principal\n") 
+            + string("[1] Obtenir la qualite moyenne de l air\n") 
+            + string("[2] Obtenir capteurs similaires\n") 
+            + string("[3] Verifier comportement capteurs\n") 
+            + string("[4] Quitter application\n\n\n"), sout.str());
+
+    free(parameters);
+    cin.rdbuf(cinBuf);
+    cout.rdbuf(coutBuf);
 }
 TEST(FunctionTest, CalculerQualite)
 {
+    // Redirect cin cout
+    istringstream sin("1\n4\nSensor0\n*\n4\n");
+    ostringstream sout;
+    streambuf *cinBuf = cin.rdbuf(sin.rdbuf());
+    streambuf *coutBuf = cout.rdbuf(sout.rdbuf());
 
+    // Parameters for the program
+    char **parameters = (char **)malloc(4 * sizeof(char *));
+    parameters[0] = (char *)"./exec";
+    parameters[1] = (char *)"resources/Sensor10.csv";
+    parameters[2] = (char *)"resources/AttributeType.csv";
+    parameters[3] = (char *)"resources/ServiceTestData.csv";
+
+    EXPECT_NO_THROW(menu(4, parameters));
+
+    // Result
+    EXPECT_EQ(string("Menu Principal\n") 
+            + string("[1] Obtenir la qualite moyenne de l air\n") 
+            + string("[2] Obtenir capteurs similaires\n") 
+            + string("[3] Verifier comportement capteurs\n") 
+            + string("[4] Quitter application\n\n\n") 
+            + string("Choississez le type de zone a etudier\n")
+            + string("[1] Point precis (lat, long)\n")
+            + string("[2] Territoire (Point, rayon)\n")
+            + string("[3] Aire totale\n")
+            + string("[4] Capteur\n")
+            + string("[5] Retour\n\n")
+            + string("\nRentrez l'id d'un capteur\n") 
+            + string("\nIndiquer la periode temporelle\n")
+            + string("[1]A une date donnee plus ou moins une heure : date\n")
+            + string("[2]Sur une plage de temps donnee delimitee par deux dates : date1 date2\n")
+            + string("[*]Sur l integralite des mesures  * \n\n")
+            + string("Indice ATMO 3\n")
+            + string("Indice fiabilite 100%\n")
+            + string("O3,49.2417\n")
+            + string("NO2,82.5779\n")
+            + string("SO2,52.2821\n")
+            + string("PM10,5.96786\n")
+            + string("\nMenu Principal\n") 
+            + string("[1] Obtenir la qualite moyenne de l air\n") 
+            + string("[2] Obtenir capteurs similaires\n") 
+            + string("[3] Verifier comportement capteurs\n") 
+            + string("[4] Quitter application\n\n\n"), sout.str());
+
+    free(parameters);
+    cin.rdbuf(cinBuf);
+    cout.rdbuf(coutBuf);
 }
 } //namespace

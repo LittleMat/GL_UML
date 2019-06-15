@@ -30,54 +30,55 @@ using namespace std;
 string Mesure :: getAttributID ( ) const
 {
 	return this -> attributID;
-}
+
+} //----- End of getAttributID
 
 float Mesure :: getValue ( ) const
 {
 	return this -> value;
-}
+
+} //----- End of getValue
 
 string Mesure :: getSensorID ( ) const
 {
 	return this -> sensorID;
-}
+
+} //----- End of getSensorID
 
 struct tm Mesure :: getTimestamp ( ) const
 {
 	return this -> timestamp;
-}
+
+} //----- End of getTimestamp
 
 //-------------------------------------------- Constructors - destructor
 
 Mesure :: Mesure (const struct tm& timestamp, const string& attributID, float value, const string& sensorID) :
 		timestamp(timestamp), attributID(attributID), value(value), sensorID(sensorID)
-// Algorithm :
-//
 {
 
 	#ifdef MAP
-			cout << "Appel au constructeur de <Mesure>" << endl;
+		cout << "Appel au constructeur de <Mesure>" << endl;
 	#endif
 
 	if (this->attributID.empty() || this->sensorID.empty() || mktime(&this->timestamp) > time(NULL)) {
 		throw "Illegal Argument Exception";
 	}
 	
-}//-----End of Mesure
+} //----- End of Mesure
 
-Mesure::Mesure ( )
+Mesure :: Mesure ( )
 {
 	this -> timestamp = tm ( );
 	this -> attributID = string ( );
-	this -> value = NULL;
+	this -> value = 0.0;
 	this -> sensorID = string ( );
-}
+} //----- End of Mesure
 
 Mesure:: ~Mesure ( )
-// Algorithm :
-//
 {
 	#ifdef MAP
 	cout << "Appel au destructeur de <Mesure>" << endl;
 	#endif
-}//----- End of ~Mesure 
+
+} //----- End of ~Mesure 

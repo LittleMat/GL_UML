@@ -11,7 +11,7 @@
 //---------------------------------------------------------------- INCLUDE
 
 //--------------------------------------------------------- System include
-using namespace std;
+
 //------------------------------------------------------ Personnal include
 #include "cli.h"
 //------------------------------------------------------------- Constantes
@@ -25,4 +25,5 @@ int main ( int argc, char ** argv )
 {
 	menu( argc , argv );
 	return 0;
-} // End of main
+
+} //----- End of main

@@ -23,126 +23,91 @@ using namespace std;
 
 //----------------------------------------------------- Public methods
 
-bool Service :: surveillerComportementCapteur ( string capteurID, paramFiltrage & parametres )
-{
-	bool bonEtat = true;
-	bool finLecture = false;
-	fileReader->lireAttributs();
-	fileReader->lireCapteurs(parametres, Service::filtrageCapteur);
-	fileReader->debutMesure();
-	while (finLecture == false)
-	{
-		// On s�lectionne les mesures qui satisfont les crit�res de s�lection temporelles
-		const Mesure * m = fileReader->prochaineMesure( parametres, filtrageMesure );
-		// std :: cout << "lecture de mesure " << endl;
-		//Si m == nullptr, alors il n'y a plus rien � lire 
-		if ( m == nullptr )
-		{
-			finLecture = true; 
-			// std::cout << "fin de la lecture " << endl;
-			break;
-		}
-		//cout << " mesure lue :" << m->getValue() << endl;
-		
-		// On regarde si la mesure s�lectionn�e concerne le capteur � surveiller
-		if ( capteurID.compare(m-> getSensorID () ) == 0 )
-		{
-			//cout << " mesure du capteur lue :" << m->getValue() <<  endl;
-
-			if ( m -> getValue () < 0)
-			{
-				bonEtat = false;
-				delete m;
-				break;
-			}
-		}
-		delete m;		
-	}
-
-	return bonEtat;
-
-}//----- End of surveillerComportementCapteur 
-
-
-list <string> * Service :: surveillerComportementCapteurs (list <string> & capteursID)
+list<string> *Service ::surveillerComportementCapteurs(list<string> &capteursID, function<bool(Mesure &)> predicateMesure)
 {
 	if (capteursID.empty())
 		throw "Illegal Argument Exception: empty list";
+	if (predicateMesure == NULL)
+		throw "Illegal Argument Exception";
+
 	fileReader->lireAttributs();
-	paramFiltrage param_capteurs{ tm() ,tm() , new Territoire(new Point(0.0, 0.0), M_PI * RAYON_TERRE), "" };
-	unordered_map < string, Capteur * > map_tous_les_capteurs = fileReader->lireCapteurs(param_capteurs, filtrageCapteur);
-	if (capteursID.front().compare("*") == 0)
-	{
-		capteursID.clear();
-		for (auto it : map_tous_les_capteurs)
+	Territoire territoire(Point(0.0, 0.0), M_PI * RAYON_TERRE);
+	string empty;
+	using namespace placeholders;
+	function<bool(Capteur &)> passAllCapteurs = bind(Service::filtrageCapteur, _1, cref(territoire), empty);
+	function<bool(Capteur &)> predicateCapteurs = [passAllCapteurs, capteursID](Capteur &capteur) -> bool {
+		if (capteursID.front().compare("*") == 0)
 		{
-			capteursID.push_back(it.first);
+			return passAllCapteurs(capteur);
 		}
+		else
+		{
+			return passAllCapteurs(capteur) && find(capteursID.begin(), capteursID.end(), capteur.getSensorID()) != capteursID.end();
+		}
+	};
+	unordered_map<string, Capteur *> capteurs = fileReader->lireCapteurs(predicateCapteurs);
+	fileReader->lireAttributs();
+
+	//liste d'id de capteurs defectueux vide
+	list<string> *liste_id_capteursDefectueux = new list<string>;
+
+	fileReader->debutMesure();
+	bool finLecture = false;
+	function<bool(Mesure &)> predicateMesureWithCapteur = [predicateMesure, capteurs](Mesure &mesure) -> bool { return predicateMesure(mesure) && capteurs.find(mesure.getSensorID()) != capteurs.end(); };
+	while (!finLecture)
+	{
+		// On selectionne les mesures qui satisfont les criteres de selection temporels
+		const Mesure * m = fileReader->prochaineMesure(predicateMesureWithCapteur);
+
+		//Si m == nullptr, alors il n'y a plus rien a lire
+		if (m == nullptr)
+		{
+			finLecture = true;
+			break;
+		}
+
+		if (m->getValue() < 0)
+		{
+			liste_id_capteursDefectueux->push_back(m->getSensorID());
+		}
+		delete m;
 	}
 
-
-	//liste d'id de capteurs d�fectueux
-	list <string> * liste_id_capteursDefectueux = new list<string>;
-
-	for (list <string> :: iterator i = capteursID.begin(); i != capteursID.end(); i++)
-	{
-		paramFiltrage param { tm() ,tm() , new Territoire(new Point(0.0, 0.0), M_PI * RAYON_TERRE)  , *i };
-
-		if (surveillerComportementCapteur(*i, param) == false)
-		{
-			liste_id_capteursDefectueux->push_back(*i);
-		}
-	}
 	liste_id_capteursDefectueux->unique();
 	capteursID.clear();
 
 	return liste_id_capteursDefectueux;
 
-}//----- End of surveillerComportementCapteurs
+} //----- End of surveillerComportementCapteurs
 
-
-
-list <pair < string, string > > * Service :: obtenirCapteursSimilaires( struct tm & Date, int nbMesures )
-// HYPOTHESES APPLIQUEES DANS L'ALGORITHME
-// hypoth�se 0 : les concentrations des particules mesur�es � un instant t sont regroup�es les unes � la suite des autres
-// hypoth�se 1 : on consid�re que deux capteurs ont pris leurs mesures au m�me moment si la diff�rence entre leurs mesures est de +- 1 minute
-// hypoth�se 2 : un capteur � un instant t doit a des valeurs non null pour les 4 particules de l'air
-// hypoth�se 3 : en consid�rant l'hypoth�se 1 valide, on suppose que tous les capteurs prennent leurs mesures en m�me temps
-// (vrai dans le d�but du fichier .csv de mesures que j'ai lu)
-
-// Algorithm :
+list<pair<string, string>> *Service :: obtenirCapteursSimilaires(struct tm & date, int nbMesures)
 {
-
+	if (nbMesures <= 0)
+		throw "Illegal Argument Exception";
 	fileReader->debutMesure();
 
 	//On recupere tous les capteurs
-	paramFiltrage param_capteurs{ tm() ,tm() , new Territoire(new Point(0.0, 0.0), M_PI * RAYON_TERRE), "" };
-
-	unordered_map < std::string, Capteur * > map_capteurs = fileReader->lireCapteurs(param_capteurs, filtrageCapteur);
-
-	cout << "taille capteur = " << map_capteurs.size() << endl;
+	using namespace placeholders;
+	Territoire earth(Point(0.0, 0.0), M_PI * RAYON_TERRE);
+	string empty;
+	function<bool(Capteur&)> predicateCapteur = bind(Service::filtrageCapteur,  _1, cref(earth), empty);
+	unordered_map<std::string, Capteur *> map_capteurs = fileReader->lireCapteurs(predicateCapteur);
 
 	//On recupere tous les attributs
-	unordered_map < std::string, Attribut * > map_attributs = fileReader->lireAttributs(); 
+	unordered_map<std::string, Attribut *> map_attributs = fileReader->lireAttributs();
 
-	unordered_map< string, unordered_map< string, vector<float> > > capteurs_mesures;
-	//unordered_map<sensorID, unordered_map<AttributId, vector<value> > > capteurs_mesures;
+	//Structure de données pour classer les mesures 
+	// unordered_map<idCapteur, unordered_map <idAttribut,vector<Mesure>>> 
+	unordered_map<string, unordered_map<string, vector<float>>> capteurs_mesures;
 
-	paramFiltrage parametres { tm() , Date , new Territoire(new Point(0.0, 0.0), M_PI * RAYON_TERRE)  , "" };
-
+	function<bool(Mesure&)> predicateMesure = bind(Service::filtrageMesure, _1, date, tm());
 
 	// On classe les donnees pour faciliter le traitement
-
-	// Init 
-	for (unordered_map < std::string, Capteur * > :: iterator it = map_capteurs.begin(); it != map_capteurs.end(); it++)
+	// Initialisation avec des -1 
+	for (unordered_map<std::string, Capteur *>::iterator it = map_capteurs.begin(); it != map_capteurs.end(); it++)
 	{
-
-		unordered_map< string, vector<float> >  map_temp;
-		vector <float> vect;
-		for (int i = 0; i < nbMesures; i++)
-		{
-			vect.push_back(-1);
-		}
+		unordered_map<string, vector<float>> map_temp;
+		vector<float> vect;
 		map_temp.insert(make_pair("O3", vect));
 		map_temp.insert(make_pair("NO2", vect));
 		map_temp.insert(make_pair("SO2", vect));
@@ -151,35 +116,36 @@ list <pair < string, string > > * Service :: obtenirCapteursSimilaires( struct t
 		capteurs_mesures.insert(make_pair(it->first, map_temp));
 	}
 
-	//Remplissage
-	for (int i = 0; i < nbMesures; i++)
+	//Remplissage avec les mesures lues
+	for (int i = 0; i < INT32_MAX; i++)
 	{
-		Mesure * m = fileReader->prochaineMesure(parametres, filtrageMesure);
+		Mesure *m = fileReader->prochaineMesure(predicateMesure);
 
 		if (m == nullptr)
 			break;
 
 		// Etape de selection du capteur
-		// Si dans la map des capteurs selectionnes par les fonctions de filtrage spaciaux
+		// Si dans la map des capteurs selectionnes par les fonctions de filtrage spatiales
 		// le capteur de la mesure est present, c'est qu'il faut anaylser ce capteur
-
-		unordered_map < std::string, Capteur * > ::iterator trouveCapteur = map_capteurs.find(m->getSensorID());
+		if (m->getValue() < 0) {
+			delete m;
+			continue;
+		}	
+		unordered_map<std::string, Capteur *>::iterator trouveCapteur = map_capteurs.find(m->getSensorID());
 		if (trouveCapteur != map_capteurs.end())
 		{
-			unordered_map<string, unordered_map<string, vector<float> > >::iterator iterateur_sensorID = capteurs_mesures.find(m->getSensorID());
+			unordered_map<string, unordered_map<string, vector<float>>>::iterator iterateur_sensorID = capteurs_mesures.find(m->getSensorID());
 
 			if (iterateur_sensorID != capteurs_mesures.end())
 			{
-				unordered_map<string, vector<float>> ::iterator iterateur_attributId = iterateur_sensorID->second.find(m->getAttributID());
-
-				for (int ii = 0; ii < nbMesures; ii++)
-				{
-					if (iterateur_attributId->second[ii] == -1)
+				unordered_map<string, vector<float>>::iterator iterateur_attributId = iterateur_sensorID->second.find(m->getAttributID());
+				if (iterateur_attributId != iterateur_sensorID->second.end()) {
+					capteurs_mesures[m->getSensorID()][m->getAttributID()].push_back(m->getValue());
+					if (capteurs_mesures.at(m->getSensorID()).at(m->getAttributID()).size() > (unsigned int)nbMesures)
 					{
-						iterateur_attributId->second[ii] = m->getValue();
+						delete m;
 						break;
 					}
-
 				}
 			}
 		}
@@ -187,104 +153,61 @@ list <pair < string, string > > * Service :: obtenirCapteursSimilaires( struct t
 		delete m;
 	}
 
-	// Remplissage des zones vides
-	for (unordered_map< string, unordered_map< string, vector<float> > > ::iterator it = capteurs_mesures.begin(); it != capteurs_mesures.end(); it++)
-	{
-		for (unordered_map< string, vector<float> > ::iterator it_2 = it->second.begin(); it_2 != it->second.end(); it_2++)
-		{
-			for (int ii = 0; ii < nbMesures; ii++)
-			{
-				if (it_2->second[ii] == -1)
-				{
-					it_2->second[ii] = 0;
-				}
-			}
-		}
-	}
-
-
-
-	/*
-	// Visualiser la structure 
-	std :: cout << "Visualisation de la structure apres lecture" << endl;
-	std::cout << endl;
-	std::cout << "----------------------------------------------" << endl;
-	for (unordered_map< string, unordered_map< string, vector<float> > > ::iterator it = capteurs_mesures.begin(); it != capteurs_mesures.end(); it++)
-	{
-		std::cout << "Capteur = " << it->first << endl;
-		for (unordered_map< string, vector<float> > ::iterator it_2 = it->second.begin(); it_2 != it->second.end(); it_2++)
-		{
-			std::cout << "Attribut = " << it_2->first << endl;
-			for (vector<float> ::iterator it_3 = it_2->second.begin(); it_3 != it_2->second.end(); it_3++)
-			{
-				std::cout << *it_3 << " ; ";
-			}
-			std::cout << endl;
-		}
-		std::cout << endl;
-	}
-	std::cout << "----------------------------------------------" << endl;
-	std::cout << endl;
-	std::cout << endl;
-	*/
-
 	// Traitement
-	list<pair<string, string>> * capteurs_similaires = new list<pair<string, string>>;
-	
-	for (unordered_map<string, unordered_map<string, vector<float> > > ::iterator it_capteur1 = capteurs_mesures.begin(); it_capteur1 != capteurs_mesures.end(); it_capteur1++)
-	{
-		for (unordered_map<string, unordered_map<string, vector<float> > > ::iterator it_capteur2 = capteurs_mesures.begin(); it_capteur2 != capteurs_mesures.end(); it_capteur2++)
-		{
-			if (it_capteur1->first.compare(it_capteur2->first) != 0) 
-			{
-				unordered_map<string, vector<float> > ::iterator it_c1_O3 = it_capteur1->second.find("O3");
-				unordered_map<string, vector<float> > ::iterator it_c1_NO2 = it_capteur1->second.find("NO2");
-				unordered_map<string, vector<float> > ::iterator it_c1_SO2 = it_capteur1->second.find("SO2");
-				unordered_map<string, vector<float> > ::iterator it_c1_PM10 = it_capteur1->second.find("PM10");
+	list<pair<string, string>> *capteurs_similaires = new list<pair<string, string>>;
 
-				unordered_map<string, vector<float> > ::iterator it_c2_O3 = it_capteur2->second.find("O3");
-				unordered_map<string, vector<float> > ::iterator it_c2_NO2 = it_capteur2->second.find("NO2");
-				unordered_map<string, vector<float> > ::iterator it_c2_SO2 = it_capteur2->second.find("SO2");
-				unordered_map<string, vector<float> > ::iterator it_c2_PM10 = it_capteur2->second.find("PM10");
+	for (unordered_map<string, unordered_map<string, vector<float>>>::iterator it_capteur1 = capteurs_mesures.begin(); it_capteur1 != capteurs_mesures.end(); it_capteur1++)
+	{
+		for (unordered_map<string, unordered_map<string, vector<float>>>::iterator it_capteur2 = capteurs_mesures.begin(); it_capteur2 != capteurs_mesures.end(); it_capteur2++)
+		{
+			if (it_capteur1->first.compare(it_capteur2->first) != 0)
+			{
+				unordered_map<string, vector<float>>::iterator it_c1_O3 = it_capteur1->second.find("O3");
+				unordered_map<string, vector<float>>::iterator it_c1_NO2 = it_capteur1->second.find("NO2");
+				unordered_map<string, vector<float>>::iterator it_c1_SO2 = it_capteur1->second.find("SO2");
+				unordered_map<string, vector<float>>::iterator it_c1_PM10 = it_capteur1->second.find("PM10");
+
+				unordered_map<string, vector<float>>::iterator it_c2_O3 = it_capteur2->second.find("O3");
+				unordered_map<string, vector<float>>::iterator it_c2_NO2 = it_capteur2->second.find("NO2");
+				unordered_map<string, vector<float>>::iterator it_c2_SO2 = it_capteur2->second.find("SO2");
+				unordered_map<string, vector<float>>::iterator it_c2_PM10 = it_capteur2->second.find("PM10");
+				if (it_c1_O3->second.size() < (unsigned int)nbMesures || it_c2_O3->second.size() < (unsigned int)nbMesures
+							|| it_c1_NO2->second.size() < (unsigned int)nbMesures|| it_c2_NO2->second.size() < (unsigned int)nbMesures
+							|| it_c1_SO2->second.size() < (unsigned int)nbMesures || it_c2_SO2->second.size() < (unsigned int)nbMesures
+							|| it_c1_PM10->second.size() < (unsigned int)nbMesures || it_c2_PM10->second.size() < (unsigned int)nbMesures)
+					continue;
 
 				bool similaire = true;
-				
-				for (int i = 0; i < nbMesures; i++)  
+
+				for (int i = 0; i < nbMesures; i++)
 				{
 					similaire = similaire && (plusOuMoins(it_c1_O3->second[i], it_c2_O3->second[i], 15) &&
-						plusOuMoins(it_c1_NO2->second[i], it_c2_NO2->second[i], 20) &&
-						plusOuMoins(it_c1_SO2->second[i], it_c2_SO2->second[i], 15) &&
-						plusOuMoins(it_c1_PM10->second[i], it_c2_PM10->second[i], 4));
-
+											  plusOuMoins(it_c1_NO2->second[i], it_c2_NO2->second[i], 20) &&
+											  plusOuMoins(it_c1_SO2->second[i], it_c2_SO2->second[i], 15) &&
+											  plusOuMoins(it_c1_PM10->second[i], it_c2_PM10->second[i], 4));
 				}
-	
+
 				if (similaire == true)
 				{
 					capteurs_similaires->push_back(make_pair(it_capteur1->first, it_capteur2->first));
 				}
 			}
-
 		}
-
 	}
 	return capteurs_similaires;
 
 }//----- End of obtenirCapteursSimilaires
 
-
-bool Service::plusOuMoins(float v1, float v2, float ecart)
-{
-	return(abs(v1 - v2) <= ecart);
-}
-
-tuple<int, list<pair<string, float>>, float>  Service::calculerQualite(paramFiltrage & parametres)
+tuple<int, list<pair<string, float>>, float> Service::calculerQualite(string &capteurId, function<bool(Mesure &)> predicateMesure, function<float(Capteur &)> fiabilite)
 {
 
-	/*VESION OPTIMISEE OU ON NE STOCKE PAS LES MESURES*/
-	
 	fileReader->debutMesure();
-	unordered_map <string, Attribut *> attributs = fileReader->lireAttributs();
-	unordered_map <string, Capteur *> capteurs = fileReader->lireCapteurs(parametres, filtrageCapteur);
+
+	function<bool(Capteur &)> predicateCapteur = [capteurId, fiabilite](Capteur &capteur) -> bool { return fiabilite(capteur) > 0 && (capteurId.empty() || capteur.getSensorID() == capteurId); };
+
+	unordered_map<string, Attribut *> attributs = fileReader->lireAttributs();
+	unordered_map<string, Capteur *> capteurs = fileReader->lireCapteurs(predicateCapteur);
+	function<bool(Mesure &)> predicateMesures = [capteurs, predicateMesure](Mesure &mesure) -> bool { return predicateMesure(mesure) && capteurs.find(mesure.getSensorID()) != capteurs.end(); };
 	int nbMes_O3 = 0;
 	int nbMes_NO2 = 0;
 	int nbMes_SO2 = 0;
@@ -295,7 +218,7 @@ tuple<int, list<pair<string, float>>, float>  Service::calculerQualite(paramFilt
 	float somme_concentrations_SO2 = 0;
 	float somme_concentrations_PM10 = 0;
 
-	float fiabilite_O3 = 0; 
+	float fiabilite_O3 = 0;
 	float fiabilite_NO2 = 0;
 	float fiabilite_SO2 = 0;
 	float fiabilite_PM10 = 0;
@@ -304,65 +227,46 @@ tuple<int, list<pair<string, float>>, float>  Service::calculerQualite(paramFilt
 	while (finLecture == false)
 	{
 		// On recupere et lit une mesure
-		const Mesure * m = fileReader->prochaineMesure(parametres, filtrageMesure);
+		const Mesure *m = fileReader->prochaineMesure(predicateMesures);
 
 		if (m == nullptr)
 		{
 			finLecture = true;
 			break;
 		}
-
+		Capteur *capteur = capteurs[m->getSensorID()];
 		// On calule l'indice de fiabilite
-		float fiabilite = 1.0; //il est de 1 pour l'aire totale ou un capteur en particulier
-
-		//On ne considere pas un capteur en particulier
-		if (parametres.capteurId.compare("") == 0)
-		{
-			// Un point  
-			if (parametres.territoire->getRayon() == 0)
-			{
-
-				fiabilite = 1 - parametres.territoire->getCentre()->distance(capteurs.at(m->getSensorID())->getPosition()) / 10;
-			}
-			// Un territoire cible
-			else if (parametres.territoire->getRayon() > 0)
-
-			{
-				fiabilite = 1 - (parametres.territoire->getCentre()->distance(capteurs.at(m->getSensorID())->getPosition()) - parametres.territoire->getRayon()) / (0.1*parametres.territoire->getRayon());
-			}
-
-		}
-		if (fiabilite < 0)
-			fiabilite = 0;
+		float fiab = fiabilite(*capteur);
 
 		// Analyse de la donnee lue
 		if (m->getAttributID().compare("O3") == 0)
 		{
 			somme_concentrations_O3 += m->getValue();
-			fiabilite_O3 += fiabilite;			
+			fiabilite_O3 += fiab;
 			nbMes_O3++;
 		}
 		else if (m->getAttributID().compare("NO2") == 0)
 		{
 			somme_concentrations_NO2 += m->getValue();
-			fiabilite_NO2 += fiabilite;
+			fiabilite_NO2 += fiab;
 			nbMes_NO2++;
 		}
 		else if (m->getAttributID().compare("SO2") == 0)
 		{
 			somme_concentrations_SO2 += m->getValue();
-			fiabilite_SO2 += fiabilite;
+			fiabilite_SO2 += fiab;
 			nbMes_SO2++;
 		}
 		else if (m->getAttributID().compare("PM10") == 0)
 		{
 			somme_concentrations_PM10 += m->getValue();
-			fiabilite_PM10 += fiabilite;
+			fiabilite_PM10 += fiab;
 			nbMes_PM10++;
 		}
+		delete m;
 	}
 
-	// On calcul les moyennes
+	// On calcule les moyennes
 	float moyenne_concentrations_O3 = -1;
 	float moyenne_concentrations_NO2 = -1;
 	float moyenne_concentrations_SO2 = -1;
@@ -394,7 +298,7 @@ tuple<int, list<pair<string, float>>, float>  Service::calculerQualite(paramFilt
 		moyenne_fiabilite_PM10 = fiabilite_PM10 / nbMes_PM10;
 	}
 
-	list <pair<string, float>> concentrations;
+	list<pair<string, float>> concentrations;
 	concentrations.push_back(make_pair("O3", moyenne_concentrations_O3));
 	concentrations.push_back(make_pair("NO2", moyenne_concentrations_NO2));
 	concentrations.push_back(make_pair("SO2", moyenne_concentrations_SO2));
@@ -403,7 +307,7 @@ tuple<int, list<pair<string, float>>, float>  Service::calculerQualite(paramFilt
 	//Calcul Indice ATMO
 	float indiceMax = -1.0;
 	int indiceATMO;
-	for (list<pair<string, float>> ::iterator it = concentrations.begin(); it != concentrations.end(); it++)
+	for (list<pair<string, float>>::iterator it = concentrations.begin(); it != concentrations.end(); it++)
 	{
 		indiceATMO = calculIndiceATMO(it->first, it->second);
 		if (indiceATMO > indiceMax)
@@ -414,7 +318,7 @@ tuple<int, list<pair<string, float>>, float>  Service::calculerQualite(paramFilt
 	indiceATMO = indiceMax;
 
 	//Calcul fiabilité minimale
-	float fiabilites[4] = { moyenne_fiabilite_O3, moyenne_fiabilite_NO2, moyenne_fiabilite_SO2, moyenne_fiabilite_PM10 };
+	float fiabilites[4] = {moyenne_fiabilite_O3, moyenne_fiabilite_NO2, moyenne_fiabilite_SO2, moyenne_fiabilite_PM10};
 	float fiabiliteMin = 1;
 	for (int i = 0; i < 4; i++)
 	{
@@ -424,204 +328,14 @@ tuple<int, list<pair<string, float>>, float>  Service::calculerQualite(paramFilt
 		}
 	}
 
-	tuple<int, list<pair<string, float>>, float>  resultat_final = make_tuple(indiceATMO, concentrations, fiabiliteMin * 100);
+	tuple<int, list<pair<string, float>>, float> resultat_final = make_tuple(indiceATMO, concentrations, fiabiliteMin * 100);
 
 	return resultat_final;
-	
 
-	/* VERSION OU ON STOCKE TOUT */
-	/*
-	fileReader->debutMesure();
-	unordered_map <string, Attribut *> attributs = fileReader->lireAttributs();
-	unordered_map <string, Capteur *> capteurs = fileReader->lireCapteurs(parametres, filtrageCapteur);
-	list <pair<float, float>> mesures_O3;
-	list <pair<float, float>> mesures_NO2;
-	list <pair<float, float>> mesures_SO2;
-	list <pair<float, float>> mesures_PM10;
-
-	bool finLecture = false;
-	while (finLecture == false)
-	{
-		// On recupere et lit une mesure
-		const Mesure * m = fileReader->prochaineMesure(parametres, filtrageMesure);
-		
-		if (m == nullptr)
-		{
-			finLecture = true;
-			break;
-		}
-
-		// On calule l'indice de fiabilite
-		float fiabilite = 1.0; //il est de 1 pour l'aire totale ou un capteur en particulier
-
-		//On ne considere pas un capteur en particulier
-		if (parametres.capteurId.compare("") == 0)
-		{
-			// Un point  
-			if (parametres.territoire->getRayon() == 0 )
-			{
-
-				fiabilite = 1 - parametres.territoire->getCentre()->distance(capteurs.at(m->getSensorID())->getPosition())/10;
-			}
-			// Un territoire cible
-			else if (parametres.territoire->getRayon() > 0)
-				
-			{
-				fiabilite = 1 - (parametres.territoire->getCentre()->distance(capteurs.at(m->getSensorID())->getPosition()) - parametres.territoire->getRayon()) / (0.1*parametres.territoire->getRayon());
-			}
-
-		}
-		if (fiabilite < 0)
-			fiabilite = 0;
-
-		// On insere la mesure dans la liste appropriee
-		if (m->getAttributID().compare("O3") == 0)
-		{
-			mesures_O3.push_back(make_pair(m->getValue(), fiabilite));
-		}
-		else if (m->getAttributID().compare("SO2") == 0)
-		{
-			mesures_SO2.push_back(make_pair(m->getValue(), fiabilite));
-
-		}
-		else if (m->getAttributID().compare("NO2") == 0)
-		{
-			mesures_NO2.push_back(make_pair(m->getValue(), fiabilite));
-
-		}
-		else if (m->getAttributID().compare("PM10") == 0)
-		{
-			mesures_PM10.push_back(make_pair(m->getValue(), fiabilite));
-		}
-
-		delete m;
-	}
-
-	//Calcul des concentrations moyennes + fiabilite	
-	list<pair<string, float>> concentrations;
-	list<pair<string, float>> fiabilites;
-	float somme_concentrationMoyenne = 0.0;
-	float concentrationMoyenne = -1.0;
-	float somme_fiabiliteMoyenne = 0.0; 
-	float fiabiliteMoyenne = -1.0;
-
-	if (!mesures_O3.empty())
-	{
-		for (list<pair<float, float>> ::iterator it = mesures_O3.begin(); it != mesures_O3.end(); it++)
-		{
-			somme_concentrationMoyenne += it->first;
-			somme_fiabiliteMoyenne += it->second;
-		}
-		concentrationMoyenne = somme_concentrationMoyenne / mesures_O3.size();
-		fiabiliteMoyenne = somme_fiabiliteMoyenne / mesures_O3.size();
-
-	}
-	concentrations.push_back(make_pair("O3", concentrationMoyenne));  // Si == -1 => pas de mesures : autres solutions ??
-	fiabilites.push_back(make_pair("O3", fiabiliteMoyenne));
-
-	somme_concentrationMoyenne = 0.0;
-	concentrationMoyenne = -1.0;
-	if (!mesures_SO2.empty())
-	{
-		for (list<pair<float, float>> ::iterator it = mesures_SO2.begin(); it != mesures_SO2.end(); it++)
-		{
-			somme_concentrationMoyenne += it->first;
-			somme_fiabiliteMoyenne += it->second;
-
-		}
-		concentrationMoyenne = somme_concentrationMoyenne / mesures_SO2.size();
-		fiabiliteMoyenne = somme_fiabiliteMoyenne / mesures_SO2.size();
-	}
-	concentrations.push_back(make_pair("SO2", concentrationMoyenne));  // Si == -1 => pas de mesures : autres solutions ??
-	fiabilites.push_back(make_pair("SO2", fiabiliteMoyenne));
-
-	somme_concentrationMoyenne = 0.0;
-	concentrationMoyenne = -1.0;
-	if (!mesures_NO2.empty())
-	{
-		for (list<pair<float, float>> ::iterator it = mesures_NO2.begin(); it != mesures_NO2.end(); it++)
-		{
-			somme_concentrationMoyenne += it->first;
-			somme_fiabiliteMoyenne += it->second;
-
-		}
-		concentrationMoyenne = somme_concentrationMoyenne / mesures_NO2.size();
-		fiabiliteMoyenne = somme_fiabiliteMoyenne / mesures_NO2.size();
-	}
-	concentrations.push_back(make_pair("NO2", concentrationMoyenne));  // Si == -1 => pas de mesures : autres solutions ??
-	fiabilites.push_back(make_pair("NO2", fiabiliteMoyenne));
-
-	somme_concentrationMoyenne = 0.0;
-	concentrationMoyenne = -1.0;
-	if (!mesures_PM10.empty())
-	{
-		for (list<pair<float, float>> ::iterator it = mesures_PM10.begin(); it != mesures_PM10.end(); it++)
-		{
-			somme_concentrationMoyenne += it->first;
-			somme_fiabiliteMoyenne += it->second;
-
-		}
-		concentrationMoyenne = somme_concentrationMoyenne / mesures_PM10.size();
-		fiabiliteMoyenne = somme_fiabiliteMoyenne / mesures_PM10.size();
-	}
-	concentrations.push_back(make_pair("PM10", concentrationMoyenne));  // Si == -1 => pas de mesures : autres solutions ??
-	fiabilites.push_back(make_pair("PM10", fiabiliteMoyenne));
+} //----- End of calculerQualite
 
 
-	float indiceMax = -1.0;
-	int indiceATMO;
-	string composant;
-	for (list<pair<string, float>> ::iterator it = concentrations.begin(); it != concentrations.end(); it++)
-	{
-		indiceATMO = calculIndiceATMO(it->first, it->second);
-		if (indiceATMO > indiceMax)
-		{
-			indiceMax = indiceATMO;
-		}
-	}
-
-	indiceATMO = indiceMax;
-
-	
-
-	float fiabiliteMin = 1;
-	for (list<pair<string, float>> ::iterator it = fiabilites.begin(); it != fiabilites.end(); it++)
-	{
-		if (fiabiliteMin >= it->second)
-		{
-			fiabiliteMin = it->second;
-		}
-	}
-
-	tuple<int, list<pair<string, float>>, float>  resultat_final = make_tuple(indiceATMO, concentrations, fiabiliteMin * 100);
-	*/
-	
-	return resultat_final;
-	
-
-}//----- End of calculerQualite
-
- //-------------------------------------------- Constructor - destructor
-Service :: Service (const std::string & nomFichierCapteurs, const string & nomFichierAttributs, const std::list < std::string > & nomFichiersMesures)
-// Algorithm : 
-{
-#ifdef MAP
-	cout << "Appel au constructeur de <Service>" << endl;
-#endif
-	fileReader = new FileReader(nomFichierCapteurs, nomFichierAttributs, nomFichiersMesures);
-
-}//----- End of Service 
-
-Service::~Service()
-// Algorithm : 
-{
-#ifdef MAP
-	cout << "Appel au destructeur de <Service>" << endl;
-#endif
-	delete fileReader;
-}//----- End of ~Service 
-
-int Service :: calculIndiceATMO(string substance, float valeur)
+int Service::calculIndiceATMO(string substance, float valeur)
 {
 	int indiceATMO = -1;
 	if (substance.compare("O3") == 0)
@@ -666,7 +380,6 @@ int Service :: calculIndiceATMO(string substance, float valeur)
 		{
 			indiceATMO = 10;
 		}
-		
 	}
 	else if (substance.compare("NO2") == 0)
 	{
@@ -710,7 +423,6 @@ int Service :: calculIndiceATMO(string substance, float valeur)
 		{
 			indiceATMO = 10;
 		}
-
 	}
 	else if (substance.compare("SO2") == 0)
 	{
@@ -754,7 +466,6 @@ int Service :: calculIndiceATMO(string substance, float valeur)
 		{
 			indiceATMO = 10;
 		}
-
 	}
 	else if (substance.compare("PM10") == 0)
 	{
@@ -801,97 +512,67 @@ int Service :: calculIndiceATMO(string substance, float valeur)
 	}
 	return indiceATMO;
 
-}
+} //----- End of calculIndiceATMO
 
- //------------------------------------------------------------------ PRIVE
-
- //----------------------------------------------------- Protected methods
-
-
-bool Service::filtrageCapteur(Capteur & capteur, Territoire & territoire , string capteurId )
 // Algorithm :
-// Si capteurId == null, 
-	// On recupere la position du capteur avec posCapteur = capteur.getPosition()
-
-	// Si territoire.getRayon() == 0 (point considere)
-		// On regarde si la distance entre posCapteur et territoire.getCentre <= 10 km
-			// Si oui : on retourne true
-			// Sinon : on retourne false
-
-	// Si terrtoire.getRayon() != 0 et territoire.getCentre() != (0,0) (territoire considere)
-		// On regarde si la distance entre posCapteur et (territoire.getCentre() + territoire.getRayon()) <= (50 + territoire.getRayon())
-			// Si oui : on retourne true
-			// Sinon : on retourne false
-
-	// Si terrtoire.getRayon() == 0 et territoire.getCentre() == (0,0) (aire totale consid�r�e ou tous les capteurs) 
-		// on retourne true;
-
-// Si capteurId != null
-	// On regarde si capteurId == mesure.getCapteur()->getSensorID()
-		// Si oui : on retourne true
-		// Sinon : on retourne false
-{
+// Si capteurId == null,
+	// On voit si fiabilite est 0.
+	// Si oui, on retourne true
+// Sinon, on voit si le capteurId est l'id d'un capteur existant
+// Si c'est le cas, on retourne true
+//
+function<bool(const Capteur &, const Territoire &, const string &)> Service::filtrageCapteur = [](const Capteur &capteur, const Territoire &territoire, const string &capteurId) -> bool {
 	
-	bool capteurAPrendre = false;
+	return (!capteurId.empty() && capteur.getSensorID().compare(capteurId) == 0) || (capteurId.empty() && fiabilite(capteur, territoire) > 0);
 
-		const Point * posCapteur = capteur.getPosition();
-		
-		// cas 3 : capteur
-		if(! capteurId.empty())
-		{
-			if (capteur.getSensorID().compare(capteurId) == 0) {
-				capteurAPrendre = true;
-			}
-		}
-		else
-		{
-			// cas 1 : point considere 
-			if (territoire.getRayon() == 0.0)
-			{
-				Point * centre_zoneAcceptee = new Point(territoire.getCentre()->getLongitude(), territoire.getCentre()->getLatitude());
-				Territoire zoneAcceptee = Territoire(centre_zoneAcceptee, territoire.getRayon() + 10/*0000*/);
-				if (zoneAcceptee.contient(posCapteur))
-				{
-					capteurAPrendre = true;
-				}
-			}
-			// cas 2 : territoire considere
-			else if (territoire.getRayon() != 0)
-			{
-				Point * centre_zoneAcceptee = new Point(territoire.getCentre()->getLongitude(), territoire.getCentre()->getLatitude());
-				Territoire zoneAcceptee = Territoire(centre_zoneAcceptee, 1.1 *territoire.getRayon() /*+ 50*/); //TODO mettre à jour la spec
-				if (zoneAcceptee.contient(posCapteur))
-				{
-					capteurAPrendre = true;
-				}
-			}
-		}
-		return capteurAPrendre;
-	/*	
-	if(capteurAPrendre && (capteurId.empty() || capteur.getSensorID().compare(capteurId) == 0))cout << "Capteur " << capteur.getSensorID() << " pris en compte" << endl;
-	return capteurAPrendre && (capteurId.empty() || capteur.getSensorID().compare(capteurId) == 0);
-	*/
-}
+}; //----- End of filtrageCapteur
 
-bool Service::filtrageMesure(Mesure & mesure, struct tm & dateInf, struct tm & dateSup)
+function<float(const Capteur &, const Territoire &)> Service::fiabilite = [](const Capteur &capteur, const Territoire &territoire) -> float {
+	// On calule l'indice de fiabilite
+	float fiabilite = 1.0; //il est de 1 pour l'aire totale ou un capteur en particulier
+
+	// Un point
+	if (territoire.getRayon() == 0)
+	{
+
+		fiabilite = 1 - territoire.getCentre().distance(capteur.getPosition()) / 10;
+	}
+	// Un territoire cible
+	else
+	{
+		float distance = territoire.getCentre().distance(capteur.getPosition());
+		fiabilite = distance < territoire.getRayon() ? 1 : 1 - (distance - territoire.getRayon()) / (0.1 * territoire.getRayon());
+	}
+	if (fiabilite < 0)
+		fiabilite = 0;
+	return fiabilite;
+
+}; //----- End of fiabilite
+
 // Algorithm :
-// Si dateInf != null && dateSup == null (periode)
-// Si dateInf == null && dateSup != null (a un instant t)
-	// On regarde si mesure.getTimestamp() appartient a l'intervalle  [dateInf (en sec) - 60 (min) * 60 sec, dateInf (en sec) + 60 (min) * 60 sec] 
-		// Si oui : on retourne true
-		// Sinon : on retourne false
-// Si  dateSup != null && dateInf != null (periode)
-	// On regarde si mesure.getTimestamp() >= dateInf et mesure.getTimestamp() <= dateSup
-		// Si oui : on retourne true
-		// Sinon : on retourne false
-// Si dateSup == null && dateInf == null (tout l'historique= 
-	// on retourne true
+// Si dateInf != null && dateSup == null (a partir de l'instant t)
+// On regarde si mesure.getTimetamp() > dateInf
+// Si oui : on retourne true
+// Sinon : on retourne false
 
-{
+// Si dateInf == null && dateSup != null (a un instant t)
+// On regarde alors si mesure.getTimestamp() appartient a l'intervalle  [dateInf (en sec) - 60 (min) * 60 sec, dateInf (en sec) + 60 (min) * 60 sec]
+// Si oui : on retourne true
+// Sinon : on retourne false
+
+// Si  dateSup != null && dateInf != null (periode)
+// On regarde si mesure.getTimestamp() >= dateInf et mesure.getTimestamp() <= dateSup
+// Si oui : on retourne true
+// Sinon : on retourne false
+
+// Si dateSup == null && dateInf == null (tout l'historique)
+// on retourne true
+
+function<bool(Mesure &, struct tm &, struct tm &)> Service::filtrageMesure = [](Mesure &mesure, struct tm &dateInf, struct tm &dateSup) -> bool {
 	bool mesureAPrendre = false;
 	struct tm time = mesure.getTimestamp();
-	time_t timeMes = mktime(&time); 
-	
+	time_t timeMes = mktime(&time);
+
 	// A un instant t
 	if ((dateNull(dateSup) == false) && (dateNull(dateInf) == true))
 	{
@@ -899,7 +580,6 @@ bool Service::filtrageMesure(Mesure & mesure, struct tm & dateInf, struct tm & d
 
 		if ((timeMes >= timeSup - 3600) && (timeMes <= timeSup + 3600))
 			mesureAPrendre = true;
-
 	}
 	// Une periode
 	else if ((dateNull(dateSup) == false) && (dateNull(dateInf) == false))
@@ -910,7 +590,6 @@ bool Service::filtrageMesure(Mesure & mesure, struct tm & dateInf, struct tm & d
 		{
 			mesureAPrendre = true;
 		}
-					 
 	}
 	// Tout l'historique
 	else if ((dateNull(dateSup) == true) && (dateNull(dateInf) == true))
@@ -919,22 +598,55 @@ bool Service::filtrageMesure(Mesure & mesure, struct tm & dateInf, struct tm & d
 	}
 
 	// A partir d'un instant t
-	else if ((dateNull(dateInf) == false) && (dateNull(dateSup) == true)) {
+	else if ((dateNull(dateInf) == false) && (dateNull(dateSup) == true))
+	{
 		time_t timeInf = mktime(&dateInf);
 		if (timeMes >= timeInf)
 			mesureAPrendre = true;
 	}
 	return mesureAPrendre;
-}
 
-bool Service::dateNull(struct tm & date)
+}; //----- End of filtrageMesure
+
+bool Service::dateNull(struct tm &date)
 {
-	if (date.tm_hour == 0 && date.tm_min == 0 && date.tm_sec == 0
-		&& date.tm_mday == 0 && date.tm_mon == 0 && date.tm_year == 0)
+	if (date.tm_hour == 0 && date.tm_min == 0 && date.tm_sec == 0 && date.tm_mday == 0 && date.tm_mon == 0 && date.tm_year == 0)
 		return true;
 	else
 		return false;
+} //----- End of dateNull
 
-}
+bool Service::plusOuMoins(float v1, float v2, float ecart)
+{
+	return (abs(v1 - v2) <= ecart);
 
+} //----- End of plusOuMoins
+
+
+
+//-------------------------------------------- Constructor - destructor
+Service ::Service(const std::string &nomFichierCapteurs, const string &nomFichierAttributs, const std::list<std::string> &nomFichiersMesures)
+{
+#ifdef MAP
+	cout << "Appel au constructeur de <Service>" << endl;
+#endif
+
+	fileReader = new FileReader(nomFichierCapteurs, nomFichierAttributs, nomFichiersMesures);
+
+} //----- End of Service
+
+Service::~Service()
+{
+#ifdef MAP
+	cout << "Appel au destructeur de <Service>" << endl;
+#endif
+
+	delete fileReader;
+
+} //----- End of ~Service
+
+
+//------------------------------------------------------------------ PRIVE
+
+//----------------------------------------------------- Protected methods
 

@@ -10,7 +10,7 @@
 //------------- Realisation of <FileReader> (file FileReader.cpp) ----------------
 
 //---------------------------------------------------------------- INCLUDE
-using namespace std;
+
 //--------------------------------------------------------- System include
 
 //------------------------------------------------------ Personnal include
@@ -19,7 +19,7 @@ using namespace std;
 regex FileReader::reg_mesure = regex("(.*);(.*);(.*);(.*[0-9]+.*);");
 regex FileReader::reg_date = regex("([0-9]*)-([0-9]{2})-([0-9]{2})T([0-9]{2}):([0-9]{2}):([0-9]{2}.[0-9]*)");
 regex FileReader::reg_capt = regex("(.*);(.*[0-9]+);(.*[0-9]+);(.*);");
-regex FileReader::reg_attr = regex("(.*);(.*\/.*);(.*);");
+regex FileReader::reg_attr = regex("(.*);(.*/.*);(.*);");
 
 string FileReader::enteteFicherCapteurs = "SensorID;Latitude;Longitude;Description;";
 string FileReader::enteteFichierAttributs = "AttributeID;Unit;Description;";
@@ -28,15 +28,15 @@ string FileReader::enteteFichierMesures = "Timestamp;SensorID;AttributeID;Value;
 
 //----------------------------------------------------- Public methodes
 
-unordered_map<string, Capteur *> FileReader ::lireCapteurs(paramFiltrage &parametres, bool (*filtrageCapteur)(Capteur &, Territoire &, string))
+unordered_map<string, Capteur *> FileReader ::lireCapteurs( function<bool(Capteur&)> predicateCapteur )
 {
-	if (filtrageCapteur == nullptr || *filtrageCapteur == NULL)
+	if (predicateCapteur == NULL)
 	{
 		throw "Illegal Argument Exception: parameter is nullptr";
 	}
 	ifstream infile(this->nomFichierCapteurs);
 
-	//Si la map n'est pas vide, on la vide et on détruit tous les éléments contenu dans celle ci
+	//Si la map n'est pas vide, on la vide et on détruit tous les éléments contenus dans celle ci
 	if (this->map_capteurs.size() != 0)
 	{
 		for (auto it : this->map_capteurs)
@@ -66,7 +66,7 @@ unordered_map<string, Capteur *> FileReader ::lireCapteurs(paramFiltrage &parame
 			Capteur *c = new Capteur(sensorID, position, description);
 
 			//Filtre permetant de filtrer les capteurs selon le choix de l'utilisateur
-			if (filtrageCapteur(*c, *parametres.territoire, parametres.capteurId))
+			if (predicateCapteur(*c))
 			{
 				this->map_capteurs[sensorID] = c;
 			}
@@ -78,7 +78,8 @@ unordered_map<string, Capteur *> FileReader ::lireCapteurs(paramFiltrage &parame
 	}
 
 	return this->map_capteurs;
-}
+
+} //----- End of lireCapteurs
 
 unordered_map<string, Attribut *> FileReader ::lireAttributs()
 {
@@ -116,7 +117,8 @@ unordered_map<string, Attribut *> FileReader ::lireAttributs()
 	}
 
 	return this->map_attributs;
-}
+
+} //----- End of lireAttributs
 
 //Revient au début des mesures
 void FileReader ::debutMesure()
@@ -125,7 +127,8 @@ void FileReader ::debutMesure()
 	fichierMesureEnCours.clear();
 	fichierMesureEnCours.close();
 	fichierMesureEnCours.open(nomFichiersMesures[idFichierMesures]);
-}
+
+} //----- End of debutMesure
 
 bool FileReader ::fichierLisible()
 {
@@ -133,12 +136,10 @@ bool FileReader ::fichierLisible()
 
 	if (fichierMesureEnCours.eof())
 	{
-		//cout << "Reached end of file" << endl;
 		//Regarde s'il reste encore un fichier de mesure
 		idFichierMesures++;
 		if (idFichierMesures < nomFichiersMesures.size())
 		{
-			//cout << "Nb : " << nomFichiersMesures.size() << "  name : " << nomFichiersMesures.front() << endl;
 			fichierMesureEnCours.clear();
 			fichierMesureEnCours.close();
 
@@ -151,7 +152,8 @@ bool FileReader ::fichierLisible()
 	}
 
 	return res;
-}
+
+} //----- End of fichierLisible
 
 void FileReader ::getLineModifie(ifstream &fichierMesureEnCours, string &line)
 {
@@ -166,15 +168,16 @@ void FileReader ::getLineModifie(ifstream &fichierMesureEnCours, string &line)
 			line += *it;
 		}
 	}
-}
 
-Mesure *FileReader ::prochaineMesure(paramFiltrage &parametres, bool (*filtrageMesure)(Mesure &, struct tm &, struct tm &))
+} //----- End of getLineModifie
+
+Mesure *FileReader ::prochaineMesure(function<bool(Mesure&)> predicateMesure)
 {
 #ifdef MAP
 	cout << "Appel prochaineMesure" << endl;
 #endif
 
-	if (filtrageMesure == nullptr || *filtrageMesure == NULL)
+	if (predicateMesure == NULL)
 	{
 		throw "Illegal Argument Exception: parameter is null";
 	}
@@ -204,7 +207,6 @@ Mesure *FileReader ::prochaineMesure(paramFiltrage &parametres, bool (*filtrageM
 					string sensorID = matches[2].str();
 					string attributeID = matches[3].str();
 					float value = stof(matches[4].str());
-					//cout << timestamp << " - " << sensorID << " - " << attributeID << " - " << value << endl;
 
 					//Search for the date
 					regex_search(timestamp, time_match, reg_date);
@@ -219,37 +221,19 @@ Mesure *FileReader ::prochaineMesure(paramFiltrage &parametres, bool (*filtrageM
 						time->tm_min = stoi(time_match[5].str());
 						time->tm_sec = floor(stof(time_match[6].str()));
 
-						// cout << time->tm_year << " - " << time->tm_mon << " - " << time->tm_mday << " - " << time->tm_hour << " - " << time->tm_min << " - " << time->tm_sec << endl;
-
-						//TODO : à enlever après tests
-						/*
-							if ( this -> map_attributs.count ( attributeID ) == 0 )
-							{
-								cout << "Pb avec attributeID" << endl;
-							}
-
-							if ( this -> map_capteurs.count ( sensorID ) == 0 )
-							{
-								cout << "Pb avec capteurID" << endl;
-							}
-							*/
 						if (this->map_attributs.find(attributeID) != this->map_attributs.end() && this->map_capteurs.find(sensorID) != this->map_capteurs.end())
 						{
 							//Le sensorID et l'attributID existent et sont dans les map
 							m = new Mesure(*time, attributeID, value, sensorID);
 
-							//cout << "Mesure : " << m->getValue() << endl;
-
 							//Filtre la mesure avec les paramètres de l'utilisateur
-							if (!filtrageMesure(*m, parametres.dateInf, parametres.dateSup))
+							if (!predicateMesure(*m))
 							{
-								// cout << "Filtrage ne passe pas " << endl;
 								delete m;
 								m = nullptr;
 							}
 							else
 							{
-								// cout << "Mesure good : " << m->getValue() << endl;
 								continuer = false;
 							}
 						}
@@ -267,20 +251,15 @@ Mesure *FileReader ::prochaineMesure(paramFiltrage &parametres, bool (*filtrageM
 	}
 
 	return m;
-}
 
-/*
-	const list < string > FileReader :: getNomFichiersMesures ( ) const 
-	{
-		return this -> nomFichiersMesures;
-	}*/
+} //----- End of prochaineMesure
 
 //-------------------------------------------- Constructors - destructor
 
 FileReader ::FileReader(const string &nomFichierCapteurs, const string &nomFichierAttributs, const list<string> &nomFichiersMesures)
 {
 #ifdef MAP
-	cerr << "Constructor of <FileReader>" << endl;
+	cout << "Appel au constructeur de <FileReader>" << endl;
 #endif
 
 	this->nomFichierCapteurs = nomFichierCapteurs;
@@ -341,8 +320,6 @@ FileReader ::FileReader(const string &nomFichierCapteurs, const string &nomFichi
 	{
 		cout << "ouverture de " << this->nomFichiersMesures[idFichierMesures] << endl;
 		this->fichierMesureEnCours.open(this->nomFichiersMesures[idFichierMesures]);
-		//cout << fichierMesureEnCours.fail() << endl;
-
 		cout << "ouverture fichier : " << fichierMesureEnCours.is_open() << endl;
 	}
 	else
@@ -350,29 +327,16 @@ FileReader ::FileReader(const string &nomFichierCapteurs, const string &nomFichi
 		cerr << "List nomFichiersMesures vide" << endl;
 	}
 #endif
-} // End of constructor
 
-/*
-FileReader :: FileReader ( )
-{	
-	#ifdef MAP
-	    cerr << "Default constructor of <FileReader>" << endl;
-	#endif
-
-	this -> nomFichierCapteurs = "";
-	this -> nomFichierAttributs = "";
-
-	reg_mesure = regex( "(.*);(.*);(.*);(.*[0-9]+);" );
-	reg_date = regex( "([0-9]*)-([0-9]{2})-([0-9]{2})T([0-9]{2}):([0-9]{2}):([0-9]{2}.[0-9]*)" );
-	reg_capt = regex( "(.*);(.*[0-9]+);(.*[0-9]+);(.*);" );
-	reg_attr = regex( "(.*);(.*\/.*);(.*);" );
-}*/
+} //----- End of FileReader
 
 FileReader ::~FileReader()
 {
+	#ifdef MAP
+		cout << "Appel au destructeur de <FileReader>" << endl;
+	#endif
 
 	//Ferme le dernier fichier de mesure
-	//TODO : vérifier qu'ouvert
 	fichierMesureEnCours.clear();
 	fichierMesureEnCours.close();
 
@@ -394,4 +358,5 @@ FileReader ::~FileReader()
 		}
 		map_attributs.clear();
 	}
-} // End of destructor
+
+} //----- End of ~FileReader

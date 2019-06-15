@@ -22,7 +22,7 @@ using namespace std;
 
 //------------------------------------------------------------------------
 // Goal of the <Mesure> class
-// Représente une mesure, avec un attribut, une valeur, un capteur et un timestamp
+// Un objet <Mesure> représente une mesure, avec un attribut, une valeur, un capteur et un timestamp
 //------------------------------------------------------------------------
 
 
@@ -34,16 +34,24 @@ public :
 
 //----------------------------------------------------- Public methods
 
-	//Retourne l'attribut
+	/*
+	* Retourne l'attribut
+	*/
 	string getAttributID () const;
 
-	//Retourne la valeur
+	/*
+	* Retourne la valeur
+	*/
 	float getValue ( ) const;
 
-	//Retourne l'id du capteur de la mesure
+	/* 
+	* Retourne l'id du capteur de la mesure
+	*/
 	string getSensorID ( ) const;
 
-	//Retourne le timestamp
+	/*
+	* Retourne le timestamp
+	*/
 	struct tm getTimestamp ( ) const;
 
 
@@ -55,10 +63,11 @@ public :
 
 	~Mesure ( );
 
-
-//----------------------------------------------------- Protected attributes
+//----------------------------------------------------------------- PROTECTED
 
 protected :
+
+//----------------------------------------------------- Protected attributes
 	struct tm timestamp;
 	string attributID;
 	float value;

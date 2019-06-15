@@ -38,7 +38,7 @@ GTEST_LIBS = libgtest.a libgtest_main.a
 
 # All tests produced by this Makefile.  Remember to add new tests you
 # created to the list.
-TESTS = unitTest
+TESTS = unitTest systemTest
 
 # All Google Test headers.  Usually you shouldn't change this
 # definition.

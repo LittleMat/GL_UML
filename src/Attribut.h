@@ -18,10 +18,9 @@
 
 using namespace std;
 
-
 //------------------------------------------------------------------------
 // Goal of the <Attribut> class
-// Représente un attribut, avec un id, une unité, et une descrition
+// Un objet Attribut représente un attribut, avec un id, une unité, et une description
 //------------------------------------------------------------------------
 
 
@@ -32,14 +31,19 @@ class Attribut
 public :
 
 //----------------------------------------------------- Public methods
-
-	//Retourne l'attribut
+	/*
+	* Retourne l'id de l'attribut
+	*/
 	std::string getAttributID ( ) const;
 
-	//Retourne l'unité
+	/*
+	* Retourne l'unité
+	*/
 	std::string getUnit ( ) const;
 
-	//Retourne la description
+	/* 
+	* Retourne la description
+	*/
 	std::string getDescription ( ) const;
 
 //-------------------------------------------- Constructor - destructor
@@ -49,9 +53,11 @@ public :
 
 	~Attribut ( );
 
-//----------------------------------------------------- Protected attributes
+//----------------------------------------------------------------- PROTECTED
+
 protected :
 
+//----------------------------------------------------- Protected attributes
     std :: string attributID;
     std :: string unit;
     std :: string description;
